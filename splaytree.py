@@ -218,9 +218,6 @@ if __name__ == '__main__':
     t.find(20711)
     t.find(36126)
     print(t.root.right.left.right.key)
-    a = SplayTree(range(40))
-    for x in a.inorder_stack():
-        print(x)
     r = SplayTree()
     r.insert(100)
     s = SplayTree()
@@ -235,3 +232,22 @@ if __name__ == '__main__':
     print(s.root)
     print(bool(s.root))
     print(bool(s))
+
+    def newsamp():
+        samp = BinaryNode(15)
+        samp.left = BinaryNode(10)
+        samp.left.left = BinaryNode(5)
+        samp.right = BinaryNode(25)
+        samp.right.right = BinaryNode(30)
+        tsamp = SplayTree()
+        tsamp.root = samp
+        return tsamp
+
+    ts1 = newsamp()
+    ts1.find(11)
+    print("ts1: ", ts1.root.key)
+    # Should print 10. Want succ_item to be 15
+    ts2 = newsamp()
+    ts2.find(26)
+    print("ts2: ", ts2.root.key)
+    # Should print 30. Want prev_item to be 25.
