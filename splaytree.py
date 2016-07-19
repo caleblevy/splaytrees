@@ -103,16 +103,16 @@ class SplayTree(object):
         else:
             return None
 
-    def find(self, key):
+    def __contains__(self, key):
         """Find an item in the tree."""
         if self.root is None:
-            return None
+            return False
         self.splay(key)
         # Must adjust itself even when raising error to maintain behavior
         # (otherwise we could spam it with invalid requests)
         if self.root.key != key:
-            return None
-        return self.root.key
+            return False
+        return True
 
     def __bool__(self):
         """Test if tree is logically empty."""
@@ -204,19 +204,19 @@ if __name__ == '__main__':
         print("Find min or find max error")
 
     for i in range(2, nums, 2):
-        if t.find(i) != i:
+        if i not in t or t.root.key != i:
             print("Error: find fails for " + str(i))
 
     for i in range(1, nums, 2):
-        if t.find(i) is not None:
+        if i in t:
             print("Error: found deleted item " + str(i))
 
-    t.find(100)
-    t.find(18199)
-    t.find(29512)
-    t.find(39153)
-    t.find(20711)
-    t.find(36126)
+    100 in t
+    18199 in t
+    29512 in t
+    39153 in t
+    20711 in t
+    36126 in t
     print(t.root.right.left.right.key)
     r = SplayTree()
     r.insert(100)
