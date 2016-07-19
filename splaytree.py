@@ -1,5 +1,26 @@
 """Implementations a top-down splay tree using simple splaying."""
 
+import functools
+
+
+@functools.total_ordering
+class _GlobalMax(object):
+    """Represent a global maximum."""
+
+    def __lt__(self, other):
+        return False
+
+
+class _GlobalMin(object):
+    """Represent a global minimum."""
+
+    def __lt__(self, other):
+        return True
+
+
+Inf = _GlobalMax()
+NegInf = _GlobalMin()
+
 
 class BinaryNode(object):
     __slots__ = ("left", "right", "key")
@@ -68,25 +89,19 @@ class SplayTree(object):
 
     def min(self):
         """Find the smallest item in the tree"""
-        x = self.root
-        if self.root is None:
+        self.splay(NegInf)
+        if self.root is not None:
+            return self.root.key
+        else:
             return None
-        # Must splay this way since we don't know what it is.
-        # Order statistics on this kind of tree?
-        while x.left is not None:
-            x = x.left
-        self.splay(x.key)
-        return x.key
 
     def max(self):
         """Find the largest item in the tree."""
-        x = self.root
-        if self.root is None:
+        self.splay(Inf)
+        if self.root is not None:
+            return self.root.key
+        else:
             return None
-        while x.right is not None:
-            x = x.right
-        self.splay(x.key)
-        return x.key
 
     def find(self, key):
         """Find an item in the tree."""
@@ -102,6 +117,8 @@ class SplayTree(object):
     def __bool__(self):
         """Test if tree is logically empty."""
         return self.root is not None
+
+    __nonzero__ = __bool__
 
     def splay(self, key):
         l = r = self.header
@@ -142,7 +159,7 @@ class SplayTree(object):
         t.right = self.header.left
         self.root = t
 
-    def inorder(self):
+    def inorder_stack(self):
         """Traverse descendents in symmetric order."""
         # Taken from http://www.geeksforgeeks.org/inorder-tree-traversal-without-recursion/
         current = self.root
@@ -159,6 +176,13 @@ class SplayTree(object):
                     current = current.right
                 else:
                     done = True
+
+    def __iter__(self):
+        """Traverse the elements of the tree in Symmetric Order."""
+        # Use splaying to do this and preserve our running time heuristics
+        if self.root is None:
+            return
+        min = 1
 
 
 if __name__ == '__main__':
@@ -195,5 +219,19 @@ if __name__ == '__main__':
     t.find(36126)
     print(t.root.right.left.right.key)
     a = SplayTree(range(40))
-    for x in a.inorder():
+    for x in a.inorder_stack():
         print(x)
+    r = SplayTree()
+    r.insert(100)
+    s = SplayTree()
+    if r:
+        print(1)
+    if not r:
+        print(2)
+    if s:
+        print(3)
+    if not s:
+        print(4)
+    print(s.root)
+    print(bool(s.root))
+    print(bool(s))
