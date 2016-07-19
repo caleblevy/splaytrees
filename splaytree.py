@@ -9,6 +9,16 @@ class BinaryNode(object):
         self.left = None
         self.right = None
 
+    def inorder_recursive(self):
+        """Traverse descendents in symmetric order."""
+        if self.left is not None:
+            for x in self.left.inorder_recursive():
+                yield x
+        yield self.key
+        if self.right is not None:
+            for x in self.right.inorder_recursive():
+                yield x
+
 
 class SplayTree(object):
 
@@ -132,6 +142,10 @@ class SplayTree(object):
         t.right = self.header.left
         self.root = t
 
+    def inorder(self):
+        """Traverse nodes in symmetric order."""
+        return self.root.inorder_recursive()
+
 
 if __name__ == '__main__':
     t = SplayTree()
@@ -158,3 +172,12 @@ if __name__ == '__main__':
     for i in range(1, nums, 2):
         if t.find(i) is not None:
             print("Error: found deleted item " + str(i))
+
+    t.find(100)
+    t.find(18199)
+    t.find(29512)
+    t.find(39153)
+    t.find(20711)
+    t.find(36126)
+    print(t.root.right.left.right.key)
+    print(list(SplayTree(range(40)).inorder()))
