@@ -10,7 +10,7 @@ class BinaryNode(object):
         self.right = None
 
     def inorder_recursive(self):
-        """Traverse descendents in symmetric order."""
+        """Traverse descendents in symmetric order recursively."""
         if self.left is not None:
             for x in self.left.inorder_recursive():
                 yield x
@@ -143,8 +143,22 @@ class SplayTree(object):
         self.root = t
 
     def inorder(self):
-        """Traverse nodes in symmetric order."""
-        return self.root.inorder_recursive()
+        """Traverse descendents in symmetric order."""
+        # Taken from http://www.geeksforgeeks.org/inorder-tree-traversal-without-recursion/
+        current = self.root
+        stack = []
+        done = False
+        while not done:
+            if current is not None:
+                stack.append(current)
+                current = current.left
+            else:
+                if stack:
+                    current = stack.pop()
+                    yield current.key
+                    current = current.right
+                else:
+                    done = True
 
 
 if __name__ == '__main__':
@@ -180,4 +194,6 @@ if __name__ == '__main__':
     t.find(20711)
     t.find(36126)
     print(t.root.right.left.right.key)
-    print(list(SplayTree(range(40)).inorder()))
+    a = SplayTree(range(40))
+    for x in a.inorder():
+        print(x)
