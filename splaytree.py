@@ -32,8 +32,8 @@ class SplayTree(object):
             return
         n = BinaryNode(key)
         if key < self.root.key:
-            n.left = root.left
-            n.right = root
+            n.left = self.root.left
+            n.right = self.root
             self.root.left = None
         else:
             n.right = self.root.right
@@ -51,15 +51,14 @@ class SplayTree(object):
         if self.root.left is None:
             self.root = self.root.right
         else:
-            x = BinaryNode(self.root.right)
+            x = self.root.right
             self.root = self.root.left
             self.splay(key)
             self.root.right = x
-            print("root.key vs key?")
 
     def min(self):
         """Find the smallest item in the tree"""
-        x = BinaryNode(self.root)
+        x = self.root
         if self.root is None:
             return None
         # Must splay this way since we don't know what it is.
@@ -71,7 +70,7 @@ class SplayTree(object):
 
     def max(self):
         """Find the largest item in the tree."""
-        x = BinaryNode(self.root)
+        x = self.root
         if self.root is None:
             return None
         while x.right is not None:
@@ -132,3 +131,30 @@ class SplayTree(object):
         t.left = self.header.right
         t.right = self.header.left
         self.root = t
+
+
+if __name__ == '__main__':
+    t = SplayTree()
+    nums = 40000
+    gap = 307
+    print("Checking... (no bad output means success)")
+    i = gap
+    while i:
+        t.insert(i)
+        i = (i + gap) % nums
+    print("Inserts complete")
+
+    for i in range(1, nums, 2):
+        t.remove(i)
+    print("Removes complete")
+
+    if t.min() != 2 or t.max() != nums-2:
+        print("Find min or find max error")
+
+    for i in range(2, nums, 2):
+        if t.find(i) != i:
+            print("Error: find fails for " + str(i))
+
+    for i in range(1, nums, 2):
+        if t.find(i) is not None:
+            print("Error: found deleted item " + str(i))
