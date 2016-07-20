@@ -1,3 +1,4 @@
+from __future__ import print_function
 """Implementations a top-down splay tree using simple splaying."""
 
 import functools
@@ -160,44 +161,36 @@ class SplayTree(object):
         t.right = self.header.left
         self.root = t
 
+
     def splay_plus(self, key):
+        print("\nSplay plus at ", key,'\n-------')
         l = r = self.header
         t = self.root
         self.header.left = self.header.right = None
         while True:
-            if t.key <= key:
+            print("key ", t.key)
+            if t.key > key:
+                if t.left is None:
+                    break
+                if t.left.key > key:
+                    rotate-right
+                    if t.left is None:
+                        break
+                link right
+            else:
                 if t.right is None:
                     break
                 if t.right.key <= key:
-                    y = t.right  # rotate right
-                    t.right = y.left
-                    y.left = t
-                    t = y
-                    if t.left is None:
-                        break
-                r.left = t  # Link right
-                r = t
-                t = t.left
-            elif key > t.key:
-                if t.right is None:
-                    break
-                if key > t.right.key:
-                    y = t.right  # rotate left
-                    t.right = y.left
-                    y.left = t
-                    t = y
+                    rotate-left
                     if t.right is None:
                         break
-                l.right = t  # link left
-                l = t
-                t = t.right
-            else:
-                break
+                link left
         l.right = t.left  # assemble
         r.left = t.right
         t.left = self.header.right
         t.right = self.header.left
         self.root = t
+
 
     def inorder_stack(self):
         """Traverse descendents in symmetric order."""
@@ -229,7 +222,7 @@ class SplayTree(object):
         if not self:
             raise KeyError("Empty tree has no successor")
         self.splay_plus(key)
-        return self.root.key
+        
 
 
 class TestSimpleSplay(unittest.TestCase):
@@ -269,6 +262,16 @@ class TestSimpleSplay(unittest.TestCase):
         36126 in t
 
         self.assertEqual(39136, t.root.right.left.right.key)
+
+        t.splay_plus(-5)
+        print(t.root.key)
+        150000 in t
+        t.splay_plus(2)
+        print(t.root.key)
+        t.splay_plus(Inf)
+        print(t.root.key)
+        t.splay_plus(2)
+        print(t.root.key)
 
     def test_tree_truthiness(self):
         """Test tree is False iff it is empty."""

@@ -234,6 +234,14 @@ public class SplayTree
         for(int i = 1; i < NUMS; i+=2)
             if(t.find(new Integer(i))  != null)
                 System.out.println("Error: Found deleted item " + i);
+        t.find(100);
+        t.find(18199);
+        t.find(29512);
+        t.find(39153);
+        t.find(20711);
+        t.find(36126);
+        System.out.println(t.root.right.left.right.key);
+        t.find(2)
     }
 
 }
