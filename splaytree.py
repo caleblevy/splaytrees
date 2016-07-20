@@ -161,37 +161,6 @@ class SplayTree(object):
         t.right = self.header.left
         self.root = t
 
-
-    def splay_plus(self, key):
-        print("\nSplay plus at ", key,'\n-------')
-        l = r = self.header
-        t = self.root
-        self.header.left = self.header.right = None
-        while True:
-            print("key ", t.key)
-            if t.key > key:
-                if t.left is None:
-                    break
-                if t.left.key > key:
-                    rotate-right
-                    if t.left is None:
-                        break
-                link right
-            else:
-                if t.right is None:
-                    break
-                if t.right.key <= key:
-                    rotate-left
-                    if t.right is None:
-                        break
-                link left
-        l.right = t.left  # assemble
-        r.left = t.right
-        t.left = self.header.right
-        t.right = self.header.left
-        self.root = t
-
-
     def inorder_stack(self):
         """Traverse descendents in symmetric order."""
         # Taken from http://www.geeksforgeeks.org/inorder-tree-traversal-without-recursion/
