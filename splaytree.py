@@ -90,22 +90,22 @@ class SplayTree(object):
     def min(self):
         """Find the smallest item in the tree"""
         self.splay(NegInf)
-        if self.root is not None:
+        if self:
             return self.root.key
         else:
-            return None
+            raise ValueError("Cannot find min() of empty tree")
 
     def max(self):
         """Find the largest item in the tree."""
         self.splay(Inf)
-        if self.root is not None:
+        if self:
             return self.root.key
         else:
-            return None
+            raise ValueError("Cannot find max() of empty tree")
 
     def __contains__(self, key):
         """Find an item in the tree."""
-        if self.root is None:
+        if not self:
             return False
         self.splay(key)
         # Must adjust itself even when raising error to maintain behavior
@@ -244,10 +244,10 @@ if __name__ == '__main__':
         return tsamp
 
     ts1 = newsamp()
-    ts1.find(11)
+    11 in ts1
     print("ts1: ", ts1.root.key)
     # Should print 10. Want succ_item to be 15
     ts2 = newsamp()
-    ts2.find(26)
+    26 in ts2
     print("ts2: ", ts2.root.key)
     # Should print 30. Want prev_item to be 25.
