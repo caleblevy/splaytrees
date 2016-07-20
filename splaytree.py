@@ -1,6 +1,7 @@
 """Implementations a top-down splay tree using simple splaying."""
 
 import functools
+import unittest
 
 
 @functools.total_ordering
@@ -159,6 +160,45 @@ class SplayTree(object):
         t.right = self.header.left
         self.root = t
 
+    def splay_plus(self, key):
+        l = r = self.header
+        t = self.root
+        self.header.left = self.header.right = None
+        while True:
+            if t.key <= key:
+                if t.right is None:
+                    break
+                if t.right.key <= key:
+                    y = t.right  # rotate right
+                    t.right = y.left
+                    y.left = t
+                    t = y
+                    if t.left is None:
+                        break
+                r.left = t  # Link right
+                r = t
+                t = t.left
+            elif key > t.key:
+                if t.right is None:
+                    break
+                if key > t.right.key:
+                    y = t.right  # rotate left
+                    t.right = y.left
+                    y.left = t
+                    t = y
+                    if t.right is None:
+                        break
+                l.right = t  # link left
+                l = t
+                t = t.right
+            else:
+                break
+        l.right = t.left  # assemble
+        r.left = t.right
+        t.left = self.header.right
+        t.right = self.header.left
+        self.root = t
+
     def inorder_stack(self):
         """Traverse descendents in symmetric order."""
         # Taken from http://www.geeksforgeeks.org/inorder-tree-traversal-without-recursion/
@@ -184,54 +224,65 @@ class SplayTree(object):
             return
         min = 1
 
+    def successor(self, key):
+        """Find the smallest element greater than key."""
+        if not self:
+            raise KeyError("Empty tree has no successor")
+        self.splay_plus(key)
+        return self.root.key
+
+
+class TestSimpleSplay(unittest.TestCase):
+
+    def test_simple_splaying(self):
+        t = SplayTree()
+        nums = 40000
+        gap = 307
+        print("Checking... (no bad output means success)")
+
+        i = gap
+        while i:
+            t.insert(i)
+            i = (i + gap) % nums
+        print("Inserts complete")
+
+        for i in range(1, nums, 2):
+            t.remove(i)
+        print("Removes complete")
+
+        self.assertEqual(t.min(), 2)
+        self.assertEqual(t.max(), nums-2)
+
+        for i in range(2, nums, 2):
+            self.assertIn(i, t)
+            self.assertEqual(i, t.root.key)
+
+        for i in range(1, nums, 2):
+            self.assertNotIn(i, t)
+            self.assertIn(i, {t.root.key-1, t.root.key+1})
+
+        100 in t  # Splaying of random things
+        18199 in t
+        29512 in t
+        39153 in t
+        20711 in t
+        36126 in t
+
+        self.assertEqual(39136, t.root.right.left.right.key)
+
+    def test_tree_truthiness(self):
+        """Test tree is False iff it is empty."""
+        r = SplayTree()
+        r.insert(100)
+        s = SplayTree()
+        self.assertTrue(r)
+        self.assertFalse(not r)
+        self.assertFalse(s)
+        self.assertTrue(not s)
+
 
 if __name__ == '__main__':
-    t = SplayTree()
-    nums = 40000
-    gap = 307
-    print("Checking... (no bad output means success)")
-    i = gap
-    while i:
-        t.insert(i)
-        i = (i + gap) % nums
-    print("Inserts complete")
-
-    for i in range(1, nums, 2):
-        t.remove(i)
-    print("Removes complete")
-
-    if t.min() != 2 or t.max() != nums-2:
-        print("Find min or find max error")
-
-    for i in range(2, nums, 2):
-        if i not in t or t.root.key != i:
-            print("Error: find fails for " + str(i))
-
-    for i in range(1, nums, 2):
-        if i in t:
-            print("Error: found deleted item " + str(i))
-
-    100 in t
-    18199 in t
-    29512 in t
-    39153 in t
-    20711 in t
-    36126 in t
-    print(t.root.right.left.right.key)
-    r = SplayTree()
-    r.insert(100)
-    s = SplayTree()
-    if r:
-        print(1)
-    if not r:
-        print(2)
-    if s:
-        print(3)
-    if not s:
-        print(4)
-    print(s.root)
-    print(bool(s.root))
-    print(bool(s))
+    unittest.main()
 
     def newsamp():
         samp = BinaryNode(15)
@@ -251,3 +302,5 @@ if __name__ == '__main__':
     26 in ts2
     print("ts2: ", ts2.root.key)
     # Should print 30. Want prev_item to be 25.
+    ts3 = newsamp()
+    print(ts3.successor(11))
