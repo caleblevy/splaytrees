@@ -5,6 +5,16 @@ import functools
 import unittest
 
 
+def listmaker(generator):
+    """Takes a generator function and wraps it to return a list of the items it
+    generates.
+    """
+    @functools.wraps(generator)
+    def lister(*args, **kwargs):
+        return list(generator(*args, **kwargs))
+    return lister
+
+
 @functools.total_ordering
 class _GlobalMax(object):
     """Represent a global maximum."""
@@ -223,6 +233,7 @@ class SplayTree(object):
         t.right = self.header.left
         self.root = t
 
+    @listmaker
     def inorder_stack(self):
         """Traverse descendents in symmetric order."""
         # Taken from http://www.geeksforgeeks.org/inorder-tree-traversal-without-recursion/
