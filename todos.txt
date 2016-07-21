@@ -1,0 +1,12 @@
+# Break SplayTree into SplayABC, with all methods concrete except the crucial
+  splaying step.
+# Have two trees: SimpleSplayTree and SplayTree
+# Do more to codify the public interfaces: i.e. successor should raise error if
+  at max. But don't overdue it; we don't need to get rid of the LUB objects
+  yet.
+# Add "preorder stack", preorder traversal, construct tree from preorder,
+  compare tree from preorder.
+# Add equality and identity methods.
+# Add uniformly random tree maker.
+# Make benchmarks comparing splay trees, binary trees, sorting, and whatnot.
+  Check for that linear time.
