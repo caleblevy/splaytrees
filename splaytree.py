@@ -348,12 +348,12 @@ class SplayTree(object):
         """Traverse the elements of the tree in reverse Symmetric Order."""
         if self.root is None:
             return
-            prev_key = Inf
-            key = self.max()
-            while key < prev_key:
-                yield key
-                prev_key = key
-                key = self.predecessor(prev_key)
+        prev_key = Inf
+        key = self.max()
+        while key < prev_key:
+            yield key
+            prev_key = key
+            key = self.predecessor(prev_key)
 
 
 class TestSimpleSplay(unittest.TestCase):
@@ -481,24 +481,3 @@ class TestExtrema(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-    def newsamp():
-        samp = BinaryNode(15)
-        samp.left = BinaryNode(10)
-        samp.left.left = BinaryNode(5)
-        samp.right = BinaryNode(25)
-        samp.right.right = BinaryNode(30)
-        tsamp = SplayTree()
-        tsamp.root = samp
-        return tsamp
-
-    ts1 = newsamp()
-    11 in ts1
-    print("ts1: ", ts1.root.key)
-    # Should print 10. Want succ_item to be 15
-    ts2 = newsamp()
-    26 in ts2
-    print("ts2: ", ts2.root.key)
-    # Should print 30. Want prev_item to be 25.
-    ts3 = newsamp()
-    print(ts3.successor(11))
