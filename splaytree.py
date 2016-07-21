@@ -241,13 +241,6 @@ class SplayTree(object):
                 else:
                     done = True
 
-    def __iter__(self):
-        """Traverse the elements of the tree in Symmetric Order."""
-        # Use splaying to do this and preserve our running time heuristics
-        if self.root is None:
-            return
-        min = 1
-
     # My idea of "successor" requires at least four things.
     # 1) I will define iteration over the tree by repeated calls to successor
     # 2) I need to be able to access, insert and delete items DURING iteration
@@ -314,12 +307,42 @@ class SplayTree(object):
     #
     # The Inf and NegInf do not face this problem since they are not it left or
     # right subtrees.
+    #
+    # I believe even holding rank info, you would need to look for rank of key,
+    # then go to next rank, so I think this problem is inherent.
+    #
+    # Proper way to do it: splay to the key itself, then find the successor
+    # using the LUB/GLB objects. O(log(n)) since its two splays.
 
     def successor(self, key):
         """Find the smallest element greater than key."""
         if not self:
             raise KeyError("Empty tree has no successor")
-        self.splay_plus(key)
+        self.splay(key)
+        self.splay(LUB(key))
+        return self.root.key
+
+    def predecessor(self, key):
+        """Find the largest element smaller than key."""
+        if not self:
+            raise KeyError("Empty tree has no predecessor")
+        self.splay(key)
+        self.splay(GLB(key))
+        return self.root.key
+
+    def __iter__(self):
+        """Traverse the elements of the tree in Symmetric Order."""
+        # Use splaying to do this and preserve our running time heuristics.
+        # If traversal conjecture is true for simple splaying, this take linear
+        # time assuming the tree is not altered.
+        if self.root is None:
+            return
+        prev_key = NegInf
+        key = self.min()
+        while prev_key < key:
+            yield key
+            prev_key = key
+            key = self.successor(prev_key)
 
 
 class TestSimpleSplay(unittest.TestCase):
@@ -360,15 +383,15 @@ class TestSimpleSplay(unittest.TestCase):
 
         self.assertEqual(39136, t.root.right.left.right.key)
 
-        # t.splay_plus(-5)
-        # print(t.root.key)
-        # 150000 in t
-        # t.splay_plus(2)
-        # print(t.root.key)
-        # t.splay_plus(Inf)
-        # print(t.root.key)
-        # t.splay_plus(2)
-        # print(t.root.key)
+        t.splay(LUB(-5))
+        print(t.root.key)
+        150000 in t
+        t.splay(LUB(2))
+        print(t.root.key)
+        t.splay(Inf)
+        print(t.root.key)
+        print(t.successor(1.9))
+        print(t.predecessor(1.9))
 
     def test_tree_truthiness(self):
         """Test tree is False iff it is empty."""
