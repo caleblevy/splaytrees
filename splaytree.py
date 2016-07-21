@@ -25,7 +25,7 @@ class _GlobalMin(object):
 
 # Cannot use functools.total_ordering; LUB objects are not totally ordered
 class LUB(object):
-    """LUB(x) is the least upper bound of x. y < LUB(x) <==> y <= x."""
+    """The Least Upper Bound of x. x < LUB(x) < y for all y > x."""
     __slots__ = ("_x")
 
     def __init__(self, x):
@@ -49,17 +49,37 @@ class LUB(object):
     def __ne__(self, other):
         return NotImplemented
 
+    def __repr__(self):
+        return "%s(%s)" % (self.__class__.__name__, self._x)
 
-# @functools.total_ordering
-# def GLB(object):
-#     """GLB(x) is the greatest lower bound of x. GLB(x) < y <==> x <= y."""
-#     __slots__ = ("_x")
-#
-#     def __init__(self, x):
-#         self._x = x
-#
-#     def __lt__(self, other):
-#         return self._x <= other
+
+class GLB(object):
+    """The Greatest Lower Bound of x. y < GLB(x) < x for all y < x."""
+    __slots__ = ("_x")
+
+    def __init__(self, x):
+        self._x = x
+
+    def __lt__(self, other):
+        return self._x <= other
+
+    def __le__(self, other):
+        return self._x <= other
+
+    def __ge__(self, other):
+        return self._x > other
+
+    def __gt__(self, other):
+        return self._x > other
+
+    def __eq__(self, other):
+        return NotImplemented
+
+    def __ne__(self, other):
+        return NotImplemented
+
+    def __repr__(self):
+        return "%s(%s)" % (self.__class__.__name__, self._x)
 
 
 Inf = _GlobalMax()
@@ -364,6 +384,7 @@ class TestSimpleSplay(unittest.TestCase):
 class TestExtrema(unittest.TestCase):
 
     def test_least_upper_bound(self):
+        """Test the necessary properties of the Least Upper Bound"""
         a = LUB(7)
         # Test when called by reflected methods
         self.assertTrue(7 < a)
@@ -395,6 +416,40 @@ class TestExtrema(unittest.TestCase):
         self.assertTrue(a >= 6)
         self.assertFalse(a < 6)
         self.assertFalse(a <= 6)
+
+    def test_greatest_lower_bound(self):
+        """Test the necessary properties of the greatest lower bound."""
+        b = GLB(7)
+        # Test the reflected methods against itself
+        self.assertTrue(7 > b)
+        self.assertTrue(7 >= b)
+        self.assertFalse(7 < b)
+        self.assertFalse(7 <= b)
+        # Test the regular methods against itself
+        self.assertTrue(b < 7)
+        self.assertTrue(b <= 7)
+        self.assertFalse(b >= 7)
+        self.assertFalse(b > 7)
+        # Test the reflected methods of the upper bounds
+        self.assertTrue(8 > b)
+        self.assertTrue(8 >= b)
+        self.assertFalse(8 < b)
+        self.assertFalse(8 <= b)
+        # Test the regular methods of upper bounds
+        self.assertTrue(b < 8)
+        self.assertTrue(b <= 8)
+        self.assertFalse(b > 8)
+        self.assertFalse(b >= 8)
+        # Test the reflected methods of lower bounds
+        self.assertTrue(6 < b)
+        self.assertTrue(6 <= b)
+        self.assertFalse(6 > b)
+        self.assertFalse(6 >= b)
+        # Test the regular methods of lower bounds
+        self.assertTrue(b > 6)
+        self.assertTrue(b >= 6)
+        self.assertFalse(b < 6)
+        self.assertFalse(b <= 6)
 
 
 if __name__ == '__main__':
