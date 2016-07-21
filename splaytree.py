@@ -104,16 +104,6 @@ class BinaryNode(object):
         self.left = None
         self.right = None
 
-    def inorder_recursive(self):
-        """Traverse descendents in symmetric order recursively."""
-        if self.left is not None:
-            for x in self.left.inorder_recursive():
-                yield x
-        yield self.key
-        if self.right is not None:
-            for x in self.right.inorder_recursive():
-                yield x
-
 
 class SplayTree(object):
 
