@@ -116,6 +116,15 @@ class SplayTree(object):
             for x in iterable:
                 self.insert(x)
 
+    def __repr__(self):
+        return "%s(%s)" % (self.__class__.__name__, list(self))
+
+    def __eq__(self, other):
+        return NotImplemented
+
+    def __ne__(self, other):
+        return not(self == other)
+
     def insert(self, key):
         """Insert key into tree."""
         if self.root is None:
@@ -289,7 +298,7 @@ class SplayTree(object):
     # failed because its constant space, O(log n) time, and does not requre
     # finding the key itself initially.
     #
-    # The very issue is in the single constant it stores. Search for 13 in
+    # The very issue is in the single constant it stores. Search for 14 in
     #
     #    20
     #   /
@@ -302,18 +311,27 @@ class SplayTree(object):
     #     13
     #
     # We won't know that we've hit the right node until we go all the way down
-    # the right branch at 10. We then need to either go down twice to find the
+    # the right branch at 10. We need to either go down twice to find the
     # key and then splay (for guarentees), or splay multiple times (no
     # guarentees).
     #
-    # The Inf and NegInf do not face this problem since they are not it left or
+    # The Inf and NegInf do not face this problem since they are not in left or
     # right subtrees.
     #
     # I believe even holding rank info, you would need to look for rank of key,
     # then go to next rank, so I think this problem is inherent.
     #
     # Proper way to do it: splay to the key itself, then find the successor
-    # using the LUB/GLB objects. O(log(n)) since its two splays.
+    # using the LUB/GLB objects. O(log(n)) since its two splays. As bonus, you
+    # get relatively sane behavior when performing any combination of
+    # access/insert/delete while iterating. If we delete an item ahead of the
+    # iterator, it simply moves on past.
+    #
+    # Another way to say this is we have the invarient:
+    #   When iterating over the tree using repeated calls to successor,
+    #   then at the point where successor is called, it will return the
+    #   smallest item that is in the tree which is strictly greater than the
+    #   previously returned element.
 
     def successor(self, key):
         """Find the smallest element greater than key."""
@@ -408,6 +426,32 @@ class TestSimpleSplay(unittest.TestCase):
     def test_successor_and_predecessor(self):
         """Test we get the same preorder and postorder."""
 
+    def test_splay_tree_modification_during_iteration(self):
+        """Test that we can add and delete elements while iterating."""
+        try:
+            from itertools import izip_longest as zip_longest
+        except ImportError:
+            from itertools import zip_longest
+        t = SplayTree(range(100))
+        forward = []
+        backward = []
+        for i, j in zip_longest(t, reversed(t)):
+            if i == 7:
+                t.remove(32)
+            if j == 7:
+                t.remove(98)
+            if i is not None:
+                forward.append(i)
+            if j is not None:
+                backward.append(j)
+        f = list(range(100))
+        b = list(reversed(range(100)))
+        f.remove(32)
+        f.remove(98)
+        b.remove(32)
+        self.assertEqual(f, forward)
+        self.assertEqual(b, backward)
+
 
 class TestExtrema(unittest.TestCase):
 
@@ -479,6 +523,9 @@ class TestExtrema(unittest.TestCase):
         self.assertFalse(b < 6)
         self.assertFalse(b <= 6)
 
+
+class SplayTimings(object):
+    pass
 
 if __name__ == '__main__':
     unittest.main()
