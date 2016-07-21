@@ -25,7 +25,7 @@ class _GlobalMin(object):
 
 # Cannot use functools.total_ordering; LUB objects are not totally ordered
 class LUB(object):
-    """The Least Upper Bound of x. x < LUB(x) < y for all y > x."""
+    """The Least Upper Bound of x: x < LUB(x) < y for all y > x."""
     __slots__ = ("_x")
 
     def __init__(self, x):
@@ -54,7 +54,7 @@ class LUB(object):
 
 
 class GLB(object):
-    """The Greatest Lower Bound of x. y < GLB(x) < x for all y < x."""
+    """The Greatest Lower Bound of x: y < GLB(x) < x for all y < x."""
     __slots__ = ("_x")
 
     def __init__(self, x):
@@ -344,6 +344,17 @@ class SplayTree(object):
             prev_key = key
             key = self.successor(prev_key)
 
+    def __reversed__(self):
+        """Traverse the elements of the tree in reverse Symmetric Order."""
+        if self.root is None:
+            return
+            prev_key = Inf
+            key = self.max()
+            while key < prev_key:
+                yield key
+                prev_key = key
+                key = self.predecessor(prev_key)
+
 
 class TestSimpleSplay(unittest.TestCase):
 
@@ -383,16 +394,6 @@ class TestSimpleSplay(unittest.TestCase):
 
         self.assertEqual(39136, t.root.right.left.right.key)
 
-        t.splay(LUB(-5))
-        print(t.root.key)
-        150000 in t
-        t.splay(LUB(2))
-        print(t.root.key)
-        t.splay(Inf)
-        print(t.root.key)
-        print(t.successor(1.9))
-        print(t.predecessor(1.9))
-
     def test_tree_truthiness(self):
         """Test tree is False iff it is empty."""
         r = SplayTree()
@@ -402,6 +403,9 @@ class TestSimpleSplay(unittest.TestCase):
         self.assertFalse(not r)
         self.assertFalse(s)
         self.assertTrue(not s)
+
+    def test_successor_and_predecessor(self):
+        """Test we get the same preorder and postorder."""
 
 
 class TestExtrema(unittest.TestCase):
