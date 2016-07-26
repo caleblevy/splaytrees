@@ -1,8 +1,14 @@
 from __future__ import print_function
 """Implementations a top-down splay tree using simple splaying."""
 
+import abc
 import functools
 import unittest
+
+from time import time
+from random import shuffle
+
+import six
 
 
 def listmaker(generator):
@@ -105,7 +111,7 @@ class BinaryNode(object):
         self.right = None
 
 
-class SplayTree(object):
+class ABCSplay(six.with_metaclass(abc.ABCMeta)):
 
     __slots__ = ("root", "header")
 
@@ -193,48 +199,9 @@ class SplayTree(object):
 
     __nonzero__ = __bool__
 
-    def splay(self, key):
-        l = r = self.header
-        t = self.root
-        self.header.left = self.header.right = None
-        while True:
-            if key < t.key:
-                if t.left is None:
-                    break
-                if key < t.left.key:
-                    y = t.left  # Rotate right
-                    t.left = y.right
-                    y.right = t
-                    t = y
-                    if t.left is None:
-                        break
-                r.left = t  # Link right
-                r = t
-                t = t.left
-            elif key > t.key:
-                if t.right is None:
-                    break
-                if key > t.right.key:
-                    y = t.right  # rotate left
-                    t.right = y.left
-                    y.left = t
-                    t = y
-                    if t.right is None:
-                        break
-                l.right = t  # link left
-                l = t
-                t = t.right
-            else:
-                break
-        l.right = t.left  # assemble
-        r.left = t.right
-        t.left = self.header.right
-        t.right = self.header.left
-        self.root = t
-
     @listmaker
     def inorder_stack(self):
-        """Traverse descendents in symmetric order."""
+        """List the nodes in symmetric order."""
         # Taken from http://www.geeksforgeeks.org/inorder-tree-traversal-without-recursion/
         current = self.root
         stack = []
@@ -247,6 +214,24 @@ class SplayTree(object):
                 if stack:
                     current = stack.pop()
                     yield current.key
+                    current = current.right
+                else:
+                    done = True
+
+    @listmaker
+    def preorder(self):
+        """List the nodes in preorder."""
+        current = self.root
+        stack = []
+        done = False
+        while not done:
+            if current is not None:
+                stack.append(current)
+                yield current.key
+                current = current.left
+            else:
+                if stack:
+                    current = stack.pop()
                     current = current.right
                 else:
                     done = True
@@ -374,11 +359,57 @@ class SplayTree(object):
             prev_key = key
             key = self.predecessor(prev_key)
 
+    @abc.abstractmethod
+    def splay(self):
+        return None
+
+
+class SimpleSplayTree(ABCSplay):
+
+    def splay(self, key):
+        l = r = self.header
+        t = self.root
+        self.header.left = self.header.right = None
+        while True:
+            if key < t.key:
+                if t.left is None:
+                    break
+                if key < t.left.key:
+                    y = t.left  # Rotate right
+                    t.left = y.right
+                    y.right = t
+                    t = y
+                    if t.left is None:
+                        break
+                r.left = t  # Link right
+                r = t
+                t = t.left
+            elif key > t.key:
+                if t.right is None:
+                    break
+                if key > t.right.key:
+                    y = t.right  # rotate left
+                    t.right = y.left
+                    y.left = t
+                    t = y
+                    if t.right is None:
+                        break
+                l.right = t  # link left
+                l = t
+                t = t.right
+            else:
+                break
+        l.right = t.left  # assemble
+        r.left = t.right
+        t.left = self.header.right
+        t.right = self.header.left
+        self.root = t
+
 
 class TestSimpleSplay(unittest.TestCase):
 
     def test_simple_splaying(self):
-        t = SplayTree()
+        t = SimpleSplayTree()
         nums = 40000
         gap = 307
         print("Checking... (no bad output means success)")
@@ -415,9 +446,9 @@ class TestSimpleSplay(unittest.TestCase):
 
     def test_tree_truthiness(self):
         """Test tree is False iff it is empty."""
-        r = SplayTree()
+        r = SimpleSplayTree()
         r.insert(100)
-        s = SplayTree()
+        s = SimpleSplayTree()
         self.assertTrue(r)
         self.assertFalse(not r)
         self.assertFalse(s)
@@ -432,7 +463,7 @@ class TestSimpleSplay(unittest.TestCase):
             from itertools import izip_longest as zip_longest
         except ImportError:
             from itertools import zip_longest
-        t = SplayTree(range(100))
+        t = SimpleSplayTree(range(100))
         forward = []
         backward = []
         for i, j in zip_longest(t, reversed(t)):
@@ -451,6 +482,13 @@ class TestSimpleSplay(unittest.TestCase):
         b.remove(32)
         self.assertEqual(f, forward)
         self.assertEqual(b, backward)
+
+    def test_preorder(self):
+        """Test preorder traversal."""
+        t = SimpleSplayTree(range(10))
+        self.assertEqual(list(reversed(range(10))), t.preorder())
+        0 in t
+        self.assertEqual([0, 8, 6, 4, 2, 1, 3, 5, 7, 9], t.preorder())
 
 
 class TestExtrema(unittest.TestCase):
@@ -525,7 +563,21 @@ class TestExtrema(unittest.TestCase):
 
 
 class SplayTimings(object):
-    pass
+    def test_linear_traversal(self):
+        for i in range(3, 6):
+            total_time = 0
+            for _ in range(10):
+                r = range(10**i)
+                shuffle(r)
+                t = SimpleSplayTree(r)
+                print(i, _, t.root.key)
+                ts = time()
+                list(t)
+                tf = time()
+                total_time += tf - ts
+            print(total_time)
+
 
 if __name__ == '__main__':
+    SplayTimings().test_linear_traversal()
     unittest.main()
