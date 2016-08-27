@@ -406,6 +406,51 @@ class SimpleSplayTree(ABCSplay):
         self.root = t
 
 
+class AccessTree(SimpleSplayTree):
+    """Canonical splay tree with keys 0...n-1 outputting enodings."""
+
+    def __init__(self, n):
+        l = list(range(n))
+        super(SimpleSplayTree, self).__init__(l)
+        self._set = set(l)
+        self._accesses = []
+
+    def _binary_search(self, x):
+        """Do a binary search on the splay tree, return access pattern."""
+        search_encoding = []
+        current = self.root
+        while True:
+            if current.key < x:
+                search_encoding.append(1)
+                current = current.right
+            elif current.key > x:
+                search_encoding.append(0)
+                current = current.left
+            else:
+                search_encoding.append(None)
+                break
+        self._accesses.extend(search_encoding)
+
+    def access(self, x):
+        """Access a node in x."""
+        if x not in self._set:
+            raise ValueError("Attempt to access a key %s not in tree" % x)
+        self._binary_search(x)
+        self.splay(x)
+
+    @property
+    def access_frequencies(self):
+        freqs = []
+        current = 0
+        for a in self._accesses:
+            if a is not None:
+                current += 1
+            else:
+                freqs.append(current+1)
+                current = 0
+        return freqs
+
+
 class TestSimpleSplay(unittest.TestCase):
 
     def test_simple_splaying(self):
@@ -579,5 +624,19 @@ class SplayTimings(object):
 
 
 if __name__ == '__main__':
-    SplayTimings().test_linear_traversal()
+    # SplayTimings().test_linear_traversal()
+    a = AccessTree(100)
+    for i in range(100):
+        a.access(i)
+    print(a._accesses)
+    import random
+    acc = [random.randrange(100) for i in range(3000)] * 5
+    a._accesses = []
+    for i in acc:
+        a.access(i)
+    print(a._accesses)
+    import matplotlib.pyplot as plt
+    plt.plot(a.access_frequencies)
+    plt.show()
+    a
     unittest.main()
