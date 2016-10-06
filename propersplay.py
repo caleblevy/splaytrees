@@ -2,6 +2,19 @@
 sequential access, etc. holds exactly."""
 
 
+def complete_bst_preorder(d, root=None):
+    """Return preorder sequence of complete BST of depth d on nodes
+    1...2^d-1. """
+    if root is None:
+        root = 2**(d-1)
+    yield root
+    if d > 1:
+        for node in complete_bst_preorder(d-1, root-2**(d-2)):
+            yield node
+        for node in complete_bst_preorder(d-1, root+2**(d-2)):
+            yield node
+
+
 class Node(object):
 
     def __init__(self, x):
@@ -17,6 +30,48 @@ class Node(object):
             "left=%s" % getattr(self.left, 'key', None),
             "right=%s" % getattr(self.right, 'key', None)
         ])
+
+    def rotate(self):
+        """Rotate the edge between x and its parent."""
+        # Normalize to kozma's definition, page 8 of thesis
+        if self.parent is None:
+            return
+        x = self
+        y = self.parent
+        # Ensures x < y
+        if x.key > y.key:  # TODO: Could be done without compare
+            x, y = y, x
+        if x is y.left:
+            # Shift around subtree
+            B = x.right
+            y.left = B
+            if B is not None:
+                B.parent = y
+            # Switch up parent pointers
+            z = y.parent
+            x.parent = z
+            if z is not None:
+                if y is z.right:
+                    z.right = x
+                else:
+                    z.left = x
+            x.right = y
+            y.parent = x
+        elif y is x.right:  # (if y is x.right)
+            B = y.left
+            x.right = B
+            if B is not None:
+                B.parent = x
+            # Switch up parent pointers
+            z = x.parent
+            y.parent = z
+            if z is not None:
+                if x is z.right:
+                    z.right = y
+                else:
+                    z.left = y
+            y.left = x
+            x.parent = y
 
 
 def _inorder_walk(x):
@@ -125,20 +180,22 @@ for x in a.postorder():
     print(x)
 
 
-def complete_bst_preorder(d, root=None):
-    """Return preorder sequence of complete BST of depth d on nodes
-    1...2^d-1. """
-    if root is None:
-        root = 2**(d-1)
-    yield root
-    if d > 1:
-        for node in complete_bst_preorder(d-1, root-2**(d-2)):
-            yield node
-        for node in complete_bst_preorder(d-1, root+2**(d-2)):
-            yield node
 
-
-
-c6 = list(complete_bst_preorder(6))
+c6 = list(complete_bst_preorder(5))
 t6 = SplayTree(c6)
 print(c6 == list(t6.preorder()))
+n1 = t6._find_with_depth(1)
+print(n1)
+n1.rotate()
+print(t6.preorder())
+n1.rotate()
+print(t6.preorder())
+n63 = t6._find_with_depth(31)
+n63.rotate()
+print(t6.preorder())
+n63.rotate()
+print(t6.preorder())
+t6 = SplayTree(c6)
+n28 = t6._find_with_depth(28)
+n28.rotate()
+print(t6.preorder())
