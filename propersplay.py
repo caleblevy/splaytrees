@@ -75,6 +75,26 @@ class Node(object):
             y.left = x
             x.parent = y
 
+    def _splay_step(self):
+        """Do one zig, zig-zig or zig-zag."""
+        x = self
+        y = x.parent
+        if y is None:
+            return
+        else:
+            z = y.parent
+            # zig
+            if z is None:
+                x.rotate()
+            # zig-zag
+            elif (y is z.left and x is y.right) or (y is z.right and x is z.left):
+                x.rotate()
+                x.rotate()
+            # zig-zig
+            else:
+                y.rotate()
+                x.rotate()
+
 
 def _inorder_walk(x):
     """Helper function to print nodes in order."""
@@ -196,8 +216,8 @@ class SplayTreeTests(unittest.TestCase):
         n4 = t._find_with_depth(4)
         n4.rotate()
         self.assertEqual(
-            [16, 4, 2, 1, 3, 8, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15, 24,
-             20, 18, 17, 19, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31],
+            [16, 4, 2, 1, 3, 8, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
+             24, 20, 18, 17, 19, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31],
             t.preorder()
         )
         # Rotate back down on right child
@@ -205,6 +225,20 @@ class SplayTreeTests(unittest.TestCase):
         self.assertEqual(c, t.preorder())
         t.root.rotate()
         self.assertEqual(c, t.preorder())
+
+    def test_splay_step(self):
+        """Test the corner case of an individual splay step"""
+        c = list(complete_bst_preorder(5))
+        t_zigzig_right = SplayTree(c)  # right zig-zig
+        n2 = t_zigzig_right._find_with_depth(2)
+        n2._splay_step()
+        self.assertEqual(
+            [16, 2, 1, 4, 3, 8, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
+             24, 20, 18, 17, 19, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31],
+            t_zigzig_right.preorder()
+        )
+        t_zigzig_left = SplayTree(c)
+        n30 = t._find_with_depth(30)
 
 
 if __name__ == '__main__':
