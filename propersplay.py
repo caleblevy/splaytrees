@@ -87,7 +87,7 @@ class Node(object):
             if z is None:
                 x.rotate()
             # zig-zag
-            elif (y is z.left and x is y.right) or (y is z.right and x is z.left):
+            elif (y is z.left and x is y.right) or (y is z.right and x is y.left):
                 x.rotate()
                 x.rotate()
             # zig-zig
@@ -244,6 +244,22 @@ class SplayTreeTests(unittest.TestCase):
             [16, 8, 4, 2, 1, 3, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
              30, 28, 24, 20, 18, 17, 19, 22, 21, 23, 26, 25, 27, 29, 31],
             t_zigzig_left.preorder()
+        )
+        t_zigzag_right = SplayTree(c)
+        n6 = t_zigzag_right._find_with_depth(6)
+        n6._splay_step()
+        self.assertEqual(
+            [16, 6, 4, 2, 1, 3, 5, 8, 7, 12, 10, 9, 11, 14, 13, 15,
+             24, 20, 18, 17, 19, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31],
+            t_zigzag_right.preorder()
+        )
+        t_zigzag_left = SplayTree(c)
+        n26 = t_zigzag_left._find_with_depth(26)
+        n26._splay_step()
+        self.assertEqual(
+            [16, 8, 4, 2, 1, 3, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
+             26, 24, 20, 18, 17, 19, 22, 21, 23, 25, 28, 27, 30, 29, 31],
+            t_zigzag_left.preorder()
         )
 
 
