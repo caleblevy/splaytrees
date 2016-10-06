@@ -19,6 +19,36 @@ class Node(object):
         ])
 
 
+def _inorder_walk(x):
+    """Helper function to print nodes in order."""
+    if x is not None:
+        for key in _inorder_walk(x.left):
+            yield key
+        yield x.key
+        for key in _inorder_walk(x.right):
+            yield key
+
+
+def _preorder_walk(x):
+    """Helper function for preorder tree walk."""
+    if x is not None:
+        yield x.key
+        for key in _preorder_walk(x.left):
+            yield key
+        for key in _preorder_walk(x.right):
+            yield key
+
+
+def _postorder_walk(x):
+    """Helper function for postorder tree walk."""
+    if x is not None:
+        for key in _postorder_walk(x.left):
+            yield key
+        for key in _postorder_walk(x.right):
+            yield key
+        yield x.key
+
+
 # TODO: implement from preorder
 # TODO: Add root.
 
@@ -41,7 +71,7 @@ class SplayTree(object):
                 x = x.right
         return x
 
-    def add(self, v):
+    def _simple_add(self, v):
         """Add a node with value v to the binary search tree while maintaining
         symmetric search order."""
         z = Node(v)
@@ -49,27 +79,49 @@ class SplayTree(object):
         x = self.root
         while x is not None:
             y = x
-            if z.key < x.key:
+            if v < x.key:
                 x = x.left
             else:
                 x = x.right
-        z.parent = y  # TODO: Understand why we need this.
+        z.parent = y
         if y is None:
-            self.root = z  # tree was empty
-        elif z.key < y.key:
+            self.root = z
+        elif v < y.key:
             y.left = z
         else:
             y.right = z
+        return z
+
+    def inorder(self):
+        """Output tree nodes in order."""
+        return _inorder_walk(self.root)
+
+    def preorder(self):
+        """Output tree nodes in preorder."""
+        return _preorder_walk(self.root)
+
+    def postorder(self):
+        """Output tree nodes in postorder."""
+        return _postorder_walk(self.root)
 
 
 a = SplayTree()
-a.add(4)
-a.add(1)
-a.add(2)
-a.add(5)
-a.add(7)
-a.add(6)
+a._simple_add(4)
+a._simple_add(1)
+a._simple_add(2)
+a._simple_add(5)
+a._simple_add(7)
+a._simple_add(6)
 print(a.root)
 print(a.root.right)
 print(a.root.right.right)
 print(a._find_with_depth(5))
+print("inorder")
+for x in a.inorder():
+    print(x)
+print("preorder")
+for x in a.preorder():
+    print(x)
+print("postorder")
+for x in a.postorder():
+    print(x)
