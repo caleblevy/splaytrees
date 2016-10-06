@@ -11,6 +11,5 @@ def complete_bst_preorder(d, root=None):
             yield node
 
 
-
-for n in complete_bst_preorder(5):
+for n in complete_bst_preorder(6):
     print(n)
