@@ -238,7 +238,13 @@ class SplayTreeTests(unittest.TestCase):
             t_zigzig_right.preorder()
         )
         t_zigzig_left = SplayTree(c)
-        n30 = t._find_with_depth(30)
+        n30 = t_zigzig_left._find_with_depth(30)
+        n30._splay_step()
+        self.assertEqual(
+            [16, 8, 4, 2, 1, 3, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
+             30, 28, 24, 20, 18, 17, 19, 22, 21, 23, 26, 25, 27, 29, 31],
+            t_zigzig_left.preorder()
+        )
 
 
 if __name__ == '__main__':
