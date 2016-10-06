@@ -180,6 +180,17 @@ class SplayTree(object):
             y.right = z
         return z
 
+    def add(self, k):
+        """Add key using splaying."""
+        z = self._simple_add(k)
+        z._splay()
+        self.root = z
+
+    def splay_update(self, iterable):
+        """Update from elements of iterable using splaying"""
+        for x in iterable:
+            self.add(x)
+
     def inorder(self):
         """Output tree nodes in order."""
         return list(_inorder_walk(self.root))
