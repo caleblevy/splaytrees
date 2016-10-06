@@ -91,6 +91,11 @@ class Node(object):
             y.rotate()
             x.rotate()
 
+    def _splay(self):
+        """Splay x up the tree."""
+        while self.parent is not None:
+            self._splay_step()
+
 
 def _inorder_walk(x):
     """Helper function to print nodes in order."""
@@ -138,14 +143,20 @@ class SplayTree(object):
                 self._simple_add(x)
 
     def _find_with_depth(self, k):
-        """Find a node with key k."""
-        x = x_prev = self.root
+        """Find a node with key k, return node and depth"""
+        x = self.root
+        depth = 1  # Every time we set x=, its a new node in path.
         while x is not None and k != x.key:
-            x_prev = x
+            depth += 1
             if k < x.key:
                 x = x.left
             else:
                 x = x.right
+        return x, depth
+
+    def _find(self, k):
+        """Wrapper for _find_with_depth. Returns only key."""
+        x, _ = self._find_with_depth(k)
         return x
 
     def _simple_add(self, v):
@@ -181,6 +192,16 @@ class SplayTree(object):
         """Output tree nodes in postorder."""
         return list(_postorder_walk(self.root))
 
+    def access(self, k):
+        """Access key k, and splay at it."""
+        # Splaying part
+        x, d = self._find_with_depth(k)
+        x._splay()
+        self.root = x
+        # Cost part
+        self.count += d
+        return d
+
 
 class SplayTreeTests(unittest.TestCase):
 
@@ -209,7 +230,7 @@ class SplayTreeTests(unittest.TestCase):
         self.assertEqual(c, t.preorder())
         self.assertEqual(range(1, 32), t.inorder())
         # Rotate up on left child
-        n4 = t._find_with_depth(4)
+        n4 = t._find(4)
         n4.rotate()
         self.assertEqual(
             [16, 4, 2, 1, 3, 8, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
@@ -226,7 +247,7 @@ class SplayTreeTests(unittest.TestCase):
         """Test the corner case of an individual splay step"""
         c = list(complete_bst_preorder(5))
         t_zigzig_right = SplayTree(c)  # right zig-zig
-        n2 = t_zigzig_right._find_with_depth(2)
+        n2 = t_zigzig_right._find(2)
         n2._splay_step()
         self.assertEqual(
             [16, 2, 1, 4, 3, 8, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
@@ -234,7 +255,7 @@ class SplayTreeTests(unittest.TestCase):
             t_zigzig_right.preorder()
         )
         t_zigzig_left = SplayTree(c)
-        n30 = t_zigzig_left._find_with_depth(30)
+        n30 = t_zigzig_left._find(30)
         n30._splay_step()
         self.assertEqual(
             [16, 8, 4, 2, 1, 3, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
@@ -242,7 +263,7 @@ class SplayTreeTests(unittest.TestCase):
             t_zigzig_left.preorder()
         )
         t_zigzag_right = SplayTree(c)
-        n6 = t_zigzag_right._find_with_depth(6)
+        n6 = t_zigzag_right._find(6)
         n6._splay_step()
         self.assertEqual(
             [16, 6, 4, 2, 1, 3, 5, 8, 7, 12, 10, 9, 11, 14, 13, 15,
@@ -250,7 +271,7 @@ class SplayTreeTests(unittest.TestCase):
             t_zigzag_right.preorder()
         )
         t_zigzag_left = SplayTree(c)
-        n26 = t_zigzag_left._find_with_depth(26)
+        n26 = t_zigzag_left._find(26)
         n26._splay_step()
         self.assertEqual(
             [16, 8, 4, 2, 1, 3, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
@@ -258,12 +279,35 @@ class SplayTreeTests(unittest.TestCase):
             t_zigzag_left.preorder()
         )
         t_zig_right = SplayTree(c)
-        n8 = t_zig_right._find_with_depth(8)
+        n8 = t_zig_right._find(8)
         n8._splay_step()
         n16 = t_zig_right.root
         self.assertIs(n8, n16.parent)
         self.assertIs(n8.right, n16)
 
+    def test_access(self):
+        """Test that access via splaying alters the tree in the tree."""
+        c = list(complete_bst_preorder(5))
+        t = SplayTree(c)  # right zig-zig
+        t.access(1)
+        self.assertEqual(
+            [1, 8, 2, 4, 3, 6, 5, 7, 16, 12, 10, 9, 11, 14, 13, 15,
+             24, 20, 18, 17, 19, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31],
+            t.preorder()
+        )
+        t.access(19)
+        self.assertEqual(
+            [19, 8, 1, 2, 4, 3, 6, 5, 7, 16, 12, 10, 9, 11, 14, 13, 15, 18, 17,
+             24, 20, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31],
+            t.preorder()
+        )
+        t.access(19)
+        self.assertEqual(
+            [19, 8, 1, 2, 4, 3, 6, 5, 7, 16, 12, 10, 9, 11, 14, 13, 15, 18, 17,
+             24, 20, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31],
+            t.preorder()
+        )
+        self.assertEqual(13, t.count)
 
 if __name__ == '__main__':
     unittest.main()
