@@ -56,6 +56,7 @@ def _postorder_walk(x):
 class SplayTree(object):
     """A splay tree implemented with top-down splaying."""
     # Add elements by finding them and splaying there.
+
     def __init__(self, iterable=None):
         self.root = None
         self.count = 0  # Total length of access paths
@@ -97,15 +98,15 @@ class SplayTree(object):
 
     def inorder(self):
         """Output tree nodes in order."""
-        return _inorder_walk(self.root)
+        return list(_inorder_walk(self.root))
 
     def preorder(self):
         """Output tree nodes in preorder."""
-        return _preorder_walk(self.root)
+        return list(_preorder_walk(self.root))
 
     def postorder(self):
         """Output tree nodes in postorder."""
-        return _postorder_walk(self.root)
+        return list(_postorder_walk(self.root))
 
 
 a = SplayTree([4, 1, 2, 5, 7, 6])
@@ -122,3 +123,22 @@ for x in a.preorder():
 print("postorder")
 for x in a.postorder():
     print(x)
+
+
+def complete_bst_preorder(d, root=None):
+    """Return preorder sequence of complete BST of depth d on nodes
+    1...2^d-1. """
+    if root is None:
+        root = 2**(d-1)
+    yield root
+    if d > 1:
+        for node in complete_bst_preorder(d-1, root-2**(d-2)):
+            yield node
+        for node in complete_bst_preorder(d-1, root+2**(d-2)):
+            yield node
+
+
+
+c6 = list(complete_bst_preorder(6))
+t6 = SplayTree(c6)
+print(c6 == list(t6.preorder()))
