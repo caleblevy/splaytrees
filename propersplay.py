@@ -39,7 +39,7 @@ class Node(object):
         x = self
         y = self.parent
         # Ensures x < y
-        if x.key > y.key:  # TODO: Could be done without compare
+        if x is y.right:
             x, y = y, x
         if x is y.left:
             # Shift around subtree
@@ -57,7 +57,7 @@ class Node(object):
                     z.left = x
             x.right = y
             y.parent = x
-        elif y is x.right:  # (if y is x.right)
+        else:  # y is x.right
             B = y.left
             x.right = B
             if B is not None:
