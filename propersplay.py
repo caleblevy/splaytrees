@@ -1,6 +1,8 @@
 """Implement a proper splay tree, as described in the paper, so we know
 sequential access, etc. holds exactly."""
 
+import unittest
+
 
 def complete_bst_preorder(d, root=None):
     """Return preorder sequence of complete BST of depth d on nodes
@@ -164,50 +166,46 @@ class SplayTree(object):
         return list(_postorder_walk(self.root))
 
 
-a = SplayTree([4, 1, 2, 5, 7, 6])
-print(a.root)
-print(a.root.right)
-print(a.root.right.right)
-print(a._find_with_depth(5))
-print("inorder")
-for x in a.inorder():
-    print(x)
-print("preorder")
-for x in a.preorder():
-    print(x)
-print("postorder")
-for x in a.postorder():
-    print(x)
+class SplayTreeTests(unittest.TestCase):
+
+    def test_basics(self):
+        """Test basic binary tree operations."""
+        # Feed preorder sequence, should get preorder
+        a = SplayTree([4, 1, 2, 5, 7, 6])
+        #   4
+        #  /  \
+        # 1    5
+        #  \    \
+        #   2   7
+        #      /
+        #     6
+        self.assertTrue(a.root.key == 4)
+        self.assertTrue(a.root.right.key == 5)
+        self.assertTrue(a.root.right.right.key == 7)
+        self.assertEqual([1, 2, 4, 5, 6, 7], a.inorder())
+        self.assertEqual([4, 1, 2, 5, 7, 6], a.preorder())
+        self.assertEqual([2, 1, 6, 7, 5, 4], a.postorder())
+
+    def test_rotation(self):
+        """Test tree rotations correctly transform the tree back and forth."""
+        c = list(complete_bst_preorder(5))
+        t = SplayTree(c)
+        self.assertEqual(c, t.preorder())
+        self.assertEqual(range(1, 32), t.inorder())
+        # Rotate up on left child
+        n4 = t._find_with_depth(4)
+        n4.rotate()
+        self.assertEqual(
+            [16, 4, 2, 1, 3, 8, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15, 24,
+             20, 18, 17, 19, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31],
+            t.preorder()
+        )
+        # Rotate back down on right child
+        n4.right.rotate()
+        self.assertEqual(c, t.preorder())
+        t.root.rotate()
+        self.assertEqual(c, t.preorder())
 
 
-
-c6 = list(complete_bst_preorder(5))
-t6 = SplayTree(c6)
-print(c6 == list(t6.preorder()))
-n1 = t6._find_with_depth(1)
-print(n1)
-n1.rotate()
-print(t6.preorder())
-n1.rotate()
-print(t6.preorder())
-n63 = t6._find_with_depth(31)
-n63.rotate()
-print(t6.preorder())
-n63.rotate()
-print(t6.preorder())
-t6 = SplayTree(c6)
-n28 = t6._find_with_depth(28)
-n28.rotate()
-print(t6.preorder())
-n28.left.rotate()
-print(t6.preorder() == c6)
-n4 = t6._find_with_depth(4)
-n4.rotate()
-print(t6.preorder())
-n4.right.rotate()
-print(t6.preorder() == c6)
-t6.root.rotate()
-print(t6.preorder() == c6)
-t6.root.left.rotate()
-print(t6.preorder())
-print(t6.root.parent)
+if __name__ == '__main__':
+    unittest.main()
