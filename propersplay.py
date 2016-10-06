@@ -257,6 +257,12 @@ class SplayTreeTests(unittest.TestCase):
              26, 24, 20, 18, 17, 19, 22, 21, 23, 25, 28, 27, 30, 29, 31],
             t_zigzag_left.preorder()
         )
+        t_zig_right = SplayTree(c)
+        n8 = t_zig_right._find_with_depth(8)
+        n8._splay_step()
+        n16 = t_zig_right.root
+        self.assertIs(n8, n16.parent)
+        self.assertIs(n8.right, n16)
 
 
 if __name__ == '__main__':
