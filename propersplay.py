@@ -56,9 +56,12 @@ def _postorder_walk(x):
 class SplayTree(object):
     """A splay tree implemented with top-down splaying."""
     # Add elements by finding them and splaying there.
-    def __init__(self):
+    def __init__(self, iterable=None):
         self.root = None
         self.count = 0  # Total length of access paths
+        if iterable is not None:
+            for x in iterable:
+                self._simple_add(x)
 
     def _find_with_depth(self, k):
         """Find a node with key k."""
@@ -105,13 +108,7 @@ class SplayTree(object):
         return _postorder_walk(self.root)
 
 
-a = SplayTree()
-a._simple_add(4)
-a._simple_add(1)
-a._simple_add(2)
-a._simple_add(5)
-a._simple_add(7)
-a._simple_add(6)
+a = SplayTree([4, 1, 2, 5, 7, 6])
 print(a.root)
 print(a.root.right)
 print(a.root.right.right)
