@@ -25,7 +25,13 @@ def left_spline(n):
     return T
 
 
-print(left_spline(4).preorder())
+def complete_bst(d):
+    """Generate a complete BST of depth d."""
+    T = left_spline(2**d-1)
+    for i in range(d):
+        T.access(2**i)
+    T.count = 0
+    return T
 
 
 def right_spline(n):
@@ -73,5 +79,19 @@ def splay_left_spline_on_complete_bst(d):
     print("Cost per node %s" % (1.*cost/(2**d-1)))
 
 
-for i in range(1, 24):
+for i in range(1, 10):
     splay_left_spline_on_complete_bst(i)
+
+
+def splay_complete_bst_sequentially(d):
+    """Compute the cost of splaying a complete bst of depth d sequentially"""
+    # The main purpose of this is to determine if the costs/node increase as
+    # quickly.
+    T = complete_bst(d)
+    cost = access_cost(T, range(1, 2**d))
+    print("Cost of sequential splay of complete bst depth %s: %s" % (d, cost))
+    print("Cost per node: %s" % (1.*cost/(2**d-1)))
+
+
+for i in range(1, 23):
+    splay_complete_bst_sequentially(i)
