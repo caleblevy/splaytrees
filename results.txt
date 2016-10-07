@@ -1,0 +1,87 @@
+Cost of splaying [0,..., 1,..., 0]: 0
+Cost of splaying [1,..., 0]: 0
+Cost of splaying [1,..., 1,..., 1]: 1
+Cost of splaying [1,..., 1]: 1
+Cost of splaying [2,..., 1,..., 2]: 5
+Cost of splaying [1,..., 2]: 4
+Cost of splaying [3,..., 1,..., 3]: 9
+Cost of splaying [1,..., 3]: 7
+Cost of splaying [4,..., 1,..., 4]: 13
+Cost of splaying [1,..., 4]: 12
+Cost of splaying [5,..., 1,..., 5]: 17
+Cost of splaying [1,..., 5]: 15
+Cost of splaying [6,..., 1,..., 6]: 21
+Cost of splaying [1,..., 6]: 20
+Cost of splaying [7,..., 1,..., 7]: 25
+Cost of splaying [1,..., 7]: 23
+Cost of splaying [8,..., 1,..., 8]: 29
+Cost of splaying [1,..., 8]: 30
+Cost of splaying [9,..., 1,..., 9]: 33
+Cost of splaying [1,..., 9]: 33
+Cost of splaying [10,..., 1,..., 10]: 37
+Cost of splaying [1,..., 10]: 38
+Cost of splaying [11,..., 1,..., 11]: 41
+Cost of splaying [1,..., 11]: 41
+Cost of splaying [12,..., 1,..., 12]: 45
+Cost of splaying [1,..., 12]: 52
+Cost of splaying [13,..., 1,..., 13]: 49
+Cost of splaying [1,..., 13]: 55
+Cost of splaying [14,..., 1,..., 14]: 53
+Cost of splaying [1,..., 14]: 60
+Cost of splaying [15,..., 1,..., 15]: 57
+Cost of splaying [1,..., 15]: 63
+Cost of splaying [16,..., 1,..., 16]: 61
+Cost of splaying [1,..., 16]: 70
+Cost of splaying [17,..., 1,..., 17]: 65
+Cost of splaying [1,..., 17]: 73
+Cost of splaying [18,..., 1,..., 18]: 69
+Cost of splaying [1,..., 18]: 78
+Cost of splaying [19,..., 1,..., 19]: 73
+Cost of splaying [1,..., 19]: 81
+Cost of splaying complete bst of depth 1: 1
+Cost per node 1.0
+Cost of splaying complete bst of depth 2: 7
+Cost per node 2.33333333333
+Cost of splaying complete bst of depth 3: 23
+Cost per node 3.28571428571
+Cost of splaying complete bst of depth 4: 62
+Cost per node 4.13333333333
+Cost of splaying complete bst of depth 5: 151
+Cost per node 4.87096774194
+Cost of splaying complete bst of depth 6: 338
+Cost per node 5.36507936508
+Cost of splaying complete bst of depth 7: 732
+Cost per node 5.76377952756
+Cost of splaying complete bst of depth 8: 1552
+Cost per node 6.0862745098
+Cost of splaying complete bst of depth 9: 3224
+Cost per node 6.30919765166
+Cost of splaying complete bst of depth 10: 6618
+Cost per node 6.46920821114
+Cost of splaying complete bst of depth 11: 13495
+Cost per node 6.59257449927
+Cost of splaying complete bst of depth 12: 27416
+Cost per node 6.69499389499
+Cost of splaying complete bst of depth 13: 55540
+Cost per node 6.78061286778
+Cost of splaying complete bst of depth 14: 112244
+Cost per node 6.85124824513
+Cost of splaying complete bst of depth 15: 226386
+Cost per node 6.90896328623
+Cost of splaying complete bst of depth 16: 455876
+Cost per node 6.95622186618
+Cost of splaying complete bst of depth 17: 916857
+Cost per node 6.99511715025
+Cost of splaying complete bst of depth 18: 1842130
+Cost per node 7.02719508055
+Cost of splaying complete bst of depth 19: 3698116
+Cost per node 7.05360995028
+Cost of splaying complete bst of depth 20: 7418992
+Cost per node 7.07530887156
+Cost of splaying complete bst of depth 21: 14875316
+Cost per node 7.09310679107
+Cost of splaying complete bst of depth 22: 29811838
+Cost per node 7.10769775097
+Cost of splaying complete bst of depth 23: 59724011
+Cost per node 7.11965776916
+rmbp:splaytrees clevy$ 

@@ -1,6 +1,6 @@
 """Experiments with the cost of splaying certain trees."""
 
-from propersplay import SplayTree
+from propersplay import SplayTree, complete_bst_preorder
 
 
 def access_depths(T, X):
@@ -57,8 +57,21 @@ def compare_left_right_subsequence(n):
     Y = range(1, n+1)
     cost_x = access_cost(T1, X)
     cost_y = access_cost(T2, Y)
-    print("Cost of splaying [%s,..., 1, 1,..., %s]: %s" % (n, n, cost_x))
+    print("Cost of splaying [%s,..., 1,..., %s]: %s" % (n, n, cost_x))
     print("Cost of splaying [1,..., %s]: %s" % (n, cost_y))
 
 
-compare_left_right_subsequence(10**6)
+for i in range(20):
+    compare_left_right_subsequence(i)
+
+
+def splay_left_spline_on_complete_bst(d):
+    """Compute cost of splaying left spline on complete bst of depth d."""
+    T = left_spline(2**d-1)
+    cost = access_cost(T, complete_bst_preorder(d))
+    print("Cost of splaying complete bst of depth %s: %s" % (d, cost))
+    print("Cost per node %s" % (1.*cost/(2**d-1)))
+
+
+for i in range(1, 24):
+    splay_left_spline_on_complete_bst(i)
