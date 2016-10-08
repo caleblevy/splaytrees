@@ -79,6 +79,20 @@ def splay_left_spline_on_complete_bst(d):
     print("Cost per node %s" % (1.*cost/(2**d-1)))
 
 
+def depths_right_spline_on_complete_bst(d):
+    """Return the splay depths for right spline on complete bst of depth d."""
+    T = right_spline(2**d-1)
+    return access_depths(T, complete_bst_preorder(d))
+
+
+def splay_right_spline_on_complete_bst(d):
+    """Compute cost of splaying right spline on complete bst of depth d."""
+    T = right_spline(2**d-1)
+    cost = access_cost(T, complete_bst_preorder(d))
+    print("Cost of splaying complete bst of depth %s: %s" % (d, cost))
+    print("Cost per node %s" % (1.*cost/(2**d-1)))
+
+
 for i in range(1, 10):
     splay_left_spline_on_complete_bst(i)
 
@@ -93,5 +107,24 @@ def splay_complete_bst_sequentially(d):
     print("Cost per node: %s" % (1.*cost/(2**d-1)))
 
 
-for i in range(1, 23):
+for i in range(1, 15):
     splay_complete_bst_sequentially(i)
+
+
+print(depths_right_spline_on_complete_bst(6))
+
+
+def odd_depths(d):
+    """Depths of odd nodes in right spline splayed at cbst(d)"""
+    depths = depths_right_spline_on_complete_bst(d)
+    cbp = complete_bst_preorder(d)
+    for d, i in zip(depths, cbp):
+        if i % 2:
+            print(i, d)
+
+
+print(odd_depths(10))
+
+
+for d in range(1, 23):
+    splay_right_spline_on_complete_bst(d)
