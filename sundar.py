@@ -2,6 +2,12 @@
 	On the deque conjecture for the Splay Algorithm, 1992.
 """
 
+from math import log as log
+
+
+def lg(n):
+	return log(n)/log(2)
+
 
 def K(i, j):
 	"""K(i, j) grows as A(i//2, j)"""
@@ -33,4 +39,28 @@ def A(i, j):
 		else:
 			return A(i-1, A(i, j-1))
 
-print(A(2, 4))
+
+def a_hat(i, n):
+	"""Inverse Ackermann for each i."""
+	k = 1
+	while A(i, k) < n:
+		k += 1
+	return k
+
+
+def a_bar(n):
+	"""Main, slow growing inverse Ackermann"""
+	k = 1
+	while A(k, 1) < n:
+		k += 1
+	return k
+
+
+def a(m, n):
+	"""The mysterious two-param Ackermann"""
+	k = 1
+	while A(k, m//n) <= lg(n):
+		k += 1
+	return k
+
+
