@@ -19,3 +19,18 @@ def K(i, j):
 
 for i in range(1, 5):
 	print K(3, i)
+
+
+def A(i, j):
+	"""Definition of two parameter Ackermann Function"""
+	if i == 0:
+		return 2*j
+	elif i == 1:
+		return 2**j
+	else:
+		if j == 1:
+			return A(i-1, 2)
+		else:
+			return A(i-1, A(i, j-1))
+
+print(A(2, 4))
