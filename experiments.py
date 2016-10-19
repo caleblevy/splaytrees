@@ -1,6 +1,7 @@
 """Experiments with the cost of splaying certain trees."""
 
 from propersplay import SplayTree, complete_bst_preorder
+from scipy.stats.mstats import gmean
 
 
 def access_depths(T, X):
@@ -126,5 +127,62 @@ def odd_depths(d):
 print(odd_depths(10))
 
 
-for d in range(1, 23):
+def assign_depth(n):
+    """For lack of something more clever, determine the depth of a node
+    iteratively."""
+    i = 1
+    while not(n % 2**i):
+        i += 1
+    return i
+
+
+def separate_by_depth(d):
+    """Separate out costs by depth for each depth so chosen."""
+    costs = depths_right_spline_on_complete_bst(d)
+    cbp = complete_bst_preorder(d)
+    levels = [0 for _ in range(d)]
+    for c, n in zip(costs, cbp):
+        levels[assign_depth(n)-1] += c
+    for l in range(d):
+        numels = 2**(d-l-1)
+        levels[l] /= 1.*numels
+    print('\n\n\n------')
+    print("Tree depth: %s" % d)
+    print('--------------')
+    print("Depth\tAverage Cost")
+    for d, l in enumerate(levels):
+        print(d, l/2**d)
+    print
+    print("Depth\tRatios")
+    l = levels[0]
+    ratios = []
+    for l in range(1, len(levels)):
+        ratios.append(levels[l]/levels[l-1])
+        print(l, levels[l]/levels[l-1])
+    print(gmean(ratios))
+
+
+
+for d in range(1, 15):
     splay_right_spline_on_complete_bst(d)
+
+
+print(map(assign_depth, complete_bst_preorder(5)))
+
+separate_by_depth(5)
+separate_by_depth(6)
+separate_by_depth(7)
+separate_by_depth(8)
+separate_by_depth(9)
+separate_by_depth(10)
+separate_by_depth(11)
+
+separate_by_depth(12)
+separate_by_depth(13)
+separate_by_depth(14)
+separate_by_depth(15)
+separate_by_depth(16)
+separate_by_depth(17)
+separate_by_depth(18)
+separate_by_depth(19)
+separate_by_depth(20)
