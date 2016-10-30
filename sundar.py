@@ -13,13 +13,13 @@ def K(i, j):
 	"""K(i, j) grows as A(i//2, j)"""
 	if i == 1:
 		return 8*j
-	elif j == 2:
+	elif i == 2:
 		return 2**(4*j)
 	else:
 		if j == 1:
 			return i*K(i-2, i//2)
 		else:
-			return K(i, j-1)*K(i-2, K(i, j-1)/4)/2
+			return K(i, j-1)*K(i-2, K(i, j-1)//4)//2
 
 
 
