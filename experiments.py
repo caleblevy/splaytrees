@@ -43,9 +43,6 @@ def right_spline(n):
     return T
 
 
-print(right_spline(4).preorder())
-
-
 def compare_left_right_subsequence(n):
     """Compares the access cost of subsequences. Suppose we start out with
     right spline and splay in increasing order.
@@ -66,10 +63,6 @@ def compare_left_right_subsequence(n):
     cost_y = access_cost(T2, Y)
     print("Cost of splaying [%s,..., 1,..., %s]: %s" % (n, n, cost_x))
     print("Cost of splaying [1,..., %s]: %s" % (n, cost_y))
-
-
-for i in range(20):
-    compare_left_right_subsequence(i)
 
 
 def splay_left_spline_on_complete_bst(d):
@@ -94,10 +87,6 @@ def splay_right_spline_on_complete_bst(d):
     print("Cost per node %s" % (1.*cost/(2**d-1)))
 
 
-for i in range(1, 10):
-    splay_left_spline_on_complete_bst(i)
-
-
 def splay_complete_bst_sequentially(d):
     """Compute the cost of splaying a complete bst of depth d sequentially"""
     # The main purpose of this is to determine if the costs/node increase as
@@ -108,13 +97,6 @@ def splay_complete_bst_sequentially(d):
     print("Cost per node: %s" % (1.*cost/(2**d-1)))
 
 
-for i in range(1, 15):
-    splay_complete_bst_sequentially(i)
-
-
-print(depths_right_spline_on_complete_bst(6))
-
-
 def odd_depths(d):
     """Depths of odd nodes in right spline splayed at cbst(d)"""
     depths = depths_right_spline_on_complete_bst(d)
@@ -122,9 +104,6 @@ def odd_depths(d):
     for d, i in zip(depths, cbp):
         if i % 2:
             print(i, d)
-
-
-print(odd_depths(10))
 
 
 def assign_depth(n):
@@ -162,27 +141,42 @@ def separate_by_depth(d):
     print(gmean(ratios))
 
 
+if __name__ == '__main__':
 
-for d in range(1, 15):
-    splay_right_spline_on_complete_bst(d)
+    print(right_spline(4).preorder())
 
+    for i in range(20):
+        compare_left_right_subsequence(i)
 
-print(map(assign_depth, complete_bst_preorder(5)))
+    for i in range(1, 10):
+        splay_left_spline_on_complete_bst(i)
 
-separate_by_depth(5)
-separate_by_depth(6)
-separate_by_depth(7)
-separate_by_depth(8)
-separate_by_depth(9)
-separate_by_depth(10)
-separate_by_depth(11)
+    for i in range(1, 15):
+        splay_complete_bst_sequentially(i)
 
-separate_by_depth(12)
-separate_by_depth(13)
-separate_by_depth(14)
-separate_by_depth(15)
-separate_by_depth(16)
-separate_by_depth(17)
-separate_by_depth(18)
-separate_by_depth(19)
-separate_by_depth(20)
+    print(depths_right_spline_on_complete_bst(6))
+
+    print(odd_depths(10))
+
+    for d in range(1, 15):
+        splay_right_spline_on_complete_bst(d)
+
+    print(map(assign_depth, complete_bst_preorder(5)))
+
+    separate_by_depth(5)
+    separate_by_depth(6)
+    separate_by_depth(7)
+    separate_by_depth(8)
+    separate_by_depth(9)
+    separate_by_depth(10)
+    separate_by_depth(11)
+
+    separate_by_depth(12)
+    separate_by_depth(13)
+    separate_by_depth(14)
+    separate_by_depth(15)
+    separate_by_depth(16)
+    separate_by_depth(17)
+    separate_by_depth(18)
+    separate_by_depth(19)
+    separate_by_depth(20)
