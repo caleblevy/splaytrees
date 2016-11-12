@@ -141,6 +141,15 @@ def separate_by_depth(d):
     print(gmean(ratios))
 
 
+def splay_cbst_postorder(n):
+    """Find cost ratios for splay in post order."""
+    for i in range(1, n+1):
+        T = complete_bst(i)
+        post = T.postorder()
+        cost_per_node = 1.*access_cost(T, post)/len(post)
+        print("Splay CBST Postorder %s: %s" % (i, cost_per_node))
+
+
 if __name__ == '__main__':
 
     print(right_spline(4).preorder())
