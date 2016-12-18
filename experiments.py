@@ -150,6 +150,23 @@ def splay_cbst_postorder(n):
         print("Splay CBST Postorder %s: %s" % (i, cost_per_node))
 
 
+def preorder_twice(T1, T2=None):
+    """Test weather splaying twice in preorder of T is same as once?"""
+    if T2 is None:
+        T2 = T1
+    pre = T2.preorder()
+    for x in pre:
+        T1.access(x)
+    p1 = T1.preorder()
+    for x in pre:
+        T1.access(x)
+    p2 = T1.preorder()
+    return p1, p2, p1==p2
+
+
+print(preorder_twice(complete_bst(6)))
+
+
 if __name__ == '__main__':
 
     print(right_spline(4).preorder())
