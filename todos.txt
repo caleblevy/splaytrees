@@ -1,3 +1,11 @@
+1) De-complicate simple-splay; add simple "successor", "predecessor" methods to
+   find successor to root.
+2) Add a general "transition graph" function, generates transition graph for
+   algo
+3) Requires efficient "preorder enumerator" and "build from preorder" function
+
+
+
 # Break SplayTree into SplayABC, with all methods concrete except the crucial
   splaying step.
 # Have two trees: SimpleSplayTree and SplayTree
