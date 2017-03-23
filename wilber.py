@@ -39,5 +39,18 @@ def compute_kappa(s, i):
         l += 1
 
 
+def wilber2(s):
+    """Computer wilber2 bound for access sequence s."""
+    m = len(s)
+    scores = [compute_kappa(s, i) for i in range(1, m+1)]
+    print(scores)
+    return m + sum(scores)
+
 s = list("aihjgfclkendbpmoi")
 print compute_kappa(s, 17)
+print wilber2(s)
+print(wilber2(range(50)+range(50)+range(50)+range(25)+range(1000)))
+a = range(10000)
+import random
+random.shuffle(a)
+print(wilber2(a))
