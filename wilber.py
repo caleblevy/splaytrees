@@ -57,8 +57,8 @@ def bitrev(k):
 
 if __name__ == "__main__":
     s = list("aihjgfclkendbpmoi")
-    print compute_kappa(s, 17)
-    print wilber2(s, 1)
+    print(compute_kappa(s, 17))
+    print(wilber2(s, 1))
     print(wilber2(range(50)+range(50)+range(50)+range(25)+range(1000), 1))
     a = [1]*10000
     shuffle(a)

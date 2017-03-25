@@ -1,6 +1,12 @@
+"""Implementation of a threaded node for a BST, outlined in ST85 for Splay
+Trees. This ridiculously complicated way to implement nodes allows constant
+time access to a nodes parents while keeping at most two pointers per node."""
+
 import functools
+import unittest
 
 
+@functools.total_ordering
 class ThreadedNode(object):
     """Threaded node using only two pointers for left, right, parent."""
 
