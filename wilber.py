@@ -1,6 +1,9 @@
 """Attempt to implement Wilber 2 in code."""
 
+from random import shuffle
+
 from splaytree import Inf, NegInf
+from propersplay import complete_bst_preorder
 
 
 def compute_kappa(s, i):
@@ -46,26 +49,25 @@ def wilber2(s):
     print(scores)
     return m + sum(scores)
 
-s = list("aihjgfclkendbpmoi")
-print compute_kappa(s, 17)
-print wilber2(s)
-print(wilber2(range(50)+range(50)+range(50)+range(25)+range(1000)))
-a = [1]*10000
-import random
-random.shuffle(a)
-print(wilber2(a))
-
-from propersplay import complete_bst_preorder
 
 def bitrev(k):
     """Bit reversal key for k"""
     return ''.join(reversed(bin(k)[2:]))
 
+if __name__ == "__main__":
+    s = list("aihjgfclkendbpmoi")
+    print compute_kappa(s, 17)
+    print wilber2(s)
+    print(wilber2(range(50)+range(50)+range(50)+range(25)+range(1000)))
+    a = [1]*10000
+    shuffle(a)
+    print(wilber2(a))
 
-print(bitrev(4))
+
+    print(bitrev(4))
     
 
-b = list(complete_bst_preorder(10))
-b.sort(key=bitrev)
-print(b)
-print(wilber2(b))
+    b = list(complete_bst_preorder(10))
+    b.sort(key=bitrev)
+    print(b)
+    print(wilber2(b))

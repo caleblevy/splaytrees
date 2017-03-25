@@ -4,6 +4,7 @@ from random import shuffle
 
 from experiments import access_depths
 from propersplay import SplayTree
+from wilber import wilber2
 
 
 def subseq_1(n):
@@ -29,16 +30,19 @@ def subseq_perm(n):
     T1 = SplayTree(a)
     T2 = SplayTree(a)
     b = list(a)
-    popped_elems = [27, 17, 10, 1]
+    popped_elems = [20]
     for i in popped_elems:
         b.pop(i)
     X = access_depths(T1, a)
     Y = access_depths(T2, b)
     print(X)
     print(Y)
-    print(sum(X), sum(Y), sum(X[i] for i in popped_elems))
+    print(sum(X), sum(Y), sum(Y) - sum(X), sum(X[i] for i in popped_elems))
 
 
 if __name__ == "__main__":
     # subseq_1(100)
-    subseq_perm(30)
+    subseq_perm(2000)
+    a = range(1, 2001)
+    shuffle(a)
+    print(wilber2(a))
