@@ -164,10 +164,9 @@ def preorder_twice(T1, T2=None):
     return p1, p2, p1==p2
 
 
-print(preorder_twice(complete_bst(6)))
-
-
 if __name__ == '__main__':
+
+    print(preorder_twice(complete_bst(6)))
 
     print(right_spline(4).preorder())
 
