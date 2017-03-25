@@ -28,25 +28,40 @@ class ThreadedNode(object):
 
     @property
     def left(x):
-        if x.down is not None and x.down < x:
-            return x.down
+        y = x.down
+        if y is not None and y < x:
+            return y
         else:
             return None
 
     @property
     def right(x):
-        if x.down is not None:
-            if x.down > x:
-                return x.down
-            elif x.down.side is not x:
-                return x.down.side
+        y = x.down
+        if y is not None:
+            if y > x:
+                return y
+            else:
+                z = y.side
+                if z is not x:
+                    return z
+                else:
+                    return None
         else:
             return None
 
     @property
-    def parent(self):
-        if x.side is not None:
-            if x.side.down is x:
-                return x.side  # x.parent has one child
+    def parent(x):
+        y = x.side
+        if y is not None:
+            if y < x:
+                return y  # x is right child of parent
             else:
-                return x.side.side  # 
+                z = y.side
+                if z is None:
+                    return y  # x's parent y is the root
+                elif x < z < y:
+                    return z  # only case where y is not parent
+                else:
+                    return y  # proof this works is casewise
+        else:
+            return None
