@@ -42,11 +42,12 @@ def compute_kappa(s, i):
         l += 1
 
 
-def wilber2(s):
+def wilber2(s, show_scores=False):
     """Computer wilber2 bound for access sequence s."""
     m = len(s)
     scores = [compute_kappa(s, i) for i in range(1, m+1)]
-    print(scores)
+    if show_scores:
+        print(scores)
     return m + sum(scores)
 
 
@@ -57,11 +58,11 @@ def bitrev(k):
 if __name__ == "__main__":
     s = list("aihjgfclkendbpmoi")
     print compute_kappa(s, 17)
-    print wilber2(s)
-    print(wilber2(range(50)+range(50)+range(50)+range(25)+range(1000)))
+    print wilber2(s, 1)
+    print(wilber2(range(50)+range(50)+range(50)+range(25)+range(1000), 1))
     a = [1]*10000
     shuffle(a)
-    print(wilber2(a))
+    print(wilber2(a, 1))
 
 
     print(bitrev(4))
@@ -70,4 +71,4 @@ if __name__ == "__main__":
     b = list(complete_bst_preorder(10))
     b.sort(key=bitrev)
     print(b)
-    print(wilber2(b))
+    print(wilber2(b, 1))

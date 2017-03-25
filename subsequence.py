@@ -46,3 +46,5 @@ if __name__ == "__main__":
     a = range(1, 2001)
     shuffle(a)
     print(wilber2(a))
+    a.pop(20)
+    print(wilber2(a))
