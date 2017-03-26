@@ -10,24 +10,24 @@ import unittest
 class ThreadedNode(object):
     """Threaded node using only two pointers for left, right, parent."""
 
-    __slots__ = ("down", "side", "val")
+    __slots__ = ("down", "side", "key")
 
-    def __init__(x, val):
-        self.val = val
+    def __init__(x, key):
+        self.key = key
         self.down = None
         self.adj = None
 
     def __lt__(x, y):
         if isinstance(y, x.__class__):
-            return x.val < y.val
+            return x.key < y.key
         else:
-            return x.val < y
+            return x.key < y
 
     def __eq__(x, y):
         if isinstance(y, x.__class__):
-            return x.val == y.val
+            return x.key == y.key
         else:
-            return x.val == y
+            return x.key == y
 
     def __ne__(x, y):
         return not x == y
@@ -71,3 +71,23 @@ class ThreadedNode(object):
                     return y  # proof this works is casewise
         else:
             return None
+
+    def _detach(x):
+        """Detach node x from its parent."""
+        y = x.parent
+        if y is None:
+            return
+        else:
+            if x is y.right:
+                z = y.left
+                if z is None:
+                    y.down = None
+                else:
+                    z.side = y
+            else:
+                z = y.right
+                if z is None:
+                    y.down = None
+                else:
+                    y.down = z
+            x.side = x
