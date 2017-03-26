@@ -72,7 +72,7 @@ class ThreadedNode(object):
         else:
             return None
 
-    def _detach(x):
+    def detach(x):
         """Detach node x from its parent."""
         y = x.parent
         if y is None:
@@ -92,20 +92,6 @@ class ThreadedNode(object):
                     y.down = z
             x.side = None
 
-    @left.deleter
-    def left(x):
-        if x.left is not None:
-            x.left._detach()
-
-    @right.deleter
-    def right(x):
-        if x.right is not None:
-            x.right._detach()
-
-    @parent.deleter
-    def parent(x):
-        x._detach()
-
     @left.setter
     def left(x, y):
         if not isinstance(y, x.__class__):
@@ -114,7 +100,8 @@ class ThreadedNode(object):
             raise ValueError("Node y already has parent")
         elif x <= y:
             raise ValueError("Left child must be less than x")
-        del x.left  # takes care of x's left pointers
+        if x.left is not None:
+            x.left.detach()  # takes care of x's left pointers
         z = x.right
         if z is None:
             y.side = x
@@ -130,7 +117,8 @@ class ThreadedNode(object):
             raise TypeError("Node y already has parent")
         elif y <= x:
             raise ValueError("Right child must be greater than x")
-        del x.right
+        if x.right is not None:
+            x.right.detach()
         z = x.left
         if z is None:
             x.down = y
