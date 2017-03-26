@@ -196,6 +196,10 @@ class TestThreadedNode(unittest.TestCase):
         self.assertTrue(b_new.parent is a)
         self.assertTrue(a.right.left is None)
 
+    # TODO: behavior of del x.left/x.right and treatment of parents is
+    # semantically incorrect. Fix it.
+    # TODO: detach should be a public API
+
 
 if __name__ == '__main__':
     unittest.main()
