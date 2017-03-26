@@ -13,9 +13,9 @@ class ThreadedNode(object):
     __slots__ = ("down", "side", "key")
 
     def __init__(x, key):
-        self.key = key
-        self.down = None
-        self.adj = None
+        x.key = key
+        x.down = None
+        x.side = None
 
     def __lt__(x, y):
         if isinstance(y, x.__class__):
@@ -90,4 +90,54 @@ class ThreadedNode(object):
                     y.down = None
                 else:
                     y.down = z
-            x.side = x
+            x.side = None
+
+    @left.deleter
+    def left(x):
+        if x.left is not None:
+            x.left._detach()
+
+    @right.deleter
+    def right(x):
+        if x.right is not None:
+            x.right._detach()
+
+    @parent.deleter
+    def parent(x):
+        x._detach()
+
+    @left.setter
+    def left(x, y):
+        if y.parent is not None:
+            raise ValueError("Node y already has parent")
+        elif x <= y:
+            raise ValueError("Left child must be less than x")
+        elif not isinstance(y, x.__class__):
+            raise TypeError("Left child must be of type ThreadedNoded")
+        del x.left  # takes care of x's left pointers
+        z = x.right
+        if z is None:
+            y.side = x
+        else:
+            y.side = z
+        x.down = y
+
+    @right.setter
+    def right(x, y):
+        if y.parent is not None:
+            raise TypeError("Node y already has parent")
+        elif y <= x:
+            raise ValueError("Right child must be greater than x")
+        elif not isinstance(y, x.__class__):
+            raise TypeError("Right child must be of type ThreadedNode")
+        del x.right
+        z = x.left
+        if z is None:
+            x.down = y
+        else:
+            z.side = y
+        y.side = x
+
+
+a = ThreadedNode(5)
+del a.a
