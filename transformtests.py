@@ -59,6 +59,27 @@ def weighted_diameter(G):
     return maxcost
 
 
+def hamilton(G):
+    """Determine if graph has hamiltonian cycle"""
+    F = [(G,[G.nodes()[0]])]
+    n = G.number_of_nodes()
+    while F:
+        graph,path = F.pop()
+        confs = []
+        for node in graph.neighbors(path[-1]):
+            conf_p = path[:]
+            conf_p.append(node)
+            conf_g = nx.Graph(graph)
+            conf_g.remove_node(path[-1])
+            confs.append((conf_g,conf_p))
+        for g,p in confs:
+            if len(p)==n:
+                return p
+            else:
+                F.append((g,p))
+    return None
+
+
 def splaytransformtests(n):
     """Do tests for connectedness, hamiltonian, weight."""
     G = nx.DiGraph()
@@ -73,5 +94,6 @@ def splaytransformtests(n):
     print("Is strongly connected: %s" % nx.is_strongly_connected(G))
     print("Access Overhead: %s" % nx.diameter(G))
     print("Cost Overhead: %s" % weighted_diameter(G))
+    return G
 
-splaytransformtests(4)
+splaytransformtests(9)
