@@ -17,7 +17,7 @@ def listmaker(generator):
     """
     @functools.wraps(generator)
     def lister(*args, **kwargs):
-        return list(generator(*args, **kwargs))
+        return tuple(generator(*args, **kwargs))
     return lister
 
 
@@ -531,9 +531,9 @@ class TestSimpleSplay(unittest.TestCase):
     def test_preorder(self):
         """Test preorder traversal."""
         t = SimpleSplayTree(range(10))
-        self.assertEqual(list(reversed(range(10))), t.preorder())
+        self.assertEqual(tuple(reversed(range(10))), t.preorder())
         0 in t
-        self.assertEqual([0, 8, 6, 4, 2, 1, 3, 5, 7, 9], t.preorder())
+        self.assertEqual((0, 8, 6, 4, 2, 1, 3, 5, 7, 9), t.preorder())
 
 
 class TestExtrema(unittest.TestCase):
