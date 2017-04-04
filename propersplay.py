@@ -193,15 +193,15 @@ class SplayTree(object):
 
     def inorder(self):
         """Output tree nodes in order."""
-        return list(_inorder_walk(self.root))
+        return tuple(_inorder_walk(self.root))
 
     def preorder(self):
         """Output tree nodes in preorder."""
-        return list(_preorder_walk(self.root))
+        return tuple(_preorder_walk(self.root))
 
     def postorder(self):
         """Output tree nodes in postorder."""
-        return list(_postorder_walk(self.root))
+        return tuple(_postorder_walk(self.root))
 
     def access(self, k):
         """Access key k, and splay at it."""
@@ -230,22 +230,22 @@ class SplayTreeTests(unittest.TestCase):
         self.assertTrue(a.root.key == 4)
         self.assertTrue(a.root.right.key == 5)
         self.assertTrue(a.root.right.right.key == 7)
-        self.assertEqual([1, 2, 4, 5, 6, 7], a.inorder())
-        self.assertEqual([4, 1, 2, 5, 7, 6], a.preorder())
-        self.assertEqual([2, 1, 6, 7, 5, 4], a.postorder())
+        self.assertEqual((1, 2, 4, 5, 6, 7), a.inorder())
+        self.assertEqual((4, 1, 2, 5, 7, 6), a.preorder())
+        self.assertEqual((2, 1, 6, 7, 5, 4), a.postorder())
 
     def test_rotation(self):
         """Test tree rotations correctly transform the tree back and forth."""
-        c = list(complete_bst_preorder(5))
+        c = tuple(complete_bst_preorder(5))
         t = SplayTree(c)
         self.assertEqual(c, t.preorder())
-        self.assertEqual(range(1, 32), t.inorder())
+        self.assertEqual(tuple(range(1, 32)), t.inorder())
         # Rotate up on left child
         n4 = t._find(4)
         n4.rotate()
         self.assertEqual(
-            [16, 4, 2, 1, 3, 8, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
-             24, 20, 18, 17, 19, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31],
+            (16, 4, 2, 1, 3, 8, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
+             24, 20, 18, 17, 19, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31),
             t.preorder()
         )
         # Rotate back down on right child
@@ -261,32 +261,32 @@ class SplayTreeTests(unittest.TestCase):
         n2 = t_zigzig_right._find(2)
         n2._splay_step()
         self.assertEqual(
-            [16, 2, 1, 4, 3, 8, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
-             24, 20, 18, 17, 19, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31],
+            (16, 2, 1, 4, 3, 8, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
+             24, 20, 18, 17, 19, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31),
             t_zigzig_right.preorder()
         )
         t_zigzig_left = SplayTree(c)
         n30 = t_zigzig_left._find(30)
         n30._splay_step()
         self.assertEqual(
-            [16, 8, 4, 2, 1, 3, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
-             30, 28, 24, 20, 18, 17, 19, 22, 21, 23, 26, 25, 27, 29, 31],
+            (16, 8, 4, 2, 1, 3, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
+             30, 28, 24, 20, 18, 17, 19, 22, 21, 23, 26, 25, 27, 29, 31),
             t_zigzig_left.preorder()
         )
         t_zigzag_right = SplayTree(c)
         n6 = t_zigzag_right._find(6)
         n6._splay_step()
         self.assertEqual(
-            [16, 6, 4, 2, 1, 3, 5, 8, 7, 12, 10, 9, 11, 14, 13, 15,
-             24, 20, 18, 17, 19, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31],
+            (16, 6, 4, 2, 1, 3, 5, 8, 7, 12, 10, 9, 11, 14, 13, 15,
+             24, 20, 18, 17, 19, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31),
             t_zigzag_right.preorder()
         )
         t_zigzag_left = SplayTree(c)
         n26 = t_zigzag_left._find(26)
         n26._splay_step()
         self.assertEqual(
-            [16, 8, 4, 2, 1, 3, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
-             26, 24, 20, 18, 17, 19, 22, 21, 23, 25, 28, 27, 30, 29, 31],
+            (16, 8, 4, 2, 1, 3, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15,
+             26, 24, 20, 18, 17, 19, 22, 21, 23, 25, 28, 27, 30, 29, 31),
             t_zigzag_left.preorder()
         )
         t_zig_right = SplayTree(c)
@@ -298,24 +298,24 @@ class SplayTreeTests(unittest.TestCase):
 
     def test_access(self):
         """Test that access via splaying alters the tree in the tree."""
-        c = list(complete_bst_preorder(5))
+        c = tuple(complete_bst_preorder(5))
         t = SplayTree(c)  # right zig-zig
         t.access(1)
         self.assertEqual(
-            [1, 8, 2, 4, 3, 6, 5, 7, 16, 12, 10, 9, 11, 14, 13, 15,
-             24, 20, 18, 17, 19, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31],
+            (1, 8, 2, 4, 3, 6, 5, 7, 16, 12, 10, 9, 11, 14, 13, 15,
+             24, 20, 18, 17, 19, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31),
             t.preorder()
         )
         t.access(19)
         self.assertEqual(
-            [19, 8, 1, 2, 4, 3, 6, 5, 7, 16, 12, 10, 9, 11, 14, 13, 15, 18, 17,
-             24, 20, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31],
+            (19, 8, 1, 2, 4, 3, 6, 5, 7, 16, 12, 10, 9, 11, 14, 13, 15, 18, 17,
+             24, 20, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31),
             t.preorder()
         )
         t.access(19)
         self.assertEqual(
-            [19, 8, 1, 2, 4, 3, 6, 5, 7, 16, 12, 10, 9, 11, 14, 13, 15, 18, 17,
-             24, 20, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31],
+            (19, 8, 1, 2, 4, 3, 6, 5, 7, 16, 12, 10, 9, 11, 14, 13, 15, 18, 17,
+             24, 20, 22, 21, 23, 28, 26, 25, 27, 30, 29, 31),
             t.preorder()
         )
         self.assertEqual(13, t.count)
