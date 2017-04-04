@@ -2,6 +2,7 @@
 another."""
 
 import networkx as nx
+import matplotlib.pyplot as plt
 
 from propersplay import SplayTree, Node
 from treerank import treegen, B
@@ -94,6 +95,12 @@ def splaytransformtests(n):
     print("Is strongly connected: %s" % nx.is_strongly_connected(G))
     print("Access Overhead: %s" % nx.diameter(G))
     print("Cost Overhead: %s" % weighted_diameter(G))
+    pos = nx.shell_layout(G)
+    nx.draw_networkx_nodes(G, pos, node_size=700)
+    nx.draw_networkx_edges(G, pos, width=1)
+    nx.draw_networkx_labels(G, pos, font_size=6, font_family='sans-serif')
+    plt.axis("off")
+    plt.savefig("weighted_graph.png") # save as png
     return G
 
-splaytransformtests(9)
+splaytransformtests(4)
