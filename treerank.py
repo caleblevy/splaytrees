@@ -48,8 +48,4 @@ def irank(i, n):
 def treegen(n):
     """Generate BST preorders on n nodes."""
     for i in range(1, B(n)+1):
-        yield irank(i, n)
-
-
-for t in treegen(10):
-    print(t)
+        yield tuple(irank(i, n))
