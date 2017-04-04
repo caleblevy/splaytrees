@@ -1,8 +1,21 @@
 """Find the diameter and cost overhead of Splaying any tree of four nodes into
 another."""
 
-import itertools
+import networkx as nx
+
 from propersplay import SplayTree, Node
+from treerank import treegen, B
+
+# For fun
+four_node_trees = [
+    (4, 3, 2, 1), (1, 2, 3, 4),  # Il, Ir
+    (3, 2, 1, 4), (2, 1, 3, 4),  # Vl, Vr
+    (4, 1, 3, 2), (1, 4, 2, 3),  # Zl, Zr
+    (4, 1, 2, 3), (1, 4, 3, 2),  # Pl, Pr
+    (3, 1, 2, 4), (2, 1, 4, 3),  # Ul, Ur
+    (4, 3, 1, 2), (1, 2, 4, 3),  # Ll, Lr
+    (4, 2, 1, 3), (1, 3, 2, 4),  # Yl, Yr
+]
 
 def _tree_from_preorder(preorder):
     """Slow way to build a tree from the preorder permutation p."""
@@ -27,37 +40,38 @@ def tree_from_preorder(p):
     return T
 
 
-four_node_trees = [
-    (4, 3, 2, 1), (1, 2, 3, 4),  # Il, Ir
-    (3, 2, 1, 4), (2, 1, 3, 4),  # Vl, Vr
-    (4, 1, 3, 2), (1, 4, 2, 3),  # Zl, Zr
-    (4, 1, 2, 3), (1, 4, 3, 2),  # Pl, Pr
-    (3, 1, 2, 4), (2, 1, 4, 3),  # Ul, Ur
-    (4, 3, 1, 2), (1, 2, 4, 3),  # Ll, Lr
-    (4, 2, 1, 3), (1, 3, 2, 4),  # Yl, Yr
-]
-
-G = {T: [] for T in four_node_trees}
-for T in G:
-    assert tuple(tree_from_preorder(T).preorder()) == T
-
-for p in itertools.permutations(range(1, 5)):
-    if p not in G:
-        print(p)
-        assert tuple(tree_from_preorder(T).preorder()) != p
-
-
-for p in G:
-    for x in p[1:]:
-        T = tree_from_preorder(p)
-        T.access(x)
-        G[p].append((tuple(T.preorder()), T.count))
+def weighted_diameter(G):
+    """Wrapper for graph diameter of weighted networkx graph."""
+    paths = nx.shortest_path(G, weight="weight")
+    maxcost = -float('inf')
+    i = 0
+    for u in paths:
+        for v in paths[u]:
+            if u != v:
+                current_path = paths[u][v]
+                w_prev = current_path[0]
+                cost = 0
+                # Since their shortest path alg does not preserve weight info
+                for w in current_path[1:]:
+                    cost += G.get_edge_data(w_prev, w)["weight"]
+                    w_prev = w
+                maxcost = max(cost, maxcost)
+    return maxcost
 
 
-weighted_edges = []
-for T1 in G:
-    for T2, d in G[T1]:
-        weighted_edges.append((T1, T2, d))
+def splaytransformtests(n):
+    """Do tests for connectedness, hamiltonian, weight."""
+    G = nx.DiGraph()
+    for p in treegen(n):
+        for x in p[1:]:
+            t = tree_from_preorder(p)
+            t.access(x)
+            G.add_edge(p, t.preorder(), weight=t.count)
+    print("Splay stats for n=%s:" % n)
+    print("----------------------")
+    print("B(%s) = %s" % (n, B(n)))
+    print("Is strongly connected: %s" % nx.is_strongly_connected(G))
+    print("Access Overhead: %s" % nx.diameter(G))
+    print("Cost Overhead: %s" % weighted_diameter(G))
 
-
-print(len(weighted_edges))
+splaytransformtests(4)
