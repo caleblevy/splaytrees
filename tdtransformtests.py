@@ -4,8 +4,8 @@ another."""
 import networkx as nx
 import matplotlib.pyplot as plt
 
-from tdsimplesplay import SimpleSplayTree as SplayTree
-from tdsimplesplay import BinaryNode as Node
+from topdownsplay import SimpleSplayTree as SplayTree
+from topdownsplay import BinaryNode as Node
 from treerank import treegen, B
 
 # For fun

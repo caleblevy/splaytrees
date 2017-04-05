@@ -2,7 +2,7 @@
 
 from random import shuffle
 
-from tdsimplesplay import Inf, NegInf
+from topdownsplay import Inf, NegInf
 from propersplay import complete_bst_preorder
 
 
