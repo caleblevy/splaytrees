@@ -76,6 +76,35 @@ class TestTDSplay(unittest.TestCase):
                 splay(std_l, n-1)
                 self.assertEqual(std_l.preorder(), td_l.preorder())
 
+    def test_td_vs_bu(self):
+        """Test top-down splay vs bottom up."""
+        p_odd_depth = (15, 14, 13, 12, 11, 1, 10, 2, 3, 4, 5, 9, 8, 6, 7)
+        bu = SplayTree(p_odd_depth)
+        td = tdfrompre(p_odd_depth)
+        self.assertTrue(bu.preorder() == td.preorder() == p_odd_depth)
+        bu.access(7)
+        splay(td, 7)
+        self.assertEqual(bu.preorder(), td.preorder())
+        r_p_even_depth = p_odd_depth + (7.5, )
+        bu_r = SplayTree(r_p_even_depth)
+        td_r = tdfrompre(r_p_even_depth)
+        l_p_even_depth = p_odd_depth + (6.5, )
+        bu_l = SplayTree(l_p_even_depth)
+        td_l = tdfrompre(l_p_even_depth)
+        self.assertTrue(bu_r.preorder() == td_r.preorder() == r_p_even_depth)
+        self.assertTrue(bu_l.preorder() == td_l.preorder() == l_p_even_depth)
+        bu_r.access(7.5)
+        splay(td_r, 7.5)
+        self.assertNotEqual(bu_r.preorder(), td_r.preorder())
+        bu_l.access(6.5)
+        splay(td_l, 6.5)
+        self.assertNotEqual(bu_l.preorder(), td_l.preorder())
+        # Test exactly the construction of bu_r, bu_l
+        td_l_after = (6.5, 1, 2, 4, 3, 5, 6, 14, 12, 11, 10, 9, 8, 7, 13, 15)
+        self.assertEqual(td_l_after, td_l.preorder())
+        td_r_after = (7.5, 1, 2, 4, 3, 5, 6, 7, 14, 12, 11, 10, 9, 8, 13, 15)
+        self.assertEqual(td_r_after, td_r.preorder())
+
 
 if __name__ == '__main__':
     unittest.main()
