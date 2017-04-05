@@ -1,6 +1,8 @@
 """Functions based on "A numbering system for binary trees," Gary Knott,
 1977."""
 
+from random import randrange
+
 
 class memoize:
     def __init__(self, f):
@@ -49,3 +51,9 @@ def treegen(n):
     """Generate BST preorders on n nodes."""
     for i in range(1, B(n)+1):
         yield tuple(irank(i, n))
+
+
+def randtree(n):
+    """Generate random BST on n nodes."""
+    i = randrange(1, B(n)+1)
+    return irank(i, n)
