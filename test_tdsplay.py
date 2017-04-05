@@ -40,8 +40,8 @@ def splay(T, x):
 
 class TestTDSplay(unittest.TestCase):
 
-    def test_combinat_explosion(self):
-        """Test cases where zig-zig and zig-zags are cut short."""
+    def test_td_vs_std(self):
+        """Test where top-down splay should compare with simple topdown."""
         empty = TDSplayTree()
         self.assertTrue(1 not in empty)
         # Tests zig-zig and zig cases identical to simple splay
