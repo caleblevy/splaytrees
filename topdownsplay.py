@@ -424,7 +424,7 @@ class TDSplayTree(ABCSplay):
                     if t.left.left is None:  # end at partial zig
                         assemble = True
                     else:
-                        link_right = True # zig-zig
+                        link_right = True  # zig-zig
                 else:
                     link_right = True
                     if t.left.right is None:  # partial zig
