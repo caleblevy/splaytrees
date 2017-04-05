@@ -4,7 +4,7 @@ implement, and not based on reference implementation."""
 import unittest
 
 from topdownsplay import TDSplayTree, BinaryNode, SimpleSplayTree
-from propersplay import SplayTree
+from propersplay import SplayTree, complete_bst_preorder
 from treerank import randtree
 
 
@@ -104,6 +104,58 @@ class TestTDSplay(unittest.TestCase):
         self.assertEqual(td_l_after, td_l.preorder())
         td_r_after = (7.5, 1, 2, 4, 3, 5, 6, 7, 14, 12, 11, 10, 9, 8, 13, 15)
         self.assertEqual(td_r_after, td_r.preorder())
+
+    def test_missing_splays(self):
+        """Test that our top-down-splay skips out at appropriate times."""
+        cut_l_zig_zig = range(9, 0, -1)
+        td_found = tdfrompre(cut_l_zig_zig)
+        td = tdfrompre(cut_l_zig_zig)
+        splay(td_found, 1)
+        splay(td, 1.5)
+        self.assertEqual(td_found.preorder(), td.preorder())
+        cut_r_zig_zag = list(range(9, 2, -1)) + [1, 2]
+        td_found = tdfrompre(cut_r_zig_zag)
+        td = tdfrompre(cut_r_zig_zag)
+        splay(td_found, 2)
+        splay(td, 1.5)
+        self.assertEqual(td_found.preorder(), td.preorder())
+        cut_r_zig_zig = range(1, 10)
+        td_found = tdfrompre(cut_r_zig_zig)
+        td = tdfrompre(cut_r_zig_zig)
+        splay(td_found, 9)
+        splay(td, 8.5)
+        self.assertEqual(td_found.preorder(), td.preorder())
+        cut_l_zig_zag = list(range(1, 8)) + [9, 8]
+        td_found = tdfrompre(cut_l_zig_zag)
+        td = tdfrompre(cut_l_zig_zag)
+        splay(td_found, 8)
+        splay(td, 8.5)
+        self.assertEqual(td_found.preorder(), td.preorder())
+        # Zig cases
+        cut_l_zig = range(10, 0, -1)
+        td_found = tdfrompre(cut_l_zig)
+        td = tdfrompre(cut_l_zig)
+        splay(td_found, 1)
+        splay(td, 1.5)
+        self.assertEqual(td_found.preorder(), td.preorder())
+        cut_l_zag = list(range(10, 2, -1)) + [1, 2]
+        td_found = tdfrompre(cut_l_zag)
+        td = tdfrompre(cut_l_zag)
+        splay(td_found, 2)
+        splay(td, 1.5)
+        self.assertEqual(td_found.preorder(), td.preorder())
+        cut_r_zig = range(1, 11)
+        td_found = tdfrompre(cut_r_zig)
+        td = tdfrompre(cut_r_zig)
+        splay(td_found, 10)
+        splay(td, 9.5)
+        self.assertEqual(td_found.preorder(), td.preorder())
+        cut_r_zag = list(range(1, 9)) + [10, 9]
+        td_found = tdfrompre(cut_r_zag)
+        td = tdfrompre(cut_r_zag)
+        splay(td_found, 9)
+        splay(td, 9.5)
+        self.assertEqual(td_found.preorder(), td.preorder())
 
 
 if __name__ == '__main__':
