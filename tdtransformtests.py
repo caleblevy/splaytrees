@@ -67,4 +67,4 @@ def splaytransformtests(n):
     return G
 
 
-splaytransformtests(7)
+splaytransformtests(6)

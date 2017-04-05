@@ -406,6 +406,88 @@ class SimpleSplayTree(ABCSplay):
         self.root = t
 
 
+class TopDownSplayTree(ABCSplay):
+
+    def splay(self, key):
+        l = r = self.header
+        t = self.root
+        self.header.left = self.header.right = None
+        while True:
+            if key < t.key:
+                rotate_right = link_right = link_left = assemble = False
+                if t.left is None:
+                    break  # Immediate assemble
+                elif key == t.left.key:  # zig
+                    link_right = assemble = True
+                elif key < t.left.key:
+                    rotate_right = True
+                    if t.left.left is None:  # end at partial zig
+                        assemble = True
+                    else:
+                        link_right = True # zig-zig
+                else:
+                    link_right = True
+                    if t.left.right is None:  # partial zig
+                        assemble = True
+                    else:
+                        link_left = True  # Do the zig-zag
+                # Do whichever rotations were relavent
+                if rotate_right:
+                    y = t.left  # Rotate right
+                    t.left = y.right
+                    y.right = t
+                    t = y
+                if link_right:
+                    r.left = t  # Link right
+                    r = t
+                    t = t.left
+                if link_left:
+                    l.right = t  # link left
+                    l = t
+                    t = t.right
+                if assemble:
+                    break
+            elif key > t.key:
+                rotate_left = link_left = link_right = assemble = False
+                if t.right is None:
+                    break  # direct assemble
+                elif key == t.right.key:
+                    link_left = assemble = True
+                elif key > t.right.key:
+                    rotate_left = True
+                    if t.right.right is None:
+                        assemble = True
+                    else:
+                        link_left = True
+                else:
+                    link_left = True
+                    if t.right.left is None:
+                        assemble = True
+                    else:
+                        link_right = True
+                # Do equivalent rotations
+                if rotate_left:
+                    y = t.right  # rotate left
+                    t.right = y.left
+                    y.left = t
+                    t = y
+                if link_left:
+                    l.right = t  # link left
+                    l = t
+                    t = t.right
+                if link_right:
+                    r.left = t  # Link right
+                    r = t
+                    t = t.left
+            else:
+                break
+        l.right = t.left  # assemble
+        r.left = t.right
+        t.left = self.header.right
+        t.right = self.header.left
+        self.root = t
+
+
 class AccessTree(SimpleSplayTree):
     """Canonical splay tree with keys 0...n-1 outputting enodings."""
 
