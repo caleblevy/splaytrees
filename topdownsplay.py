@@ -406,7 +406,7 @@ class SimpleSplayTree(ABCSplay):
         self.root = t
 
 
-class TopDownSplayTree(ABCSplay):
+class TDSplayTree(ABCSplay):
 
     def splay(self, key):
         l = r = self.header
@@ -479,6 +479,8 @@ class TopDownSplayTree(ABCSplay):
                     r.left = t  # Link right
                     r = t
                     t = t.left
+                if assemble:
+                    break
             else:
                 break
         l.right = t.left  # assemble
