@@ -4,42 +4,8 @@ another."""
 import networkx as nx
 import matplotlib.pyplot as plt
 
-from topdownsplay import SimpleSplayTree as SplayTree
-from topdownsplay import BinaryNode as Node
+from topdownsplay import tdfrompre
 from treerank import treegen, B
-
-# For fun
-four_node_trees = [
-    (4, 3, 2, 1), (1, 2, 3, 4),  # Il, Ir
-    (3, 2, 1, 4), (2, 1, 3, 4),  # Vl, Vr
-    (4, 1, 3, 2), (1, 4, 2, 3),  # Zl, Zr
-    (4, 1, 2, 3), (1, 4, 3, 2),  # Pl, Pr
-    (3, 1, 2, 4), (2, 1, 4, 3),  # Ul, Ur
-    (4, 3, 1, 2), (1, 2, 4, 3),  # Ll, Lr
-    (4, 2, 1, 3), (1, 3, 2, 4),  # Yl, Yr
-]
-
-def _tree_from_preorder(preorder):
-    """Slow way to build a tree from the preorder permutation p."""
-    if preorder:
-        root_item = preorder[0]
-        left_items = [item for item in preorder if item < root_item]
-        right_items = [item for item in preorder if item > root_item]
-        root = Node(root_item)
-        root.left = _tree_from_preorder(left_items)
-        root.right = _tree_from_preorder(right_items)
-        # if root.left is not None:
-        #     root.left.parent = root
-        # if root.right is not None:
-        #      root.right.parent = root
-        return root
-
-
-def tree_from_preorder(p):
-    """Return splay tree with preorder sequence P."""
-    T = SplayTree()
-    T.root = _tree_from_preorder(p)
-    return T
 
 
 def splaytransformtests(n):
@@ -47,7 +13,7 @@ def splaytransformtests(n):
     G = nx.DiGraph()
     for p in treegen(n):
         for x in p[1:]:
-            t = tree_from_preorder(p)
+            t = tdfrompre(p)
             print t.preorder() == t.preorder() == p
             t.__contains__(x)
             G.add_edge(p, t.preorder())
