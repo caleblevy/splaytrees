@@ -2,6 +2,7 @@
 implement, and not based on reference implementation."""
 
 import unittest
+from random import randrange
 
 from topdownsplay import TDSplayTree, BinaryNode, SimpleSplayTree
 from propersplay import SplayTree, complete_bst_preorder
@@ -104,6 +105,19 @@ class TestTDSplay(unittest.TestCase):
         self.assertEqual(td_l_after, td_l.preorder())
         td_r_after = (7.5, 1, 2, 4, 3, 5, 6, 7, 14, 12, 11, 10, 9, 8, 13, 15)
         self.assertEqual(td_r_after, td_r.preorder())
+
+        n = 130
+        for _ in range(10):
+            p = randtree(n)
+            T_bu = SplayTree(p)
+            T_td = tdfrompre(p)
+            for _ in range(30):
+                x = randrange(1, n+1)
+                _, d = T_bu._find_with_depth(x)
+                if d % 2:
+                    T_bu.access(x)
+                    splay(T_td, x)
+                    self.assertTrue(T_bu.preorder() == T_td.preorder())
 
     def test_missing_splays(self):
         """Test that our top-down-splay skips out at appropriate times."""
