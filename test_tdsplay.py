@@ -1,5 +1,5 @@
-"""Separate unit tests for top-down-splay, since it was most complicated to
-implement, and not based on reference implementation."""
+"""Separate unit tests for top-down-splay, since they rely on the bottom-up
+splay tree."""
 
 import unittest
 from random import randrange
