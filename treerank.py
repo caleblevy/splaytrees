@@ -6,6 +6,18 @@ import unittest
 from random import randrange
 
 
+# For fun
+four_node_trees = [
+    (4, 3, 2, 1), (1, 2, 3, 4),  # Il, Ir
+    (3, 2, 1, 4), (2, 1, 3, 4),  # Vl, Vr
+    (4, 1, 3, 2), (1, 4, 2, 3),  # Zl, Zr
+    (4, 1, 2, 3), (1, 4, 3, 2),  # Pl, Pr
+    (3, 1, 2, 4), (2, 1, 4, 3),  # Ul, Ur
+    (4, 3, 1, 2), (1, 2, 4, 3),  # Ll, Lr
+    (4, 2, 1, 3), (1, 3, 2, 4),  # Yl, Yr
+]
+
+
 class memoize:
     def __init__(self, f):
         self.f = f

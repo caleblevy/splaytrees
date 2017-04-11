@@ -4,39 +4,11 @@ implement, and not based on reference implementation."""
 import unittest
 from random import randrange
 
-from topdownsplay import TDSplayTree, BinaryNode, SimpleSplayTree
+from topdownsplay import (
+    TDSplayTree, BinaryNode, SimpleSplayTree, tdfrompre, stdfrompre, splay
+)
 from propersplay import SplayTree, complete_bst_preorder
 from treerank import randtree
-
-
-def _tree_from_preorder(preorder):
-    """Slow way to build a tree from the preorder permutation p."""
-    if preorder:
-        root_item = preorder[0]
-        left_items = [item for item in preorder if item < root_item]
-        right_items = [item for item in preorder if item > root_item]
-        root = BinaryNode(root_item)
-        root.left = _tree_from_preorder(left_items)
-        root.right = _tree_from_preorder(right_items)
-        return root
-
-
-def tdfrompre(preorder):
-    root = _tree_from_preorder(preorder)
-    T = TDSplayTree()
-    T.root = root
-    return T
-
-
-def stdfrompre(preorder):
-    root = _tree_from_preorder(preorder)
-    T = SimpleSplayTree()
-    T.root = root
-    return T
-
-
-def splay(T, x):
-    x in T
 
 
 class TestTDSplay(unittest.TestCase):

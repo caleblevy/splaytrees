@@ -535,6 +535,36 @@ class AccessTree(SimpleSplayTree):
         return freqs
 
 
+def _tree_from_preorder(preorder):
+    """Slow way to build a tree from the preorder permutation p."""
+    if preorder:
+        root_item = preorder[0]
+        left_items = [item for item in preorder if item < root_item]
+        right_items = [item for item in preorder if item > root_item]
+        root = BinaryNode(root_item)
+        root.left = _tree_from_preorder(left_items)
+        root.right = _tree_from_preorder(right_items)
+        return root
+
+
+def tdfrompre(preorder):
+    root = _tree_from_preorder(preorder)
+    T = TDSplayTree()
+    T.root = root
+    return T
+
+
+def stdfrompre(preorder):
+    root = _tree_from_preorder(preorder)
+    T = SimpleSplayTree()
+    T.root = root
+    return T
+
+
+def splay(T, x):
+    x in T
+
+
 class TestSimpleSplay(unittest.TestCase):
 
     def test_simple_splaying(self):
