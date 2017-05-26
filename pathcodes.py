@@ -89,23 +89,32 @@ class Node(object):
         current = x
         stack = []
         while True:
-            # Reach left most node of current's subtree
             if current is not None:
-                # Place pointer to a tree node on the stack before traversing
-                # left subtree.
                 yield current.key
                 stack.append(current)
                 current = current.left
-            # Backtrack from empty subtree and visit node at top of stack.
-            # However, if stack is empty, we are doen.
             else:
                 if stack:
                     current = stack.pop()
-                    # We have visited the node and its left subtree. Now visit
-                    # right subtree.
                     current = current.right
                 else:
                     break
+
+    def postorder(x):
+        """Return postorder of subtree rooted at x."""
+        s1 = [x]
+        s2 = []
+        while s1:
+            node = s1.pop()
+            s2.append(node)
+            # push left and right children of removed item to s1
+            if node.left is not None:
+                s1.append(node.left)
+            if node.right is not None:
+                s1.append(node.right)
+            # gives us a "reverse" postorder
+        while s2:
+            yield s2.pop().key
 
 
 class TestNode(unittest.TestCase):
@@ -192,6 +201,27 @@ class TestNode(unittest.TestCase):
         h.rotate()
         pre = list("khgacbemf")
         self.assertTrue(pre == list(k.preorder()))
+
+    def test_postorder(self):
+        """Test postorder traversal."""
+        k = Node("k")
+        g = k.left = Node("g");  g.parent = k
+        c = g.left = Node("c");  c.parent = g
+        a = c.left = Node("a");  a.parent = c
+        b = c.right = Node("b");  b.parent = c
+        h = g.right = Node("h");  h.parent = g
+        e = h.left = Node("e");  e.parent = h
+        m = h.right = Node("m");  m.parent = h
+        f = k.right = Node("f");  f.parent = k
+        post = list("abcemhgfk")
+        self.assertTrue(post == list(k.postorder()))
+        a.rotate()
+        post = list("bcaemhgfk")
+        self.assertTrue(post == list(k.postorder()))
+        h.rotate()
+        post = list("bcaegmhfk")
+        self.assertTrue(post == list(k.postorder()))
+
 
 if __name__ == '__main__':
     unittest.main()
