@@ -1,5 +1,7 @@
 """A new version of bottom-up splay and move-to-root carrying less baggage."""
 
+import unittest
+
 
 class Node(object):
     """BST node with parents."""
@@ -12,19 +14,18 @@ class Node(object):
         x.left = None
         x.right = None
 
-    def __repr__(self):
-        return self.__class__.__name__ + '(%s)' % ", ".join([
-            "key=%s" % self.key,
-            "parent=%s" % getattr(self.parent, 'key', None),
-            "left=%s" % getattr(self.left, 'key', None),
-            "right=%s" % getattr(self.right, 'key', None)
+    def __repr__(x):
+        return x.__class__.__name__ + '(%s)' % ", ".join([
+            "key=%s" % x.key,
+            "parent=%s" % getattr(x.parent, 'key', None),
+            "left=%s" % getattr(x.left, 'key', None),
+            "right=%s" % getattr(x.right, 'key', None)
         ])
 
-    def rotate(self):
+    def rotate(x):
         """Rotate the edge between x and its parent."""
         # Normalize to kozma's definition, page 8 of thesis
-        x = self
-        y = self.parent
+        y = x.parent
         # Ensures x < y
         if x is y.right:
             x, y = y, x
@@ -61,26 +62,136 @@ class Node(object):
             x.parent = y
 
     def inorder(x):
-        stack = [x]
-        while stack:
-            if stack[-1].left is not None:
-                stack.append(stack[-1].left)
+        """Traverse subtree rooted at x inorder."""
+        current = x
+        stack = []
+        while True:
+            # Reach left most node of current's subtree
+            if current is not None:
+                # Place pointer to a tree node on the stack before traversing
+                # left subtree.
+                stack.append(current)
+                current = current.left
+            # Backtrack from empty subtree and visit node at top of stack.
+            # However, if stack is empty, we are doen.
             else:
-                while stack[-1].right is None:
-                    yield stack.pop()
-                stack.append(stack[-1].right)
-                yield stack.pop()
+                if stack:
+                    current = stack.pop()
+                    yield current.key
+                    # We have visited the node and its left subtree. Now visit
+                    # right subtree.
+                    current = current.right
+                else:
+                    break
+
+    def preorder(x):
+        """Traverse subtree rooted at x inorder."""
+        current = x
+        stack = []
+        while True:
+            # Reach left most node of current's subtree
+            if current is not None:
+                # Place pointer to a tree node on the stack before traversing
+                # left subtree.
+                yield current.key
+                stack.append(current)
+                current = current.left
+            # Backtrack from empty subtree and visit node at top of stack.
+            # However, if stack is empty, we are doen.
+            else:
+                if stack:
+                    current = stack.pop()
+                    # We have visited the node and its left subtree. Now visit
+                    # right subtree.
+                    current = current.right
+                else:
+                    break
 
 
-k = Node("k")
-g = k.left = Node("g")
-c = g.left = Node("c")
-a = c.left = Node("a")
-b = c.right = Node("b")
-h = g.right = Node("h")
-e = h.left = Node("e")
-m = h.right = Node("h")
-f = k.right = Node("f")
+class TestNode(unittest.TestCase):
 
-for i in k.inorder():
-    print(i)
+    def test_rotation(self):
+        k = Node("k")
+        g = k.left = Node("g");  g.parent = k
+        c = g.left = Node("c");  c.parent = g
+        a = c.left = Node("a");  a.parent = c
+        b = c.right = Node("b");  b.parent = c
+        h = g.right = Node("h");  h.parent = g
+        e = h.left = Node("e");  e.parent = h
+        m = h.right = Node("h");  m.parent = h
+        f = k.right = Node("f");  f.parent = k
+        parent_pairs = [
+            (g, k), (c, g), (a, c), (b, c), (h, g), (e, h), (m, h), (f, k)
+        ]
+        #       k
+        #      /  \
+        #      g  f
+        #    /   \
+        #   c    h
+        #  / \   /\
+        # a   b e  m
+        a.rotate()
+        self.assertTrue(g.right is h)
+        self.assertTrue(g.left is a)
+        self.assertTrue(c.parent is a)
+        self.assertTrue(a.parent is g)
+        self.assertTrue(a.left is None)
+        self.assertTrue(a.right is c)
+        h.rotate()
+        self.assertTrue(h.parent is k)
+        self.assertTrue(k.left is h)
+        self.assertTrue(k.right is f)
+        self.assertTrue(h.right is m)
+        self.assertTrue(h.left is g)
+        self.assertTrue(g.parent is h)
+        self.assertTrue(m.parent is h)
+        self.assertTrue(e.parent is g)
+        self.assertTrue(g.right is e)
+        self.assertTrue(g.left is a)
+        # Reverse these rotations
+        c.rotate();  g.rotate()
+        for x, y in parent_pairs:
+            self.assertTrue(x.parent is y)
+
+    def test_inorder(self):
+        """Test inorder traversal."""
+        k = Node("k")
+        g = k.left = Node("g");  g.parent = k
+        c = g.left = Node("c");  c.parent = g
+        a = c.left = Node("a");  a.parent = c
+        b = c.right = Node("b");  b.parent = c
+        h = g.right = Node("h");  h.parent = g
+        e = h.left = Node("e");  e.parent = h
+        m = h.right = Node("m");  m.parent = h
+        f = k.right = Node("f");  f.parent = k
+        order = list("acbgehmkf")
+        self.assertTrue(order == list(k.inorder()))
+        a.rotate()
+        order = list("acbgehmkf")
+        self.assertTrue(order == list(k.inorder()))
+        h.rotate()
+        order = list("acbgehmkf")
+        self.assertTrue(order == list(k.inorder()))
+
+    def test_preorder(self):
+        """Test preorder traversal"""
+        k = Node("k")
+        g = k.left = Node("g");  g.parent = k
+        c = g.left = Node("c");  c.parent = g
+        a = c.left = Node("a");  a.parent = c
+        b = c.right = Node("b");  b.parent = c
+        h = g.right = Node("h");  h.parent = g
+        e = h.left = Node("e");  e.parent = h
+        m = h.right = Node("m");  m.parent = h
+        f = k.right = Node("f");  f.parent = k
+        pre = list("kgcabhemf")
+        self.assertTrue(pre == list(k.preorder()))
+        a.rotate()
+        pre = list("kgacbhemf")
+        self.assertTrue(pre == list(k.preorder()))
+        h.rotate()
+        pre = list("khgacbemf")
+        self.assertTrue(pre == list(k.preorder()))
+
+if __name__ == '__main__':
+    unittest.main()
