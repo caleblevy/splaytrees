@@ -128,6 +128,18 @@ class Node(object):
         while s2:
             yield s2.pop().key
 
+    def path_encoding(x):
+        """Return binary string encoding path from root to x."""
+        encoding = []
+        while x.parent is not None:
+            if x is x.parent.left:
+                encoding.append("0")
+            else:
+                encoding.append("1")
+            x = x.parent
+        encoding.reverse()
+        return ''.join(encoding)
+
     def _splay_step(x):
         """Perform zig, zig-zag or zig-zig appropriately."""
         y = x.parent
@@ -183,12 +195,54 @@ class Tree(object):
 
     def __init__(T, root):
         """Initialize from root node."""
+        if T._template_algo is None:
+            raise TypeError("Must instantiate tree subclass")
         if not isinstance(root, Node):
             raise TypeError("Root must be node.")
         if root.parent is not None:
             raise ValueError("Root must have no parent")
         T.root = root
         T.path_encs = []  # Encodings of all paths requested by "access."
+
+    def inorder(T):
+        """List nodes of T in symmetric order."""
+        return T.root.inorder()
+
+    def preorder(T):
+        """List nodes of T in preorder."""
+        return T.root.preorder()
+
+    def postorder(T):
+        """List nodes of T in postorder."""
+        return T.root.postorder()
+
+    _template_algo = None
+
+    def access(T, x):
+        """Access NODE x in T."""
+        T.path_encs.append(x.path_encoding())
+        T._template_algo(x)
+        T.root = x
+
+
+class StaticTree(Tree):
+    """Static BST which does not perform rotations on access."""
+    _template_algo = Node.static
+
+
+class SplayTree(Tree):
+    """A splay tree for recording binary encodings."""
+    _template_algo = Node.splay
+
+
+class SimpleSplay(Tree):
+    """A self-adjusting BST using the simple splaying heuristic."""
+    _template_algo = Node.simple_splay
+
+
+class MoveToRoot(Tree):
+    """Allan and Munro's move-to-root algorithm."""
+    _template_algo = Node.move_to_root
 
 
 class TestNode(unittest.TestCase):
@@ -394,6 +448,26 @@ class TestNode(unittest.TestCase):
         pre = tuple("kgcabhemf")
         self.assertTrue(pre == k.preorder())
 
+
+class TestTree(unittest.TestCase):
+
+    def test_init_errors(self):
+        """Make sure we can't make bad trees."""
+        k = Node("k")
+        g = k.left = Node("g");  g.parent = k
+        c = g.left = Node("c");  c.parent = g
+        a = c.left = Node("a");  a.parent = c
+        b = c.right = Node("b");  b.parent = c
+        h = g.right = Node("h");  h.parent = g
+        e = h.left = Node("e");  e.parent = h
+        m = h.right = Node("h");  m.parent = h
+        f = k.right = Node("f");  f.parent = k
+        with self.assertRaises(TypeError):
+            T = Tree(k)
+        with self.assertRaises(ValueError):
+            T = StaticTree(c)
+        with self.assertRaises(TypeError):
+            T = StaticTree(None)
 
 if __name__ == '__main__':
     unittest.main()
