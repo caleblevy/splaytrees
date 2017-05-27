@@ -366,6 +366,29 @@ class TestNode(unittest.TestCase):
             x.static()
         self.assertTrue((k, g, c, a, b, h, e, m, f) == k.preorder())
 
+    def test_path_encoding(self):
+        """Ensure encodings of node paths are correct."""
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        self.assertTrue("000" == a.path_encoding())
+        self.assertTrue("00" == c.path_encoding())
+        self.assertTrue("001" == b.path_encoding())
+        self.assertTrue("0" == g.path_encoding())
+        self.assertTrue("010" == e.path_encoding())
+        self.assertTrue("01" == h.path_encoding())
+        self.assertTrue("011" == m.path_encoding())
+        self.assertTrue("" == k.path_encoding())
+        self.assertTrue("1" == f.path_encoding())
+        a.splay()
+        self.assertTrue("" == a.path_encoding())
+        self.assertTrue("10" == c.path_encoding())
+        self.assertTrue("1010" == b.path_encoding())
+        self.assertTrue("101" == g.path_encoding())
+        self.assertTrue("10110" == e.path_encoding())
+        self.assertTrue("1011" == h.path_encoding())
+        self.assertTrue("10111" == m.path_encoding())
+        self.assertTrue("1" == k.path_encoding())
+        self.assertTrue("11" == f.path_encoding())
+
 
 class TestTree(unittest.TestCase):
 
