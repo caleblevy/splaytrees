@@ -116,6 +116,51 @@ class Node(object):
         while s2:
             yield s2.pop().key
 
+    def _splay_step(x):
+        """Perform zig, zig-zag or zig-zig appropriately."""
+        y = x.parent
+        z = y.parent  # parent checked for in "splay"
+        # zig
+        if z is None:
+            x.rotate()
+        # zig-zag
+        elif (y is z.left and x is y.right) or (y is z.right and x is y.left):
+            x.rotate()
+            x.rotate()
+        # zig-zig
+        else:
+            y.rotate()
+            x.rotate()
+
+    def _simple_splay_step(x):
+        """Do a simple splay step."""
+        y = x.parent
+        z = y.parent  # parent checked for in "splay"
+        # zig
+        if z is None:
+            x.rotate()
+        elif (y is z.left and x is y.right) or (y is z.right and x is y.left):
+            x.rotate()
+        # zig-zig
+        else:
+            y.rotate()
+            x.rotate()
+
+    def splay(x):
+        """Proper bottom-up splay to the top."""
+        while x.parent is not None:
+            x._splay_step()
+
+    def simple_splay(x):
+        """Proper bottom-up simple splay to the top."""
+        while x.parent is not None:
+            x._simple_splay_step()
+
+    def move_to_root(x):
+        """Move straight to the root."""
+        while x.parent is not None:
+            x.rotate()
+
 
 class TestNode(unittest.TestCase):
 
