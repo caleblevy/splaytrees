@@ -99,7 +99,7 @@ class Node(object):
         stack = []
         while True:
             if x is not None:
-                yield x.key
+                yield x
                 stack.append(x)
                 x = x.left
             else:
@@ -306,14 +306,11 @@ class TestNode(unittest.TestCase):
     def test_preorder(self):
         """Test preorder traversal"""
         [k, g, c, a, b, h, e, m, f] = _test_tree()
-        pre = tuple("kgcabhemf")
-        self.assertTrue(pre == k.preorder())
+        self.assertTrue((k, g, c, a, b, h, e, m, f) == k.preorder())
         a.rotate()
-        pre = tuple("kgacbhemf")
-        self.assertTrue(pre == k.preorder())
+        self.assertTrue((k, g, a, c, b, h, e, m, f) == k.preorder())
         h.rotate()
-        pre = tuple("khgacbemf")
-        self.assertTrue(pre == k.preorder())
+        self.assertTrue((k, h, g, a, c, b, e, m, f) == k.preorder())
 
     def test_postorder(self):
         """Test postorder traversal."""
@@ -328,46 +325,37 @@ class TestNode(unittest.TestCase):
         """Test the splay method works."""
         [k, g, c, a, b, h, e, m, f] = _test_tree()
         a.splay()
-        pre = tuple("akcgbhemf")
-        self.assertTrue(pre == a.preorder())
+        self.assertTrue((a, k, c, g, b, h, e, m, f) == a.preorder())
         e.splay()
-        pre = tuple("eacgbkhmf")
-        self.assertTrue(pre == e.preorder())
+        self.assertTrue((e, a, c, g, b, k, h, m, f) == e.preorder())
         # sequential access
         nodes = [a, c, b, g, e, h, m, k, f]
         for x in nodes:
             x.splay()
-        pre = tuple(reversed("acbgehmkf"))
-        self.assertTrue(pre == f.preorder())
+        self.assertTrue((f, k, m, h, e, g, b, c, a) == f.preorder())
         for x in nodes:
             self.assertTrue(x.right is None)
         # Test simple splay zig-zag.
         a.splay()
         b.splay()
-        pre = tuple("bachgekmf")
-        self.assertTrue(pre == b.preorder())
+        self.assertTrue((b, a, c, h, g, e, k, m, f) == b.preorder())
 
     def test_simple_splay(self):
-        """Test simple splaying."""
         [k, g, c, a, b, h, e, m, f] = _test_tree()
         a.simple_splay()
-        pre = tuple("akcgbhemf")
-        self.assertTrue(pre == a.preorder())
+        self.assertTrue((a, k, c, g, b, h, e, m, f) == a.preorder())
         e.simple_splay()
         # First difference from splay
-        pre = tuple("eagcbkhmf")
-        self.assertTrue(pre == e.preorder())
+        self.assertTrue((e, a, g, c, b, k, h, m, f) == e.preorder())
         # Test zig-zag difference
         a.simple_splay()
         h.simple_splay()
-        pre = tuple("heagcbkmf")
-        self.assertTrue(pre == h.preorder())
+        self.assertTrue((h, e, a, g, c, b, k, m, f) == h.preorder())
         # sequential access
         nodes = [a, c, b, g, e, h, m, k, f]
         for x in nodes:
             x.simple_splay()
-        pre = tuple(reversed("acbgehmkf"))
-        self.assertTrue(pre == f.preorder())
+        self.assertTrue((f, k, m, h, e, g, b, c, a) == f.preorder())
         for x in nodes:
             self.assertTrue(x.right is None)
 
@@ -375,11 +363,9 @@ class TestNode(unittest.TestCase):
         """Test properties of move-to-root"""
         [k, g, c, a, b, h, e, m, f] = _test_tree()
         m.move_to_root()
-        pre = tuple("mgcabhekf")
-        self.assertTrue(pre == m.preorder())
+        self.assertTrue((m, g, c, a, b, h, e, k, f) == m.preorder())
         e.move_to_root()
-        pre = tuple("egcabmhkf")
-        self.assertTrue(pre == e.preorder())
+        self.assertTrue((e, g, c, a, b, m, h, k, f) == e.preorder())
 
     def test_static(self):
         """Ensure no-op does nodda."""
@@ -387,8 +373,7 @@ class TestNode(unittest.TestCase):
         nodes = [a, b, c, f, e, g, h, m]
         for x in nodes:
             x.static()
-        pre = tuple("kgcabhemf")
-        self.assertTrue(pre == k.preorder())
+        self.assertTrue((k, g, c, a, b, h, e, m, f) == k.preorder())
 
 
 class TestTree(unittest.TestCase):
