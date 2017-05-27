@@ -15,21 +15,12 @@ def tuplemaker(generator):
 class Node(object):
     """BST node with parents."""
 
-    __slots__ = "key parent left right".split()
+    __slots__ = ("parent", "left", "right")
 
-    def __init__(x, key):
-        x.key = key
+    def __init__(x):
         x.parent = None
         x.left = None
         x.right = None
-
-    def __repr__(x):
-        return x.__class__.__name__ + '(%s)' % ", ".join([
-            "key=%s" % x.key,
-            "parent=%s" % getattr(x.parent, 'key', None),
-            "left=%s" % getattr(x.left, 'key', None),
-            "right=%s" % getattr(x.right, 'key', None)
-        ])
 
     def rotate(x):
         """Rotate the edge between x and its parent."""
@@ -252,15 +243,15 @@ def _test_tree():
     #   c    h
     #  / \   /\
     # a   b e  m
-    k = Node("k")
-    g = k.left = Node("g");  g.parent = k
-    c = g.left = Node("c");  c.parent = g
-    a = c.left = Node("a");  a.parent = c
-    b = c.right = Node("b");  b.parent = c
-    h = g.right = Node("h");  h.parent = g
-    e = h.left = Node("e");  e.parent = h
-    m = h.right = Node("m");  m.parent = h
-    f = k.right = Node("f");  f.parent = k
+    k = Node()
+    g = k.left = Node();  g.parent = k
+    c = g.left = Node();  c.parent = g
+    a = c.left = Node();  a.parent = c
+    b = c.right = Node();  b.parent = c
+    h = g.right = Node();  h.parent = g
+    e = h.left = Node();  e.parent = h
+    m = h.right = Node();  m.parent = h
+    f = k.right = Node();  f.parent = k
     return [k, g, c, a, b, h, e, m, f]
 
 class TestNode(unittest.TestCase):
