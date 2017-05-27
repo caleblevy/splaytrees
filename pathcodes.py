@@ -86,7 +86,7 @@ class Node(object):
             else:
                 if stack:
                     x = stack.pop()
-                    yield x.key
+                    yield x
                     # We have visited the node and its left subtree. Now visit
                     # right subtree.
                     x = x.right
@@ -297,14 +297,11 @@ class TestNode(unittest.TestCase):
     def test_inorder(self):
         """Test inorder traversal."""
         [k, g, c, a, b, h, e, m, f] = _test_tree()
-        order = tuple("acbgehmkf")
-        self.assertTrue(order == k.inorder())
+        self.assertTrue((a, c, b, g, e, h, m, k, f) == k.inorder())
         a.rotate()
-        order = tuple("acbgehmkf")
-        self.assertTrue(order == k.inorder())
+        self.assertTrue((a, c, b, g, e, h, m, k, f) == k.inorder())
         h.rotate()
-        order = tuple("acbgehmkf")
-        self.assertTrue(order == k.inorder())
+        self.assertTrue((a, c, b, g, e, h, m, k, f) == k.inorder())
 
     def test_preorder(self):
         """Test preorder traversal"""
