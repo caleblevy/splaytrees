@@ -161,6 +161,10 @@ class Node(object):
         while x.parent is not None:
             x.rotate()
 
+    def static(x):
+        """Operation of a static search tree."""
+        return
+
 
 class TestNode(unittest.TestCase):
 
