@@ -178,6 +178,19 @@ class Node(object):
         return
 
 
+class Tree(object):
+    """BST Template. To use properly, must inherit and set template algo."""
+
+    def __init__(T, root):
+        """Initialize from root node."""
+        if not isinstance(root, Node):
+            raise TypeError("Root must be node.")
+        if root.parent is not None:
+            raise ValueError("Root must have no parent")
+        T.root = root
+        T.path_encs = []  # Encodings of all paths requested by "access."
+
+
 class TestNode(unittest.TestCase):
 
     def test_rotation(self):
