@@ -124,7 +124,7 @@ class Node(object):
                 s1.append(x.right)
             # gives us a "reverse" postorder
         while s2:
-            yield s2.pop().key
+            yield s2.pop()
 
     def path_encoding(x):
         """Return binary string encoding path from root to x."""
@@ -321,14 +321,11 @@ class TestNode(unittest.TestCase):
     def test_postorder(self):
         """Test postorder traversal."""
         [k, g, c, a, b, h, e, m, f] = _test_tree()
-        post = tuple("abcemhgfk")
-        self.assertTrue(post == k.postorder())
+        self.assertTrue((a, b, c, e, m, h, g, f, k) == k.postorder())
         a.rotate()
-        post = tuple("bcaemhgfk")
-        self.assertTrue(post == k.postorder())
+        self.assertTrue((b, c, a, e, m, h, g, f, k) == k.postorder())
         h.rotate()
-        post = tuple("bcaegmhfk")
-        self.assertTrue(post == k.postorder())
+        self.assertTrue((b, c, a, e, g, m, h, f, k) == k.postorder())
 
     def test_splay(self):
         """Test the splay method works."""
