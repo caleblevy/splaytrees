@@ -4,6 +4,7 @@ from random import shuffle
 
 from topdownsplay import Inf, NegInf
 from propersplay import complete_bst_preorder
+from pathcodes import SplayBound, MRBound
 
 
 def compute_kappa(s, i):
@@ -42,33 +43,30 @@ def compute_kappa(s, i):
         l += 1
 
 
-def wilber2(s, show_scores=False):
+def wilber2(s):
     """Computer wilber2 bound for access sequence s."""
     m = len(s)
-    scores = [compute_kappa(s, i) for i in range(1, m+1)]
-    if show_scores:
-        print(scores)
-    return m + sum(scores)
+    return [1 + compute_kappa(s, i) for i in range(1, m+1)]
 
 
 def bitrev(k):
     """Bit reversal key for k"""
     return ''.join(reversed(bin(k)[2:]))
 
+
 if __name__ == "__main__":
-    s = list("aihjgfclkendbpmoi")
-    print(compute_kappa(s, 17))
-    print(wilber2(s, 1))
-    print(wilber2(range(50)+range(50)+range(50)+range(25)+range(1000), 1))
-    a = [1]*10000
-    shuffle(a)
-    print(wilber2(a, 1))
-
-
-    print(bitrev(4))
-    
-
-    b = list(complete_bst_preorder(10))
-    b.sort(key=bitrev)
-    print(b)
-    print(wilber2(b, 1))
+    a = list("aihjgfclkendbpmoi")
+    b = range(2000) + range(2000) + range(2000) + range(2000)
+    shuffle(b)
+    a_w = wilber2(a)
+    a_m = MRBound(a)
+    a_s = SplayBound(a)
+    b_w = wilber2(b)
+    b_m = MRBound(b)
+    b_s = SplayBound(b)
+    print(sum(a_w), sum(a_m), sum(a_s))
+    for w, m, s in zip(a_w, a_m, a_s):
+        print(max(w, m, s) - min(w, m, s))
+    print(sum(b_w), sum(b_m), sum(b_s))
+    for w, m, s in zip(b_w, b_m, b_s):
+        print(max(w, m, s) - min(w, m, s), min(w, m, s))

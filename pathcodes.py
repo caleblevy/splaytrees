@@ -234,7 +234,7 @@ class MoveToRoot(Tree):
     _template_algo = Node.move_to_root
 
 
-def MREncodings(X, treetype=MoveToRoot):
+def ZigZag_counts(X, treetype=MoveToRoot):
     """Record the encodings of move-to-root access sequence starting from right
     path."""
     keys = sorted(set(X))  # Elements
@@ -248,12 +248,23 @@ def MREncodings(X, treetype=MoveToRoot):
     T = treetype(root)
     for k in X:
         T.access(key_to_node[k])
-    seq = " ".join(T.path_encs)
-    bound = len(X) + seq.count("10") + seq.count("01")
-    return bound
+    counts = [1 + e.count("10") + e.count("01") for e in T.path_encs]
+    return counts
 
 
-print(MREncodings("aihjgfclkendbpmoi"))
+def MRBound(X):
+    """Return Wilber's second lower bound as described by Kozma"""
+    return ZigZag_counts(X)
+
+
+def SplayBound(X):
+    """Return number of zig-zags on splay paths."""
+    return ZigZag_counts(X, SplayTree)
+
+
+def SimpleBound(X):
+    """Return number of zig-zags on simple splay paths."""
+    return ZigZag_counts(X, SimpleSplay)
 
 
 def _test_tree():
