@@ -73,41 +73,39 @@ class Node(object):
     @tuplemaker
     def inorder(x):
         """Traverse subtree rooted at x inorder."""
-        current = x
         stack = []
         while True:
             # Reach left most node of current's subtree
-            if current is not None:
+            if x is not None:
                 # Place pointer to a tree node on the stack before traversing
                 # left subtree.
-                stack.append(current)
-                current = current.left
+                stack.append(x)
+                x = x.left
             # Backtrack from empty subtree and visit node at top of stack.
             # However, if stack is empty, we are doen.
             else:
                 if stack:
-                    current = stack.pop()
-                    yield current.key
+                    x = stack.pop()
+                    yield x.key
                     # We have visited the node and its left subtree. Now visit
                     # right subtree.
-                    current = current.right
+                    x = x.right
                 else:
                     break
 
     @tuplemaker
     def preorder(x):
         """Traverse subtree rooted at x inorder."""
-        current = x
         stack = []
         while True:
-            if current is not None:
-                yield current.key
-                stack.append(current)
-                current = current.left
+            if x is not None:
+                yield x.key
+                stack.append(x)
+                x = x.left
             else:
                 if stack:
-                    current = stack.pop()
-                    current = current.right
+                    x = stack.pop()
+                    x = x.right
                 else:
                     break
 
@@ -117,13 +115,13 @@ class Node(object):
         s1 = [x]
         s2 = []
         while s1:
-            node = s1.pop()
-            s2.append(node)
+            x = s1.pop()
+            s2.append(x)
             # push left and right children of removed item to s1
-            if node.left is not None:
-                s1.append(node.left)
-            if node.right is not None:
-                s1.append(node.right)
+            if x.left is not None:
+                s1.append(x.left)
+            if x.right is not None:
+                s1.append(x.right)
             # gives us a "reverse" postorder
         while s2:
             yield s2.pop().key
