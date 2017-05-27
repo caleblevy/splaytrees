@@ -271,6 +271,23 @@ class TestNode(unittest.TestCase):
         post = list("bcaegmhfk")
         self.assertTrue(post == list(k.postorder()))
 
+    def test_splay(self):
+        """Test the splay method works."""
+        k = Node("k")
+        g = k.left = Node("g");  g.parent = k
+        c = g.left = Node("c");  c.parent = g
+        a = c.left = Node("a");  a.parent = c
+        b = c.right = Node("b");  b.parent = c
+        h = g.right = Node("h");  h.parent = g
+        e = h.left = Node("e");  e.parent = h
+        m = h.right = Node("m");  m.parent = h
+        f = k.right = Node("f");  f.parent = k
+        a.splay()
+        pre = list("akcgbhemf")
+        self.assertTrue(pre == list(a.preorder()))
+        e.splay()
+        pre = list("eacgbkhmf")
+        self.assertTrue(pre == list(e.preorder()))
 
 if __name__ == '__main__':
     unittest.main()
