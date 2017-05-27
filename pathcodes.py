@@ -234,6 +234,28 @@ class MoveToRoot(Tree):
     _template_algo = Node.move_to_root
 
 
+def MREncodings(X, treetype=MoveToRoot):
+    """Record the encodings of move-to-root access sequence starting from right
+    path."""
+    keys = sorted(set(X))  # Elements
+    root = x = Node()
+    key_to_node = {}
+    for k in keys:
+        key_to_node[k] = x
+        x.right = Node()
+        x.right.parent = x
+        x = x.right
+    T = treetype(root)
+    for k in X:
+        T.access(key_to_node[k])
+    seq = " ".join(T.path_encs)
+    bound = len(X) + seq.count("10") + seq.count("01")
+    return bound
+
+
+print(MREncodings("aihjgfclkendbpmoi"))
+
+
 def _test_tree():
     """Tree used for unit tests."""
     #       k
