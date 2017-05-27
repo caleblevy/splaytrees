@@ -245,28 +245,34 @@ class MoveToRoot(Tree):
     _template_algo = Node.move_to_root
 
 
+def _test_tree():
+    """Tree used for unit tests."""
+    #       k
+    #      /  \
+    #      g  f
+    #    /   \
+    #   c    h
+    #  / \   /\
+    # a   b e  m
+    k = Node("k")
+    g = k.left = Node("g");  g.parent = k
+    c = g.left = Node("c");  c.parent = g
+    a = c.left = Node("a");  a.parent = c
+    b = c.right = Node("b");  b.parent = c
+    h = g.right = Node("h");  h.parent = g
+    e = h.left = Node("e");  e.parent = h
+    m = h.right = Node("m");  m.parent = h
+    f = k.right = Node("f");  f.parent = k
+    return [k, g, c, a, b, h, e, m, f]
+
 class TestNode(unittest.TestCase):
 
     def test_rotation(self):
-        k = Node("k")
-        g = k.left = Node("g");  g.parent = k
-        c = g.left = Node("c");  c.parent = g
-        a = c.left = Node("a");  a.parent = c
-        b = c.right = Node("b");  b.parent = c
-        h = g.right = Node("h");  h.parent = g
-        e = h.left = Node("e");  e.parent = h
-        m = h.right = Node("h");  m.parent = h
-        f = k.right = Node("f");  f.parent = k
+        """Test rotation properly changes parent pointers"""
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
         parent_pairs = [
             (g, k), (c, g), (a, c), (b, c), (h, g), (e, h), (m, h), (f, k)
         ]
-        #       k
-        #      /  \
-        #      g  f
-        #    /   \
-        #   c    h
-        #  / \   /\
-        # a   b e  m
         a.rotate()
         self.assertTrue(g.right is h)
         self.assertTrue(g.left is a)
@@ -292,15 +298,7 @@ class TestNode(unittest.TestCase):
 
     def test_inorder(self):
         """Test inorder traversal."""
-        k = Node("k")
-        g = k.left = Node("g");  g.parent = k
-        c = g.left = Node("c");  c.parent = g
-        a = c.left = Node("a");  a.parent = c
-        b = c.right = Node("b");  b.parent = c
-        h = g.right = Node("h");  h.parent = g
-        e = h.left = Node("e");  e.parent = h
-        m = h.right = Node("m");  m.parent = h
-        f = k.right = Node("f");  f.parent = k
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
         order = tuple("acbgehmkf")
         self.assertTrue(order == k.inorder())
         a.rotate()
@@ -312,15 +310,7 @@ class TestNode(unittest.TestCase):
 
     def test_preorder(self):
         """Test preorder traversal"""
-        k = Node("k")
-        g = k.left = Node("g");  g.parent = k
-        c = g.left = Node("c");  c.parent = g
-        a = c.left = Node("a");  a.parent = c
-        b = c.right = Node("b");  b.parent = c
-        h = g.right = Node("h");  h.parent = g
-        e = h.left = Node("e");  e.parent = h
-        m = h.right = Node("m");  m.parent = h
-        f = k.right = Node("f");  f.parent = k
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
         pre = tuple("kgcabhemf")
         self.assertTrue(pre == k.preorder())
         a.rotate()
@@ -332,15 +322,7 @@ class TestNode(unittest.TestCase):
 
     def test_postorder(self):
         """Test postorder traversal."""
-        k = Node("k")
-        g = k.left = Node("g");  g.parent = k
-        c = g.left = Node("c");  c.parent = g
-        a = c.left = Node("a");  a.parent = c
-        b = c.right = Node("b");  b.parent = c
-        h = g.right = Node("h");  h.parent = g
-        e = h.left = Node("e");  e.parent = h
-        m = h.right = Node("m");  m.parent = h
-        f = k.right = Node("f");  f.parent = k
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
         post = tuple("abcemhgfk")
         self.assertTrue(post == k.postorder())
         a.rotate()
@@ -352,15 +334,7 @@ class TestNode(unittest.TestCase):
 
     def test_splay(self):
         """Test the splay method works."""
-        k = Node("k")
-        g = k.left = Node("g");  g.parent = k
-        c = g.left = Node("c");  c.parent = g
-        a = c.left = Node("a");  a.parent = c
-        b = c.right = Node("b");  b.parent = c
-        h = g.right = Node("h");  h.parent = g
-        e = h.left = Node("e");  e.parent = h
-        m = h.right = Node("m");  m.parent = h
-        f = k.right = Node("f");  f.parent = k
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
         a.splay()
         pre = tuple("akcgbhemf")
         self.assertTrue(pre == a.preorder())
@@ -383,15 +357,7 @@ class TestNode(unittest.TestCase):
 
     def test_simple_splay(self):
         """Test simple splaying."""
-        k = Node("k")
-        g = k.left = Node("g");  g.parent = k
-        c = g.left = Node("c");  c.parent = g
-        a = c.left = Node("a");  a.parent = c
-        b = c.right = Node("b");  b.parent = c
-        h = g.right = Node("h");  h.parent = g
-        e = h.left = Node("e");  e.parent = h
-        m = h.right = Node("m");  m.parent = h
-        f = k.right = Node("f");  f.parent = k
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
         a.simple_splay()
         pre = tuple("akcgbhemf")
         self.assertTrue(pre == a.preorder())
@@ -415,15 +381,7 @@ class TestNode(unittest.TestCase):
 
     def test_move_to_root(self):
         """Test properties of move-to-root"""
-        k = Node("k")
-        g = k.left = Node("g");  g.parent = k
-        c = g.left = Node("c");  c.parent = g
-        a = c.left = Node("a");  a.parent = c
-        b = c.right = Node("b");  b.parent = c
-        h = g.right = Node("h");  h.parent = g
-        e = h.left = Node("e");  e.parent = h
-        m = h.right = Node("m");  m.parent = h
-        f = k.right = Node("f");  f.parent = k
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
         m.move_to_root()
         pre = tuple("mgcabhekf")
         self.assertTrue(pre == m.preorder())
@@ -433,15 +391,7 @@ class TestNode(unittest.TestCase):
 
     def test_static(self):
         """Ensure no-op does nodda."""
-        k = Node("k")
-        g = k.left = Node("g");  g.parent = k
-        c = g.left = Node("c");  c.parent = g
-        a = c.left = Node("a");  a.parent = c
-        b = c.right = Node("b");  b.parent = c
-        h = g.right = Node("h");  h.parent = g
-        e = h.left = Node("e");  e.parent = h
-        m = h.right = Node("m");  m.parent = h
-        f = k.right = Node("f");  f.parent = k
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
         nodes = [a, b, c, f, e, g, h, m]
         for x in nodes:
             x.static()
@@ -453,21 +403,14 @@ class TestTree(unittest.TestCase):
 
     def test_init_errors(self):
         """Make sure we can't make bad trees."""
-        k = Node("k")
-        g = k.left = Node("g");  g.parent = k
-        c = g.left = Node("c");  c.parent = g
-        a = c.left = Node("a");  a.parent = c
-        b = c.right = Node("b");  b.parent = c
-        h = g.right = Node("h");  h.parent = g
-        e = h.left = Node("e");  e.parent = h
-        m = h.right = Node("h");  m.parent = h
-        f = k.right = Node("f");  f.parent = k
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
         with self.assertRaises(TypeError):
             T = Tree(k)
         with self.assertRaises(ValueError):
             T = StaticTree(c)
         with self.assertRaises(TypeError):
             T = StaticTree(None)
+
 
 if __name__ == '__main__':
     unittest.main()
