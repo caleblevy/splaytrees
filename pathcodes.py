@@ -1,6 +1,15 @@
 """A new version of bottom-up splay and move-to-root carrying less baggage."""
 
+import functools
 import unittest
+
+
+def tuplemaker(generator):
+    """Make generator function return tuple containing its output."""
+    @functools.wraps(generator)
+    def tupler(*args, **kwargs):
+        return tuple(generator(*args, **kwargs))
+    return tupler
 
 
 class Node(object):
@@ -61,6 +70,7 @@ class Node(object):
             y.left = x
             x.parent = y
 
+    @tuplemaker
     def inorder(x):
         """Traverse subtree rooted at x inorder."""
         current = x
@@ -84,6 +94,7 @@ class Node(object):
                 else:
                     break
 
+    @tuplemaker
     def preorder(x):
         """Traverse subtree rooted at x inorder."""
         current = x
@@ -100,6 +111,7 @@ class Node(object):
                 else:
                     break
 
+    @tuplemaker
     def postorder(x):
         """Return postorder of subtree rooted at x."""
         s1 = [x]
@@ -222,14 +234,14 @@ class TestNode(unittest.TestCase):
         e = h.left = Node("e");  e.parent = h
         m = h.right = Node("m");  m.parent = h
         f = k.right = Node("f");  f.parent = k
-        order = list("acbgehmkf")
-        self.assertTrue(order == list(k.inorder()))
+        order = tuple("acbgehmkf")
+        self.assertTrue(order == k.inorder())
         a.rotate()
-        order = list("acbgehmkf")
-        self.assertTrue(order == list(k.inorder()))
+        order = tuple("acbgehmkf")
+        self.assertTrue(order == k.inorder())
         h.rotate()
-        order = list("acbgehmkf")
-        self.assertTrue(order == list(k.inorder()))
+        order = tuple("acbgehmkf")
+        self.assertTrue(order == k.inorder())
 
     def test_preorder(self):
         """Test preorder traversal"""
@@ -242,14 +254,14 @@ class TestNode(unittest.TestCase):
         e = h.left = Node("e");  e.parent = h
         m = h.right = Node("m");  m.parent = h
         f = k.right = Node("f");  f.parent = k
-        pre = list("kgcabhemf")
-        self.assertTrue(pre == list(k.preorder()))
+        pre = tuple("kgcabhemf")
+        self.assertTrue(pre == k.preorder())
         a.rotate()
-        pre = list("kgacbhemf")
-        self.assertTrue(pre == list(k.preorder()))
+        pre = tuple("kgacbhemf")
+        self.assertTrue(pre == k.preorder())
         h.rotate()
-        pre = list("khgacbemf")
-        self.assertTrue(pre == list(k.preorder()))
+        pre = tuple("khgacbemf")
+        self.assertTrue(pre == k.preorder())
 
     def test_postorder(self):
         """Test postorder traversal."""
@@ -262,14 +274,14 @@ class TestNode(unittest.TestCase):
         e = h.left = Node("e");  e.parent = h
         m = h.right = Node("m");  m.parent = h
         f = k.right = Node("f");  f.parent = k
-        post = list("abcemhgfk")
-        self.assertTrue(post == list(k.postorder()))
+        post = tuple("abcemhgfk")
+        self.assertTrue(post == k.postorder())
         a.rotate()
-        post = list("bcaemhgfk")
-        self.assertTrue(post == list(k.postorder()))
+        post = tuple("bcaemhgfk")
+        self.assertTrue(post == k.postorder())
         h.rotate()
-        post = list("bcaegmhfk")
-        self.assertTrue(post == list(k.postorder()))
+        post = tuple("bcaegmhfk")
+        self.assertTrue(post == k.postorder())
 
     def test_splay(self):
         """Test the splay method works."""
@@ -283,11 +295,92 @@ class TestNode(unittest.TestCase):
         m = h.right = Node("m");  m.parent = h
         f = k.right = Node("f");  f.parent = k
         a.splay()
-        pre = list("akcgbhemf")
-        self.assertTrue(pre == list(a.preorder()))
+        pre = tuple("akcgbhemf")
+        self.assertTrue(pre == a.preorder())
         e.splay()
-        pre = list("eacgbkhmf")
-        self.assertTrue(pre == list(e.preorder()))
+        pre = tuple("eacgbkhmf")
+        self.assertTrue(pre == e.preorder())
+        # sequential access
+        nodes = [a, c, b, g, e, h, m, k, f]
+        for x in nodes:
+            x.splay()
+        pre = tuple(reversed("acbgehmkf"))
+        self.assertTrue(pre == f.preorder())
+        for x in nodes:
+            self.assertTrue(x.right is None)
+        # Test simple splay zig-zag.
+        a.splay()
+        b.splay()
+        pre = tuple("bachgekmf")
+        self.assertTrue(pre == b.preorder())
+
+    def test_simple_splay(self):
+        """Test simple splaying."""
+        k = Node("k")
+        g = k.left = Node("g");  g.parent = k
+        c = g.left = Node("c");  c.parent = g
+        a = c.left = Node("a");  a.parent = c
+        b = c.right = Node("b");  b.parent = c
+        h = g.right = Node("h");  h.parent = g
+        e = h.left = Node("e");  e.parent = h
+        m = h.right = Node("m");  m.parent = h
+        f = k.right = Node("f");  f.parent = k
+        a.simple_splay()
+        pre = tuple("akcgbhemf")
+        self.assertTrue(pre == a.preorder())
+        e.simple_splay()
+        # First difference from splay
+        pre = tuple("eagcbkhmf")
+        self.assertTrue(pre == e.preorder())
+        # Test zig-zag difference
+        a.simple_splay()
+        h.simple_splay()
+        pre = tuple("heagcbkmf")
+        self.assertTrue(pre == h.preorder())
+        # sequential access
+        nodes = [a, c, b, g, e, h, m, k, f]
+        for x in nodes:
+            x.simple_splay()
+        pre = tuple(reversed("acbgehmkf"))
+        self.assertTrue(pre == f.preorder())
+        for x in nodes:
+            self.assertTrue(x.right is None)
+
+    def test_move_to_root(self):
+        """Test properties of move-to-root"""
+        k = Node("k")
+        g = k.left = Node("g");  g.parent = k
+        c = g.left = Node("c");  c.parent = g
+        a = c.left = Node("a");  a.parent = c
+        b = c.right = Node("b");  b.parent = c
+        h = g.right = Node("h");  h.parent = g
+        e = h.left = Node("e");  e.parent = h
+        m = h.right = Node("m");  m.parent = h
+        f = k.right = Node("f");  f.parent = k
+        m.move_to_root()
+        pre = tuple("mgcabhekf")
+        self.assertTrue(pre == m.preorder())
+        e.move_to_root()
+        pre = tuple("egcabmhkf")
+        self.assertTrue(pre == e.preorder())
+
+    def test_static(self):
+        """Ensure no-op does nodda."""
+        k = Node("k")
+        g = k.left = Node("g");  g.parent = k
+        c = g.left = Node("c");  c.parent = g
+        a = c.left = Node("a");  a.parent = c
+        b = c.right = Node("b");  b.parent = c
+        h = g.right = Node("h");  h.parent = g
+        e = h.left = Node("e");  e.parent = h
+        m = h.right = Node("m");  m.parent = h
+        f = k.right = Node("f");  f.parent = k
+        nodes = [a, b, c, f, e, g, h, m]
+        for x in nodes:
+            x.static()
+        pre = tuple("kgcabhemf")
+        self.assertTrue(pre == k.preorder())
+
 
 if __name__ == '__main__':
     unittest.main()
