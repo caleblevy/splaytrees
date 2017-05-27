@@ -402,6 +402,41 @@ class TestTree(unittest.TestCase):
         with self.assertRaises(TypeError):
             T = StaticTree(None)
 
+    def test_static_tree(self):
+        """Test no funny business with static search tree."""
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        T = StaticTree(k)
+        for x in T.inorder():
+            T.access(x)
+        encodings = ["000", "00", "001", "0", "010", "01", "011", "", "1"]
+
+    def test_splay_tree(self):
+        """Test splay is doing its thing."""
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        T = SplayTree(k)
+        T.access(a)
+        T.access(e)
+        T.access(b)
+        self.assertTrue(["000", "10110", "0110"] == T.path_encs)
+
+    def test_simple_splay(self):
+        """Test simple splay works as expected."""
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        T = SimpleSplay(k)
+        T.access(a)
+        T.access(e)
+        T.access(b)
+        self.assertTrue(["000", "10110", "0101"] == T.path_encs)
+
+    def test_move_to_root(self):
+        """Test move-to-root tree working."""
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        T = MoveToRoot(k)
+        T.access(m)
+        T.access(e)
+        T.access(h)
+        self.assertTrue(["011", "010", "10"] == T.path_encs)
+
 
 if __name__ == '__main__':
     unittest.main()
