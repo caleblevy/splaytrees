@@ -55,9 +55,26 @@ def bitrev(k):
 
 
 if __name__ == "__main__":
+    print("Basic\n-------")
     a = list("aihjgfclkendbpmoi")
     print(sum(wilber2(a)), sum(MRBound(a)), sum(SplayBound(a)))
-    for i in range(1, 10):
+    print("Complete BSTs\n---------------")
+    for i in range(1, 12):
+        b = list(complete_bst_preorder(i))
+        b_w = wilber2(b)
+        b_m = MRBound(b)
+        b_s = SplayBound(b)
+        print(len(b), sum(b_w), sum(b_m), sum(b_s))
+    print("Full Perms\n----------------")
+    for i in range(1, 7):
+        b = range(i*1000)
+        shuffle(b)
+        b_w = wilber2(b)
+        b_m = MRBound(b)
+        b_s = SplayBound(b)
+        print(i*1000, sum(b_w), sum(b_m), sum(b_s))
+    print("Split Up Perms\n-------------")
+    for i in range(1, 7):
         b = range(i*1000//4)*4
         shuffle(b)
         b_w = wilber2(b)
