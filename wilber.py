@@ -56,17 +56,11 @@ def bitrev(k):
 
 if __name__ == "__main__":
     a = list("aihjgfclkendbpmoi")
-    b = range(2000) + range(2000) + range(2000) + range(2000)
-    shuffle(b)
-    a_w = wilber2(a)
-    a_m = MRBound(a)
-    a_s = SplayBound(a)
-    b_w = wilber2(b)
-    b_m = MRBound(b)
-    b_s = SplayBound(b)
-    print(sum(a_w), sum(a_m), sum(a_s))
-    for w, m, s in zip(a_w, a_m, a_s):
-        print(max(w, m, s) - min(w, m, s))
-    print(sum(b_w), sum(b_m), sum(b_s))
-    for w, m, s in zip(b_w, b_m, b_s):
-        print(max(w, m, s) - min(w, m, s), min(w, m, s))
+    print(sum(wilber2(a)), sum(MRBound(a)), sum(SplayBound(a)))
+    for i in range(1, 10):
+        b = range(i*1000//4)*4
+        shuffle(b)
+        b_w = wilber2(b)
+        b_m = MRBound(b)
+        b_s = SplayBound(b)
+        print(i*1000, sum(b_w), sum(b_m), sum(b_s))
