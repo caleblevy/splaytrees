@@ -179,62 +179,7 @@ class Node(object):
         return
 
 
-class Tree(object):
-    """BST Template. To use properly, must inherit and set template algo."""
-
-    def __init__(T, root):
-        """Initialize from root node."""
-        if T._template_algo is None:
-            raise TypeError("Must instantiate tree subclass")
-        if not isinstance(root, Node):
-            raise TypeError("Root must be node.")
-        if root.parent is not None:
-            raise ValueError("Root must have no parent")
-        T.root = root
-        T.path_encs = []  # Encodings of all paths requested by "access."
-
-    def inorder(T):
-        """List nodes of T in symmetric order."""
-        return T.root.inorder()
-
-    def preorder(T):
-        """List nodes of T in preorder."""
-        return T.root.preorder()
-
-    def postorder(T):
-        """List nodes of T in postorder."""
-        return T.root.postorder()
-
-    _template_algo = None
-
-    def access(T, x):
-        """Access NODE x in T."""
-        T.path_encs.append(x.path_encoding())
-        T._template_algo(x)
-        T.root = x
-
-
-class StaticTree(Tree):
-    """Static BST which does not perform rotations on access."""
-    _template_algo = Node.static
-
-
-class SplayTree(Tree):
-    """A splay tree for recording binary encodings."""
-    _template_algo = Node.splay
-
-
-class SimpleSplay(Tree):
-    """A self-adjusting BST using the simple splaying heuristic."""
-    _template_algo = Node.simple_splay
-
-
-class MoveToRoot(Tree):
-    """Allan and Munro's move-to-root algorithm."""
-    _template_algo = Node.move_to_root
-
-
-def ZigZag_counts(X, treetype=MoveToRoot):
+def _ZigZag_counts(X, optype):
     """Record the encodings of move-to-root access sequence starting from right
     path."""
     keys = sorted(set(X))  # Elements
@@ -245,26 +190,28 @@ def ZigZag_counts(X, treetype=MoveToRoot):
         x.right = Node()
         x.right.parent = x
         x = x.right
-    T = treetype(root)
+    paths = []
     for k in X:
-        T.access(key_to_node[k])
-    counts = [1 + e.count("10") + e.count("01") for e in T.path_encs]
+        x = key_to_node[k]
+        paths.append(x.path_encoding())
+        optype(x)
+    counts = [1 + e.count("10") + e.count("01") for e in paths]
     return counts
 
 
 def MRBound(X):
     """Return Wilber's second lower bound as described by Kozma"""
-    return ZigZag_counts(X)
+    return _ZigZag_counts(X, Node.move_to_root)
 
 
 def SplayBound(X):
     """Return number of zig-zags on splay paths."""
-    return ZigZag_counts(X, SplayTree)
+    return _ZigZag_counts(X, Node.splay)
 
 
 def SimpleBound(X):
     """Return number of zig-zags on simple splay paths."""
-    return ZigZag_counts(X, SimpleSplay)
+    return ZigZag_counts(X, Node.simple_splay)
 
 
 def _test_tree():
@@ -421,54 +368,6 @@ class TestNode(unittest.TestCase):
         self.assertTrue("10111" == m.path_encoding())
         self.assertTrue("1" == k.path_encoding())
         self.assertTrue("11" == f.path_encoding())
-
-
-class TestTree(unittest.TestCase):
-
-    def test_init_errors(self):
-        """Make sure we can't make bad trees."""
-        [k, g, c, a, b, h, e, m, f] = _test_tree()
-        with self.assertRaises(TypeError):
-            T = Tree(k)
-        with self.assertRaises(ValueError):
-            T = StaticTree(c)
-        with self.assertRaises(TypeError):
-            T = StaticTree(None)
-
-    def test_static_tree(self):
-        """Test no funny business with static search tree."""
-        [k, g, c, a, b, h, e, m, f] = _test_tree()
-        T = StaticTree(k)
-        for x in T.inorder():
-            T.access(x)
-        encodings = ["000", "00", "001", "0", "010", "01", "011", "", "1"]
-
-    def test_splay_tree(self):
-        """Test splay is doing its thing."""
-        [k, g, c, a, b, h, e, m, f] = _test_tree()
-        T = SplayTree(k)
-        T.access(a)
-        T.access(e)
-        T.access(b)
-        self.assertTrue(["000", "10110", "0110"] == T.path_encs)
-
-    def test_simple_splay(self):
-        """Test simple splay works as expected."""
-        [k, g, c, a, b, h, e, m, f] = _test_tree()
-        T = SimpleSplay(k)
-        T.access(a)
-        T.access(e)
-        T.access(b)
-        self.assertTrue(["000", "10110", "0101"] == T.path_encs)
-
-    def test_move_to_root(self):
-        """Test move-to-root tree working."""
-        [k, g, c, a, b, h, e, m, f] = _test_tree()
-        T = MoveToRoot(k)
-        T.access(m)
-        T.access(e)
-        T.access(h)
-        self.assertTrue(["011", "010", "10"] == T.path_encs)
 
 
 if __name__ == '__main__':
