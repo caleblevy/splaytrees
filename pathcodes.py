@@ -178,6 +178,22 @@ class Node(object):
         """Operation of a static search tree."""
         return
 
+    def insert_left(x):
+        """Insert a node to the left of x."""
+        if x.left is not None:
+            raise ValueError("Node already has left child")
+        x.left = Node()
+        x.left.parent = x
+        return x.left
+
+    def insert_right(x):
+        """Insert node to right of x"""
+        if x.right is not None:
+            raise ValueError("Node already has right child.")
+        x.right = Node()
+        x.right.parent = x
+        return x.right
+
 
 def _ZigZag_counts(X, optype):
     """Record the encodings of move-to-root access sequence starting from right
@@ -187,9 +203,7 @@ def _ZigZag_counts(X, optype):
     key_to_node = {}
     for k in keys:
         key_to_node[k] = x
-        x.right = Node()
-        x.right.parent = x
-        x = x.right
+        x = x.insert_right()
     paths = []
     for k in X:
         x = key_to_node[k]
