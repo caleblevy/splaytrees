@@ -258,6 +258,7 @@ def _test_tree():
     f = k.insert_right()
     return [k, g, c, a, b, h, e, m, f]
 
+
 class TestNode(unittest.TestCase):
 
     def test_rotation(self):
