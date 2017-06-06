@@ -261,6 +261,24 @@ def _test_tree():
 
 class TestNode(unittest.TestCase):
 
+    def test_insert(self):
+        """Test insert methods work as expected."""
+        x = Node()
+        y = x.insert_right()
+        z = y.insert_left()
+        with self.assertRaises(ValueError):
+            x.insert_right()
+        with self.assertRaises(ValueError):
+            y.insert_left()
+        self.assertTrue(y.parent is x)
+        self.assertTrue(z.parent is y)
+        self.assertTrue(x.parent is None)
+        null_slots = [x.left, y.right, z.left, z.right]
+        for obj in null_slots:
+            self.assertFalse(isinstance(obj, Node))
+        self.assertTrue(x.right is y)
+        self.assertTrue(y.left is z)
+
     def test_rotation(self):
         """Test rotation properly changes parent pointers"""
         [k, g, c, a, b, h, e, m, f] = _test_tree()
