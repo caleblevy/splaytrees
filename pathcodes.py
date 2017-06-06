@@ -204,15 +204,22 @@ class Node(object):
         x.right.parent = x
         return x.right
 
-    def extend(x, enc):
-        """Extend x with given encoding."""
-        for b in enc:
+    def decode(x, e):
+        """Extend x with encoding e."""
+        for b in e:
             if b == '0':
-                x = x.insert_left()
+                if isinstance(x.left, Node):
+                    x = x.left
+                else:
+                    x = x.insert_left()
             elif b == '1':
-                x = x.insert_right()
+                if isinstance(x.right, Node):
+                    x = x.right
+                else:
+                    x = x.insert_right()
             else:
                 raise ValueError("Encoding must be binary")
+        return x
 
 
 def _ZigZag_counts(X, optype):
