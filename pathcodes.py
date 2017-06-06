@@ -223,6 +223,13 @@ class Node(object):
         return x
 
 
+# Methods extracted due to python wanting to create a wrapper around them
+splay = Node.splay
+simple_splay = Node.simple_splay
+move_to_root = Node.move_to_root
+static = Node.static
+
+
 class DecoderNode(Node):
     """BST Node which keeps track of initial tree as nodes are inserted."""
 
@@ -236,13 +243,6 @@ class DecoderNode(Node):
         r = Placeholder()
         x.right = x.right_init = r
         r.parent = r.parent_init = x
-
-
-# Methods extracted due to python wanting to create a wrapper around them
-splay = Node.splay
-simple_splay = Node.simple_splay
-move_to_root = Node.move_to_root
-static = Node.static
 
 
 ######################
@@ -288,7 +288,7 @@ def SimpleBound(X):
 
 def _decoder(encodings, optype):
     """Decoding list of binary path encodings using operation type."""
-    root = Node()
+    root = DecoderNode()
     nodes = []
     for e in encodings:
         x = root.decode(e)
@@ -326,32 +326,32 @@ def mr_decoder(encodings):
 # Tests #
 #########
 
-def _test_tree():
-    """Tree used for unit tests."""
-    #       k
-    #      /  \
-    #      g  f
-    #    /   \
-    #   c    h
-    #  / \   /\
-    # a   b e  m
-    k = Node()
-    g = k.insert_left()
-    c = g.insert_left()
-    a = c.insert_left()
-    b = c.insert_right()
-    h = g.insert_right()
-    e = h.insert_left()
-    m = h.insert_right()
-    f = k.insert_right()
-    return [k, g, c, a, b, h, e, m, f]
 
+class TestNodeBase(object):
 
-class TestNode(unittest.TestCase):
+    def _test_tree(self):
+        """Tree used for unit tests."""
+        #       k
+        #      /  \
+        #      g  f
+        #    /   \
+        #   c    h
+        #  / \   /\
+        # a   b e  m
+        k = self._Node()
+        g = k.insert_left()
+        c = g.insert_left()
+        a = c.insert_left()
+        b = c.insert_right()
+        h = g.insert_right()
+        e = h.insert_left()
+        m = h.insert_right()
+        f = k.insert_right()
+        return [k, g, c, a, b, h, e, m, f]
 
     def test_insert(self):
         """Test insert methods work as expected."""
-        x = Node()
+        x = self._Node()
         y = x.insert_right()
         z = y.insert_left()
         with self.assertRaises(ValueError):
@@ -369,7 +369,7 @@ class TestNode(unittest.TestCase):
 
     def test_rotation(self):
         """Test rotation properly changes parent pointers"""
-        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        [k, g, c, a, b, h, e, m, f] = self._test_tree()
         parent_pairs = [
             (g, k), (c, g), (a, c), (b, c), (h, g), (e, h), (m, h), (f, k)
         ]
@@ -399,7 +399,7 @@ class TestNode(unittest.TestCase):
 
     def test_inorder(self):
         """Test inorder traversal."""
-        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        [k, g, c, a, b, h, e, m, f] = self._test_tree()
         self.assertTrue((a, c, b, g, e, h, m, k, f) == k.inorder())
         a.rotate()
         self.assertTrue((a, c, b, g, e, h, m, k, f) == k.inorder())
@@ -408,7 +408,7 @@ class TestNode(unittest.TestCase):
 
     def test_preorder(self):
         """Test preorder traversal"""
-        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        [k, g, c, a, b, h, e, m, f] = self._test_tree()
         self.assertTrue((k, g, c, a, b, h, e, m, f) == k.preorder())
         a.rotate()
         self.assertTrue((k, g, a, c, b, h, e, m, f) == k.preorder())
@@ -417,7 +417,7 @@ class TestNode(unittest.TestCase):
 
     def test_postorder(self):
         """Test postorder traversal."""
-        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        [k, g, c, a, b, h, e, m, f] = self._test_tree()
         self.assertTrue((a, b, c, e, m, h, g, f, k) == k.postorder())
         a.rotate()
         self.assertTrue((b, c, a, e, m, h, g, f, k) == k.postorder())
@@ -426,7 +426,7 @@ class TestNode(unittest.TestCase):
 
     def test_splay(self):
         """Test the splay method works."""
-        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        [k, g, c, a, b, h, e, m, f] = self._test_tree()
         a.splay()
         self.assertTrue((a, k, c, g, b, h, e, m, f) == a.preorder())
         e.splay()
@@ -445,7 +445,7 @@ class TestNode(unittest.TestCase):
 
     def test_simple_splay(self):
         """Test simple splay method works."""
-        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        [k, g, c, a, b, h, e, m, f] = self._test_tree()
         a.simple_splay()
         self.assertTrue((a, k, c, g, b, h, e, m, f) == a.preorder())
         e.simple_splay()
@@ -465,7 +465,7 @@ class TestNode(unittest.TestCase):
 
     def test_move_to_root(self):
         """Test properties of move-to-root"""
-        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        [k, g, c, a, b, h, e, m, f] = self._test_tree()
         m.move_to_root()
         self.assertTrue((m, g, c, a, b, h, e, k, f) == m.preorder())
         e.move_to_root()
@@ -473,7 +473,7 @@ class TestNode(unittest.TestCase):
 
     def test_static(self):
         """Ensure no-op does nodda."""
-        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        [k, g, c, a, b, h, e, m, f] = self._test_tree()
         nodes = [a, b, c, f, e, g, h, m]
         for x in nodes:
             x.static()
@@ -481,7 +481,7 @@ class TestNode(unittest.TestCase):
 
     def test_encoding(self):
         """Ensure encodings of node paths are correct."""
-        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        [k, g, c, a, b, h, e, m, f] = self._test_tree()
         self.assertTrue("000" == a.encoding())
         self.assertTrue("00" == c.encoding())
         self.assertTrue("001" == b.encoding())
@@ -504,7 +504,7 @@ class TestNode(unittest.TestCase):
 
     def test_decoder(self):
         """Ensure path decodes and inserts work appropriately."""
-        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        [k, g, c, a, b, h, e, m, f] = self._test_tree()
         self.assertTrue(k is k.decode(""))
         self.assertTrue(k is not k.decode("1"))
         self.assertTrue(k.decode("00000") is a.left.left)
@@ -516,6 +516,17 @@ class TestNode(unittest.TestCase):
         self.assertTrue(len(k.inorder()) == 13)
         with self.assertRaises(ValueError):
             k.decode("1011b")
+
+
+class TestNode(unittest.TestCase, TestNodeBase):
+    """Test basic node."""
+    _Node = staticmethod(Node)
+
+
+class TestPlace(unittest.TestCase, TestNodeBase):
+    """Test decoder nodes."""
+
+    _Node = DecoderNode
 
 
 class TestDecoder(unittest.TestCase):
