@@ -238,6 +238,10 @@ def SimpleBound(X):
     return ZigZag_counts(X, Node.simple_splay)
 
 
+def decode(encodings, optype):
+    """Decoding list of binary path encodings using operation type."""
+
+
 def _test_tree():
     """Tree used for unit tests."""
     #       k
