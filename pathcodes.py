@@ -306,6 +306,10 @@ def mr_decoder(encodings):
     return _decoder(encodings, move_to_root)
 
 
+#########
+# Tests #
+#########
+
 def _test_tree():
     """Tree used for unit tests."""
     #       k
