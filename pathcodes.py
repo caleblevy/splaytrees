@@ -198,10 +198,10 @@ class Node(object):
         x_init = p.parent_init
         y = Node()
         y.parent_init = x_init
-        if p is x_init.left:
-            x_init.left = y
+        if p is x_init.left_init:
+            x_init.left_init = y
         else:
-            x_init.right = y
+            x_init.right_init = y
         x.left = y
         y.parent = x
         return y
@@ -214,10 +214,10 @@ class Node(object):
         x_init = p.parent_init
         y = Node()
         y.parent_init = x_init
-        if p is x_init.left:
-            x_init.left = y
+        if p is x_init.left_init:
+            x_init.left_init = y
         else:
-            x_init.right = y
+            x_init.right_init = y
         x.right = y
         y.parent = x
         return y
@@ -244,6 +244,15 @@ class Node(object):
         while x.parent is not None:
             x = x.parent
         return x
+
+    def reset(x):
+        """Reset the tree containing x to its initial state."""
+        r = x.root()
+        for node in r.inorder():
+            node.parent = node.parent_init
+            node.left = node.left_init
+            node.right = node.right_init
+        return r.root()
 
 
 # Methods extracted due to python wanting to create a wrapper around them
@@ -534,6 +543,17 @@ class TestNode(unittest.TestCase):
         a.splay()
         for x in nodes:
             self.assertTrue(x.root() is a)
+
+    def test_reset(self):
+        """Test tree is properly reset"""
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        orig = k.preorder()
+        k.reset()
+        self.assertTrue(k.preorder() == orig)
+        a.splay()
+        self.assertFalse(k.preorder() == orig)
+        a.reset()
+        self.assertTrue(k.preorder() == orig)
 
 
 class TestDecoder(unittest.TestCase):
