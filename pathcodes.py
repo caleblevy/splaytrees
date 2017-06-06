@@ -199,10 +199,20 @@ class Node(object):
     def insert_right(x):
         """Insert node to right of x"""
         if x.right is not None:
-            raise ValueError("Node already has right child.")
+            raise ValueError("Node already has right child")
         x.right = Node()
         x.right.parent = x
         return x.right
+
+    def extend(x, enc):
+        """Extend x with given encoding."""
+        for b in enc:
+            if b == '0':
+                x = x.insert_left()
+            elif b == '1':
+                x = x.insert_right()
+            else:
+                raise ValueError("Encoding must be binary")
 
 
 def _ZigZag_counts(X, optype):
@@ -238,8 +248,39 @@ def SimpleBound(X):
     return ZigZag_counts(X, Node.simple_splay)
 
 
-def decode(encodings, optype):
+def _decoder(encodings, optype):
     """Decoding list of binary path encodings using operation type."""
+    root = Node()
+    nodes = []
+    for e in encodings:
+        x = root.decode(e)
+        optype(x)
+        if optype is not Node.static:
+            root = x
+        nodes.append(x)
+    node_to_key = {}
+    for k, x in enumerate(root.inorder(), start=1):
+        node_to_key[x] = k
+    return tuple(map(node_to_key.__getitem__, nodes))
+
+
+def static_docoder(encodings):
+    """Decode the items requested from static tree."""
+    return _decoder(encodings, Node.static)
+
+
+def simple_decoder(encodings):
+    """Decode the items requested from simple splay using the binary paths."""
+    return _decoder(encodings, Node.simple_splay)
+
+
+def splay_decoder(encodings):
+    """Decode the items requested of splay using the binary paths."""
+    return _decoder(encodings, Node.splay)
+
+
+def mr_decoder(encodings):
+    """Decode the items requested of move-to-root using the binary paths."""
 
 
 def _test_tree():
