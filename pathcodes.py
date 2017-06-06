@@ -22,14 +22,16 @@ class Placeholder(object):
 
 
 class Node(object):
-    """BST node with parents."""
+    """BST Node which keeps track of initial tree as nodes are inserted."""
 
-    __slots__ = ("parent", "left", "right")
+    __slots__ = ("parent", "left", "right",
+                 "parent_init", "left_init", "right_init")
 
     def __init__(x):
-        x.parent = None
-        x.left = None
-        x.right = None
+        x.parent = x.parent_init = None
+        x.left = x.left_init = Placeholder()
+        x.right = x.right_init = Placeholder()
+        x.left.parent_init = x.right.parent_init = x
 
     def rotate(x):
         """Rotate the edge between x and its parent."""
@@ -226,21 +228,6 @@ class Node(object):
         while x.parent is not None:
             x = x.parent
         return x
-
-
-class DecoderNode(Node):
-    """BST Node which keeps track of initial tree as nodes are inserted."""
-
-    __slots__ = ("parent_init", "left_init", "right_init")
-
-    def __init__(x):
-        x.parent = x.parent_init = None
-        x.left = x.left_init = Placeholder()
-        x.right = x.right_init = Placeholder()
-        x.left.parent_init = x.right.parent_init = x
-
-
-a = DecoderNode()
 
 
 # Methods extracted due to python wanting to create a wrapper around them
