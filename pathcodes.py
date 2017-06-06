@@ -12,6 +12,16 @@ def tuplemaker(generator):
     return tupler
 
 
+class Placeholder(object):
+    """Slot for a null node, allowing them to be linked together."""
+
+    __slots__ = ("parent", "dual")
+
+    def __init__(x):
+        x.parent = None
+        x.dual = None
+
+
 class Node(object):
     """BST node with parents."""
 
