@@ -304,7 +304,8 @@ class TestNode(unittest.TestCase):
         self.assertTrue(g.right is e)
         self.assertTrue(g.left is a)
         # Reverse these rotations
-        c.rotate();  g.rotate()
+        c.rotate()
+        g.rotate()
         for x, y in parent_pairs:
             self.assertTrue(x.parent is y)
 
