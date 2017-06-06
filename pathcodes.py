@@ -221,6 +221,12 @@ class Node(object):
                 raise ValueError("Encoding must be binary")
         return x
 
+    def root(x):
+        """Return the root of x."""
+        while x.parent is not None:
+            x = x.parent
+        return x
+
 
 class DecoderNode(Node):
     """BST Node which keeps track of initial tree as nodes are inserted."""
@@ -515,6 +521,16 @@ class TestNode(unittest.TestCase):
         self.assertTrue(len(k.inorder()) == 13)
         with self.assertRaises(ValueError):
             k.decode("1011b")
+
+    def test_root(self):
+        """Ensure we return the proper root."""
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        nodes = k.inorder()
+        for x in nodes:
+            self.assertTrue(x.root() is k)
+        a.splay()
+        for x in nodes:
+            self.assertTrue(x.root() is a)
 
 
 class TestDecoder(unittest.TestCase):
