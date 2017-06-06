@@ -15,7 +15,7 @@ def tuplemaker(generator):
 class Placeholder(object):
     """Slot for a null node, allowing them to be linked together."""
 
-    __slots__ = ("parent", "dual")
+    __slots__ = ("parent", "parent_init")
 
     def __init__(x):
         x.parent = None
@@ -221,6 +221,21 @@ class Node(object):
             else:
                 raise ValueError("Encoding must be binary")
         return x
+
+
+class DecoderNode(Node):
+    """BST Node which keeps track of initial tree as nodes are inserted."""
+
+    __slots__ = ("parent_init", "left_init", "right_init")
+
+    def __init__(x):
+        x.parent = None
+        l = Placeholder()
+        x.left = x.left_init = l
+        l.parent = l.parent_init = x
+        r = Placeholder()
+        x.right = x.right_init = r
+        r.parent = r.parent_init = x
 
 
 # Methods extracted due to python wanting to create a wrapper around them
@@ -512,6 +527,11 @@ class TestDecoder(unittest.TestCase):
         self.assertTrue(tuple(range(1, 10)) == static_decoder(standard_tree))
         lr = ("0", "1", "0", "1", "", "0", "1", "1", "0", "0")
         self.assertTrue((1, 3, 1, 3, 2, 1, 3, 3, 1, 1) == static_decoder(lr))
+
+    def test_splay_decoder(self):
+        """Test that splaying works properly."""
+        lr = ("0", "1", "0", "1", "", "0", "1", "1", "0", "0")
+        self.assertTrue((1, 2, 1, 2, 2, 1, 2, 3, 2, 1) == splay_decoder(lr))
 
 
 if __name__ == '__main__':
