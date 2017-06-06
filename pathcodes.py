@@ -363,7 +363,7 @@ class TestNode(unittest.TestCase):
         self.assertTrue(g.left is a)
         self.assertTrue(c.parent is a)
         self.assertTrue(a.parent is g)
-        self.assertTrue(a.left is None)
+        self.assertFalse(isinstance(a.left, Node))
         self.assertTrue(a.right is c)
         h.rotate()
         self.assertTrue(h.parent is k)
@@ -422,7 +422,7 @@ class TestNode(unittest.TestCase):
             x.splay()
         self.assertTrue((f, k, m, h, e, g, b, c, a) == f.preorder())
         for x in nodes:
-            self.assertTrue(x.right is None)
+            self.assertFalse(isinstance(x.right, Node))
         # Test simple splay zig-zag.
         a.splay()
         b.splay()
@@ -446,7 +446,7 @@ class TestNode(unittest.TestCase):
             x.simple_splay()
         self.assertTrue((f, k, m, h, e, g, b, c, a) == f.preorder())
         for x in nodes:
-            self.assertTrue(x.right is None)
+            self.assertFalse(isinstance(x.right, Node))
 
     def test_move_to_root(self):
         """Test properties of move-to-root"""
@@ -495,7 +495,7 @@ class TestNode(unittest.TestCase):
         self.assertTrue(k.decode("00000") is a.left.left)
         self.assertTrue(f.decode("10") is k.right.right.left)
         self.assertTrue(b is g.decode("01"))
-        self.assertTrue(b.left is b.right is None)
+        self.assertTrue(type(b.left) is type(b.right) is not Node)
         self.assertTrue(a.left.left.parent.parent is a)
         # Test extra nodes not being inserted
         self.assertTrue(len(k.inorder()) == 13)
