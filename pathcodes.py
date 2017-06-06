@@ -222,6 +222,17 @@ class Node(object):
         return x
 
 
+# Methods extracted due to python wanting to create a wrapper around them
+splay = Node.splay
+simple_splay = Node.simple_splay
+move_to_root = Node.move_to_root
+static = Node.static
+
+
+######################
+# The Zig-Zag Bounds #
+######################
+
 def _ZigZag_counts(X, optype):
     """Record the encodings of move-to-root access sequence starting from right
     path."""
@@ -242,18 +253,22 @@ def _ZigZag_counts(X, optype):
 
 def MRBound(X):
     """Return Wilber's second lower bound as described by Kozma"""
-    return _ZigZag_counts(X, Node.move_to_root)
+    return _ZigZag_counts(X, move_to_root)
 
 
 def SplayBound(X):
     """Return number of zig-zags on splay paths."""
-    return _ZigZag_counts(X, Node.splay)
+    return _ZigZag_counts(X, splay)
 
 
 def SimpleBound(X):
     """Return number of zig-zags on simple splay paths."""
-    return ZigZag_counts(X, Node.simple_splay)
+    return ZigZag_counts(X, simple_splay)
 
+
+############
+# Decoders #
+############
 
 def _decoder(encodings, optype):
     """Decoding list of binary path encodings using operation type."""
@@ -262,7 +277,7 @@ def _decoder(encodings, optype):
     for e in encodings:
         x = root.decode(e)
         optype(x)
-        if optype is not Node.static:
+        if optype is not static:
             root = x
         nodes.append(x)
     node_to_key = {}
@@ -271,24 +286,24 @@ def _decoder(encodings, optype):
     return tuple(map(node_to_key.__getitem__, nodes))
 
 
-def static_docoder(encodings):
+def static_decoder(encodings):
     """Decode the items requested from static tree."""
-    return _decoder(encodings, Node.static)
+    return _decoder(encodings, static)
 
 
 def simple_decoder(encodings):
     """Decode the items requested from simple splay using the binary paths."""
-    return _decoder(encodings, Node.simple_splay)
+    return _decoder(encodings, simple_splay)
 
 
 def splay_decoder(encodings):
     """Decode the items requested of splay using the binary paths."""
-    return _decoder(encodings, Node.splay)
+    return _decoder(encodings, splay)
 
 
 def mr_decoder(encodings):
     """Decode the items requested of move-to-root using the binary paths."""
-    return _decoder(encodings, Node.move_to_root)
+    return _decoder(encodings, move_to_root)
 
 
 def _test_tree():
@@ -476,8 +491,22 @@ class TestNode(unittest.TestCase):
         self.assertTrue(f.decode("10") is k.right.right.left)
         self.assertTrue(b is g.decode("01"))
         self.assertTrue(b.left is b.right is None)
+        self.assertTrue(a.left.left.parent.parent is a)
+        # Test extra nodes not being inserted
+        self.assertTrue(len(k.inorder()) == 13)
         with self.assertRaises(ValueError):
             k.decode("1011b")
+
+
+class TestDecoder(unittest.TestCase):
+    """Test the various methods of decoding."""
+
+    def test_staic_decoder(self):
+        """Test tree that does not change between calls."""
+        standard_tree = ["000", "00", "001", "0", "010", "01", "011", "", "1"]
+        self.assertTrue(tuple(range(1, 10)) == static_decoder(standard_tree))
+        lr = ("0", "1", "0", "1", "", "0", "1", "1", "0", "0")
+        self.assertTrue((1, 3, 1, 3, 2, 1, 3, 3, 1, 1) == static_decoder(lr))
 
 
 if __name__ == '__main__':
