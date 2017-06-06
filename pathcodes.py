@@ -29,10 +29,8 @@ class Node(object):
 
     def __init__(x):
         x.parent = None
-        x.left = Placeholder()
-        x.left.parent = x
-        x.right = Placeholder()
-        x.right.parent = x
+        x.left = None
+        x.right = None
 
     def rotate(x):
         """Rotate the edge between x and its parent."""
@@ -45,7 +43,8 @@ class Node(object):
             # Shift around subtree
             B = x.right
             y.left = B
-            B.parent = y
+            if B is not None:
+                B.parent = y
             # Switch up parent pointers
             z = y.parent
             x.parent = z
@@ -59,7 +58,8 @@ class Node(object):
         else:  # y is x.right
             B = y.left
             x.right = B
-            B.parent = x
+            if B is not None:
+                B.parent = x
             # Switch up parent pointers
             z = x.parent
             y.parent = z
@@ -77,7 +77,7 @@ class Node(object):
         stack = []
         while True:
             # Reach left most node of current's subtree
-            if not isinstance(x, Placeholder):
+            if x is not None:
                 # Place pointer to a tree node on the stack before traversing
                 # left subtree.
                 stack.append(x)
@@ -99,7 +99,7 @@ class Node(object):
         """Traverse subtree rooted at x inorder."""
         stack = []
         while True:
-            if not isinstance(x, Placeholder):
+            if x is not None:
                 yield x
                 stack.append(x)
                 x = x.left
@@ -119,9 +119,9 @@ class Node(object):
             x = s1.pop()
             s2.append(x)
             # push left and right children of removed item to s1
-            if not isinstance(x.left, Placeholder):
+            if x.left is not None:
                 s1.append(x.left)
-            if not isinstance(x.right, Placeholder):
+            if x.right is not None:
                 s1.append(x.right)
             # gives us a "reverse" postorder
         while s2:
@@ -258,7 +258,6 @@ def _test_tree():
     f = k.right = Node();  f.parent = k
     return [k, g, c, a, b, h, e, m, f]
 
-
 class TestNode(unittest.TestCase):
 
     def test_rotation(self):
@@ -272,7 +271,7 @@ class TestNode(unittest.TestCase):
         self.assertTrue(g.left is a)
         self.assertTrue(c.parent is a)
         self.assertTrue(a.parent is g)
-        self.assertTrue(isinstance(a.left, Placeholder))
+        self.assertTrue(a.left is None)
         self.assertTrue(a.right is c)
         h.rotate()
         self.assertTrue(h.parent is k)
@@ -330,14 +329,13 @@ class TestNode(unittest.TestCase):
             x.splay()
         self.assertTrue((f, k, m, h, e, g, b, c, a) == f.preorder())
         for x in nodes:
-            self.assertTrue(isinstance(x.right, Placeholder))
+            self.assertTrue(x.right is None)
         # Test simple splay zig-zag.
         a.splay()
         b.splay()
         self.assertTrue((b, a, c, h, g, e, k, m, f) == b.preorder())
 
     def test_simple_splay(self):
-        """Test simple splay method works"""
         [k, g, c, a, b, h, e, m, f] = _test_tree()
         a.simple_splay()
         self.assertTrue((a, k, c, g, b, h, e, m, f) == a.preorder())
@@ -354,7 +352,7 @@ class TestNode(unittest.TestCase):
             x.simple_splay()
         self.assertTrue((f, k, m, h, e, g, b, c, a) == f.preorder())
         for x in nodes:
-            self.assertTrue(isinstance(x.right, Placeholder))
+            self.assertTrue(x.right is None)
 
     def test_move_to_root(self):
         """Test properties of move-to-root"""
