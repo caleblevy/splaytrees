@@ -15,11 +15,10 @@ def tuplemaker(generator):
 class Placeholder(object):
     """Slot for a null node, allowing them to be linked together."""
 
-    __slots__ = ("parent", "parent_init")
+    __slots__ = ("parent_init")
 
-    def __init__(x):
-        x.parent = None
-        x.parent_init = None
+    def __init__(p):
+        p.parent_init = None
 
 
 class Node(object):
@@ -229,13 +228,13 @@ class DecoderNode(Node):
     __slots__ = ("parent_init", "left_init", "right_init")
 
     def __init__(x):
-        x.parent = None
-        l = Placeholder()
-        x.left = x.left_init = l
-        l.parent = l.parent_init = x
-        r = Placeholder()
-        x.right = x.right_init = r
-        r.parent = r.parent_init = x
+        x.parent = x.parent_init = None
+        x.left = x.left_init = Placeholder()
+        x.right = x.right_init = Placeholder()
+        x.left.parent_init = x.right.parent_init = x
+
+
+a = DecoderNode()
 
 
 # Methods extracted due to python wanting to create a wrapper around them
