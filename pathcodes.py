@@ -248,14 +248,14 @@ def _test_tree():
     #  / \   /\
     # a   b e  m
     k = Node()
-    g = k.left = Node();  g.parent = k
-    c = g.left = Node();  c.parent = g
-    a = c.left = Node();  a.parent = c
-    b = c.right = Node();  b.parent = c
-    h = g.right = Node();  h.parent = g
-    e = h.left = Node();  e.parent = h
-    m = h.right = Node();  m.parent = h
-    f = k.right = Node();  f.parent = k
+    g = k.insert_left()
+    c = g.insert_left()
+    a = c.insert_left()
+    b = c.insert_right()
+    h = g.insert_right()
+    e = h.insert_left()
+    m = h.insert_right()
+    f = k.insert_right()
     return [k, g, c, a, b, h, e, m, f]
 
 class TestNode(unittest.TestCase):
