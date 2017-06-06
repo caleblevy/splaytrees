@@ -19,7 +19,7 @@ class Placeholder(object):
 
     def __init__(x):
         x.parent = None
-        x.dual = None
+        x.parent_init = None
 
 
 class Node(object):
@@ -43,11 +43,12 @@ class Node(object):
             # Shift around subtree
             B = x.right
             y.left = B
-            if B is not None:
+            if hasattr(B, "parent"):
                 B.parent = y
             # Switch up parent pointers
             z = y.parent
             x.parent = z
+            # y is the root
             if z is not None:
                 if y is z.right:
                     z.right = x
@@ -58,7 +59,7 @@ class Node(object):
         else:  # y is x.right
             B = y.left
             x.right = B
-            if B is not None:
+            if hasattr(B, "parent"):
                 B.parent = x
             # Switch up parent pointers
             z = x.parent
@@ -77,7 +78,7 @@ class Node(object):
         stack = []
         while True:
             # Reach left most node of current's subtree
-            if x is not None:
+            if isinstance(x, Node):
                 # Place pointer to a tree node on the stack before traversing
                 # left subtree.
                 stack.append(x)
@@ -99,7 +100,7 @@ class Node(object):
         """Traverse subtree rooted at x inorder."""
         stack = []
         while True:
-            if x is not None:
+            if isinstance(x, Node):
                 yield x
                 stack.append(x)
                 x = x.left
@@ -119,9 +120,9 @@ class Node(object):
             x = s1.pop()
             s2.append(x)
             # push left and right children of removed item to s1
-            if x.left is not None:
+            if isinstance(x.left, Node):
                 s1.append(x.left)
-            if x.right is not None:
+            if isinstance(x.right, Node):
                 s1.append(x.right)
             # gives us a "reverse" postorder
         while s2:
@@ -190,7 +191,7 @@ class Node(object):
 
     def insert_left(x):
         """Insert a node to the left of x."""
-        if x.left is not None:
+        if isinstance(x.left, Node):
             raise ValueError("Node already has left child")
         x.left = Node()
         x.left.parent = x
@@ -198,7 +199,7 @@ class Node(object):
 
     def insert_right(x):
         """Insert node to right of x"""
-        if x.right is not None:
+        if isinstance(x.right, Node):
             raise ValueError("Node already has right child")
         x.right = Node()
         x.right.parent = x
