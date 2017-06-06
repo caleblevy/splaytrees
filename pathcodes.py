@@ -44,7 +44,7 @@ class Node(object):
             # Shift around subtree
             B = x.right
             y.left = B
-            if hasattr(B, "parent"):
+            if isinstance(B, Node):
                 B.parent = y
             # Switch up parent pointers
             z = y.parent
@@ -60,7 +60,7 @@ class Node(object):
         else:  # y is x.right
             B = y.left
             x.right = B
-            if hasattr(B, "parent"):
+            if isinstance(B, Node):
                 B.parent = x
             # Switch up parent pointers
             z = x.parent
