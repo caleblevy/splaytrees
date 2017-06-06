@@ -194,17 +194,33 @@ class Node(object):
         """Insert a node to the left of x."""
         if isinstance(x.left, Node):
             raise ValueError("Node already has left child")
-        x.left = Node()
-        x.left.parent = x
-        return x.left
+        p = x.left
+        x_init = p.parent_init
+        y = Node()
+        y.parent_init = x_init
+        if p is x_init.left:
+            x_init.left = y
+        else:
+            x_init.right = y
+        x.left = y
+        y.parent = x
+        return y
 
     def insert_right(x):
         """Insert node to right of x"""
         if isinstance(x.right, Node):
             raise ValueError("Node already has right child")
-        x.right = Node()
-        x.right.parent = x
-        return x.right
+        p = x.right
+        x_init = p.parent_init
+        y = Node()
+        y.parent_init = x_init
+        if p is x_init.left:
+            x_init.left = y
+        else:
+            x_init.right = y
+        x.right = y
+        y.parent = x
+        return y
 
     def decode(x, e):
         """Extend x with encoding e."""
