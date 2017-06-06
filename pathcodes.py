@@ -336,6 +336,7 @@ class TestNode(unittest.TestCase):
         self.assertTrue((b, a, c, h, g, e, k, m, f) == b.preorder())
 
     def test_simple_splay(self):
+        """Test simple splay method works."""
         [k, g, c, a, b, h, e, m, f] = _test_tree()
         a.simple_splay()
         self.assertTrue((a, k, c, g, b, h, e, m, f) == a.preorder())
