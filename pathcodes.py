@@ -254,6 +254,13 @@ class Node(object):
             node.right = node.right_init
         return r.root()
 
+    def node_to_key(x):
+        """Return a map mapping nodes to keys."""
+        d = {}
+        for k, x in enumerate(x.inorder(), start=1):
+            d[x] = k
+        return d
+
 
 # Methods extracted due to python wanting to create a wrapper around them
 splay = Node.splay
@@ -564,6 +571,18 @@ class TestNode(unittest.TestCase):
         i = d.decode("0111010")
         i.reset()
         self.assertTrue("10101010" == i.encoding())
+
+    def test_node_to_key(self):
+        """Make sure node-to-key works properly."""
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        f_map = f.node_to_key()
+        self.assertTrue(len(f_map) == 1)
+        self.assertTrue(f_map[f] == 1)
+        ntk = k.node_to_key()
+        map1 = [ntk[x] for x in k.inorder()]
+        a.splay()
+        map2 = [ntk[x] for x in a.inorder()]
+        self.assertTrue(range(1, 10) == map1 == map2)
 
 
 class TestDecoder(unittest.TestCase):
