@@ -261,7 +261,6 @@ class Node(object):
             d[x] = k
         return d
 
-
 # Methods extracted due to python wanting to create a wrapper around them
 splay = Node.splay
 simple_splay = Node.simple_splay
@@ -303,7 +302,7 @@ def SplayBound(X):
 
 def SimpleBound(X):
     """Return number of zig-zags on simple splay paths."""
-    return ZigZag_counts(X, simple_splay)
+    return _ZigZag_counts(X, simple_splay)
 
 
 ############
