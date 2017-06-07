@@ -261,6 +261,14 @@ class Node(object):
             d[x] = k
         return d
 
+    def key_to_node(x):
+        """Return mapping of key to node."""
+        d = {}
+        for k, x in enumerate(x.inorder(), start=1):
+            d[k] = x
+        return d
+
+
 # Methods extracted due to python wanting to create a wrapper around them
 splay = Node.splay
 simple_splay = Node.simple_splay
@@ -582,6 +590,19 @@ class TestNode(unittest.TestCase):
         a.splay()
         map2 = [ntk[x] for x in a.inorder()]
         self.assertTrue(range(1, 10) == map1 == map2)
+
+    def test_key_to_node(self):
+        """Make sure key-to-node works properly."""
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        f_map = f.key_to_node()
+        self.assertTrue(len(f_map) == 1)
+        self.assertTrue(f_map[1] == f)
+        ktn1 = k.key_to_node()
+        map1 = [ktn1[i] for i in range(1, 10)]
+        a.splay()
+        ktn2 = a.key_to_node()
+        map2 = [ktn2[i] for i in range(1, 10)]
+        self.assertTrue(list(a.inorder()) == map1 == map2)
 
 
 class TestDecoder(unittest.TestCase):
