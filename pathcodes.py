@@ -549,11 +549,21 @@ class TestNode(unittest.TestCase):
         [k, g, c, a, b, h, e, m, f] = _test_tree()
         orig = k.preorder()
         k.reset()
-        self.assertTrue(k.preorder() == orig)
+        self.assertTrue(orig == k.preorder())
         a.splay()
-        self.assertFalse(k.preorder() == orig)
+        self.assertFalse(orig == k.preorder())
         a.reset()
-        self.assertTrue(k.preorder() == orig)
+        self.assertTrue(orig == k.preorder())
+        for x in k.inorder():
+            x.splay()
+        x.reset()
+        self.assertTrue(orig == k.preorder())
+        r = Node()
+        d = r.decode("101")
+        d.splay()
+        i = d.decode("0111010")
+        i.reset()
+        self.assertTrue("10101010" == i.encoding())
 
 
 class TestDecoder(unittest.TestCase):
