@@ -268,6 +268,27 @@ class Node(object):
             d[k] = x
         return d
 
+    def numbered_preorder(x):
+        """Assign numbers to preorder."""
+        return tuple(map(x.node_to_key().__getitem__, x.preorder()))
+
+    def is_isomorphic_to(x, y):
+        """Determine whether x and y have the same preorders."""
+        return x.numbered_preorder() == y.numbered_preorder()
+
+    @classmethod
+    def from_cursor(cls, movements):
+        """Reconstruct tree from cursor movements: left, right, parent."""
+        x = cls()
+        for m in movements:
+            if m == 'l':
+                x = x.insert_left()
+            elif m == 'r':
+                x = x.insert_right()
+            elif x == 'p':
+                x = x.parent
+        return x.root()  # Allow not to finish.
+
 
 # Methods extracted due to python wanting to create a wrapper around them
 splay = Node.splay
