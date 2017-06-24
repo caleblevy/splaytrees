@@ -625,6 +625,11 @@ class TestNode(unittest.TestCase):
         map2 = [ktn2[i] for i in range(1, 10)]
         self.assertTrue(list(a.inorder()) == map1 == map2)
 
+    def test_numbered_preorder(self):
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        self.assertTrue((1, ) == f.numbered_preorder())
+        self.assertTrue((5, 4, 3, 1, 2, ))
+
 
 class TestDecoder(unittest.TestCase):
     """Test the various methods of decoding."""
