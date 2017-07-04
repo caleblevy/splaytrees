@@ -4,12 +4,14 @@ import functools
 import unittest
 
 
-def tuplemaker(generator):
-    """Make generator function return tuple containing its output."""
-    @functools.wraps(generator)
-    def tupler(*args, **kwargs):
-        return tuple(generator(*args, **kwargs))
-    return tupler
+def maker(sequence_type):
+    """Turn a generator into a specified type of sequence."""
+    def outputter(generator):
+        @functools.wraps(generator)
+        def tupler(*args, **kwargs):
+            return sequence_type(generator(*args, **kwargs))
+        return tupler
+    return outputter
 
 
 class Placeholder(object):
@@ -73,7 +75,7 @@ class Node(object):
             y.left = x
             x.parent = y
 
-    @tuplemaker
+    @maker(tuple)
     def inorder(x):
         """Traverse subtree rooted at x inorder."""
         stack = []
@@ -96,7 +98,7 @@ class Node(object):
                 else:
                     break
 
-    @tuplemaker
+    @maker(tuple)
     def preorder(x):
         """Traverse subtree rooted at x inorder."""
         stack = []
@@ -112,7 +114,7 @@ class Node(object):
                 else:
                     break
 
-    @tuplemaker
+    @maker(tuple)
     def postorder(x):
         """Return postorder of subtree rooted at x."""
         s1 = [x]
