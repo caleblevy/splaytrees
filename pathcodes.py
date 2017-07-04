@@ -4,13 +4,13 @@ import functools
 import unittest
 
 
-def maker(sequence_type):
+def maker(maptype):
     """Turn a generator into a specified type of sequence."""
     def outputter(generator):
         @functools.wraps(generator)
-        def tupler(*args, **kwargs):
-            return sequence_type(generator(*args, **kwargs))
-        return tupler
+        def mapper(*args, **kwargs):
+            return maptype(generator(*args, **kwargs))
+        return mapper
     return outputter
 
 
