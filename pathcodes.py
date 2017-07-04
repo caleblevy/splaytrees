@@ -660,7 +660,7 @@ class TestNode(unittest.TestCase):
         map1 = [ntk[x] for x in k.inorder()]
         a.splay()
         map2 = [ntk[x] for x in a.inorder()]
-        self.assertTrue(range(1, 10) == map1 == map2)
+        self.assertTrue(list(range(1, 10)) == list(map1) == list(map2))
 
     def test_key_to_node(self):
         """Make sure key-to-node works properly."""
