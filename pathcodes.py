@@ -320,6 +320,7 @@ class Node(object):
                 raise ValueError("Expected move to left, right, or parent")
         return x.root()  # Allow not to finish.
 
+    @maker(''.join)
     def cursor(x):
         """Generate cursor movements."""
         z = x.parent
@@ -340,7 +341,7 @@ class Node(object):
 
 
 r = Node().decode("110110110").root()
-print(list(r.cursor()))
+print(r.cursor())
 print(list(Node().cursor()))
 print(Node.from_cursor(r.cursor()).is_isomorphic_to(r))
 
