@@ -182,20 +182,25 @@ class Node(object):
         """Proper bottom-up splay to the top."""
         while x.parent is not None:
             x._splay_step()
+        return x
 
     def simple_splay(x):
         """Proper bottom-up simple splay to the top."""
         while x.parent is not None:
             x._simple_splay_step()
+        return x
 
     def move_to_root(x):
         """Move straight to the root."""
         while x.parent is not None:
             x.rotate()
+        return x
 
     def static(x):
         """Operation of a static search tree."""
-        return
+        while x.parent is not None:
+            x = x.parent
+        return x
 
     def insert_left(x):
         """Insert a node to the left of x."""
