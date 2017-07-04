@@ -308,6 +308,7 @@ class Node(object):
     @classmethod
     def from_cursor(cls, movements):
         """Reconstruct tree from cursor movements: left, right, parent."""
+        cursor = None
         x = cls()
         for m in movements:
             if m == 'l':
@@ -316,9 +317,14 @@ class Node(object):
                 x = x.insert_right()
             elif m == 'p':
                 x = x.parent
+            elif m == '*':
+                if cursor is None:
+                    cursor = x
+                else:
+                    raise ValueError("Cannot request multiple cursor position")
             else:
-                raise ValueError("Expected move to left, right, or parent")
-        return x.root()  # Allow not to finish.
+                raise ValueError("Expected move left, right, parent or cursor")
+        return x.root() if cursor is None else cursor
 
     @maker(''.join)
     def cursor(x):
@@ -713,6 +719,17 @@ class TestNode(unittest.TestCase):
             Node.from_cursor("lrrppllppl")
         t = Node.from_cursor("lllrpppprlprpp")
         self.assertTrue(t.numbered_preorder() == (5, 4, 3, 1, 2, 7, 6, 8))
+        self.assertTrue(Node.from_cursor("").numbered_preorder() == (1, ))
+        t5 = Node.from_cursor("*lllpprr")
+        t6 = Node.from_cursor("lllpprrppp*")
+        t7 = Node.from_cursor("lllp*prr")
+        self.assertTrue(t1.is_isomorphic_to(t5))
+        self.assertTrue(t1.is_isomorphic_to(t6))
+        self.assertFalse(t1.is_isomorphic_to(t7))
+        self.assertTrue(t1.is_isomorphic_to(t7.root()))
+        self.assertTrue(t7.numbered_preorder() == (2, 1))
+        with self.assertRaises(ValueError):
+            Node.from_cursor("*lllpprrppp*")
 
     def test_cursor(self):
         """Test that using a cursor can get us as we want."""
