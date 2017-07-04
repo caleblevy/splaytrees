@@ -272,19 +272,19 @@ class Node(object):
         """Assign numbers to preorder."""
         return tuple(map(x.node_to_key().__getitem__, x.preorder()))
 
-    def _count_matches(x, e):
+    def count_matches(x, e):
         """Count number of sub-paths of tree rooted at x matching e."""
         c = 0
+        # For each node in the tree, crawl down the encoded path. If hit a null
+        # node, then path not embedded starting at that node.
         for z in x.inorder():
             for b in e:
-                if z.parent is x.parent:
-                    break
-                elif z is z.parent.right and b == '0':
-                    break
-                elif z is z.parent.left and b == '1':
-                    break
+                if isinstance(z.left, Node) and b == '0':
+                    z = z.left
+                elif isinstance(z.right, Node) and b == '1':
+                    z = z.right
                 else:
-                    z = z.parent
+                    break
             else:
                 c += 1
         return c
