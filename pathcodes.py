@@ -272,6 +272,31 @@ class Node(object):
         """Assign numbers to preorder."""
         return tuple(map(x.node_to_key().__getitem__, x.preorder()))
 
+    def _count_matches(x, e):
+        """Count number of sub-paths of tree rooted at x matching e."""
+        c = 0
+        for z in x.inorder():
+            for b in e:
+                if z.parent is x.parent:
+                    break
+                elif z is z.parent.right and b == '0':
+                    break
+                elif z is z.parent.left and b == '1':
+                    break
+                else:
+                    z = z.parent
+            else:
+                c += 1
+        return c
+
+    def count_zig_zigs(x):
+        """Count number zig-zigs in tree rooted at x."""
+        return x._count_matches("00") + x._count_matches("11")
+
+    def count_zig_zags(x):
+        """Count number of zig-zags in tree rooted at x."""
+        return x._count_matches("01") + x._count_matches("10")
+
     def is_isomorphic_to(x, y):
         """Determine whether x and y have the same preorders."""
         return x.numbered_preorder() == y.numbered_preorder()
@@ -289,6 +314,15 @@ class Node(object):
                 x = x.parent
         return x.root()  # Allow not to finish.
 
+
+r = Node()
+a = r.decode("110110110")
+print("count 11: ", r._count_matches("11"))
+print("count 00: ", r._count_matches("00"))
+a.splay()
+print("count 11 after splay:", a._count_matches("11"))
+print("count 00 after splay:", a._count_matches("00"))
+print(a.left.right.right._count_matches("11"))
 
 # Methods extracted due to python wanting to create a wrapper around them
 splay = Node.splay
