@@ -131,10 +131,15 @@ class Node(object):
         while s2:
             yield s2.pop()
 
-    def encode(x):
-        """Return binary string encoding path from root to x."""
+    def encode(x, h=None):
+        """Return binary string encoding path from root to x up to height h
+        above x."""
         encoding = []
+        height = 0
         while x.parent is not None:
+            if h is not None and height == h:
+                break
+            height += 1
             if x is x.parent.left:
                 encoding.append("0")
             else:
@@ -587,7 +592,7 @@ class TestNode(unittest.TestCase):
             x.static()
         self.assertTrue((k, g, c, a, b, h, e, m, f) == k.preorder())
 
-    def test_encode(self):
+    def test_encoding(self):
         """Ensure encodings of node paths are correct."""
         [k, g, c, a, b, h, e, m, f] = _test_tree()
         self.assertTrue("000" == a.encode())
@@ -609,6 +614,11 @@ class TestNode(unittest.TestCase):
         self.assertTrue("10111" == m.encode())
         self.assertTrue("1" == k.encode())
         self.assertTrue("11" == f.encode())
+        # test truncation
+        e.reset()
+        self.assertTrue("10" == e.encode(2))
+        self.assertTrue("" == k.encode(10))
+        self.assertTrue("" == e.encode(0))
 
     def test_decoder(self):
         """Ensure path decodes and inserts work appropriately."""
