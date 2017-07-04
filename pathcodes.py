@@ -272,9 +272,8 @@ class Node(object):
         """Assign numbers to preorder."""
         return tuple(map(x.node_to_key().__getitem__, x.preorder()))
 
-    def count_matches(x, e):
-        """Count number of sub-paths of tree rooted at x matching e."""
-        c = 0
+    def matches(x, e):
+        """Generator of root of paths matching e."""
         # For each node in the tree, crawl down the encoded path. If hit a null
         # node, then path not embedded starting at that node.
         for z in x.inorder():
@@ -286,8 +285,11 @@ class Node(object):
                 else:
                     break
             else:
-                c += 1
-        return c
+                yield z
+
+    def count_matches(x, e):
+        """Count number of sub-paths of tree rooted at x matching e."""
+        return sum(1 for _ in x.matches(e))
 
     def count_zig_zigs(x):
         """Count number zig-zigs in tree rooted at x."""
@@ -310,19 +312,12 @@ class Node(object):
                 x = x.insert_left()
             elif m == 'r':
                 x = x.insert_right()
-            elif x == 'p':
+            elif m == 'p':
                 x = x.parent
+            else:
+                raise ValueError("Expected move to left, right, or parent")
         return x.root()  # Allow not to finish.
 
-
-r = Node()
-a = r.decode("110110110")
-print("count 11: ", r._count_matches("11"))
-print("count 00: ", r._count_matches("00"))
-a.splay()
-print("count 11 after splay:", a._count_matches("11"))
-print("count 00 after splay:", a._count_matches("00"))
-print(a.left.right.right._count_matches("11"))
 
 # Methods extracted due to python wanting to create a wrapper around them
 splay = Node.splay
@@ -660,10 +655,41 @@ class TestNode(unittest.TestCase):
         self.assertTrue(list(a.inorder()) == map1 == map2)
 
     def test_numbered_preorder(self):
+        """Test we output the correct preorder."""
         [k, g, c, a, b, h, e, m, f] = _test_tree()
         self.assertTrue((1, ) == f.numbered_preorder())
         self.assertTrue((5, 4, 3, 1, 2, ))
 
+    def test_match_counting(self):
+        """Test we detect the correct number of paths."""
+        a = Node().decode("110110110")
+        r = a.root()
+        self.assertTrue(r.count_matches("11") == 3)
+        self.assertTrue(r.count_matches("00") == 0)
+        self.assertTrue(r.count_matches("110") == 3)
+        self.assertTrue(r.count_matches("111") == 0)
+        self.assertTrue(r.count_matches("10") == 3)
+        a.splay()
+        self.assertTrue(a.count_matches("11") == 3)
+        self.assertTrue(a.count_matches("00") == 1)
+        self.assertTrue(a.count_matches("10") == 2)
+        self.assertTrue(a.count_matches("01") == 1)
+
+    def test_from_cursor(self):
+        """Test my encoding of the cursor will reconstruct the tree."""
+        t1 = Node.from_cursor("lllpprr")
+        t2 = Node.from_cursor("lrrppll")
+        t3 = Node.from_cursor("lrrppllp")
+        t4 = Node.from_cursor("lrrppllppp")
+        self.assertTrue(t1.is_isomorphic_to(t2))
+        self.assertTrue(t1.is_isomorphic_to(t3))
+        self.assertTrue(t1.is_isomorphic_to(t4))
+        with self.assertRaises(ValueError):
+            Node.from_cursor("lrruull")
+        with self.assertRaises(AttributeError):
+            Node.from_cursor("lrrppllpppp")
+        with self.assertRaises(ValueError):
+            Node.from_cursor("lrrppllppl")
 
 class TestDecoder(unittest.TestCase):
     """Test the various methods of decoding."""
