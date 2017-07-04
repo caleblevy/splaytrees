@@ -131,7 +131,7 @@ class Node(object):
         while s2:
             yield s2.pop()
 
-    def encoding(x):
+    def encode(x):
         """Return binary string encoding path from root to x."""
         encoding = []
         while x.parent is not None:
@@ -369,7 +369,7 @@ def _ZigZag_counts(X, optype):
     paths = []
     for k in X:
         x = key_to_node[k]
-        paths.append(x.encoding())
+        paths.append(x.encode())
         optype(x)
     counts = [1 + e.count("10") + e.count("01") for e in paths]
     return counts
@@ -587,28 +587,28 @@ class TestNode(unittest.TestCase):
             x.static()
         self.assertTrue((k, g, c, a, b, h, e, m, f) == k.preorder())
 
-    def test_encoding(self):
+    def test_encode(self):
         """Ensure encodings of node paths are correct."""
         [k, g, c, a, b, h, e, m, f] = _test_tree()
-        self.assertTrue("000" == a.encoding())
-        self.assertTrue("00" == c.encoding())
-        self.assertTrue("001" == b.encoding())
-        self.assertTrue("0" == g.encoding())
-        self.assertTrue("010" == e.encoding())
-        self.assertTrue("01" == h.encoding())
-        self.assertTrue("011" == m.encoding())
-        self.assertTrue("" == k.encoding())
-        self.assertTrue("1" == f.encoding())
+        self.assertTrue("000" == a.encode())
+        self.assertTrue("00" == c.encode())
+        self.assertTrue("001" == b.encode())
+        self.assertTrue("0" == g.encode())
+        self.assertTrue("010" == e.encode())
+        self.assertTrue("01" == h.encode())
+        self.assertTrue("011" == m.encode())
+        self.assertTrue("" == k.encode())
+        self.assertTrue("1" == f.encode())
         a.splay()
-        self.assertTrue("" == a.encoding())
-        self.assertTrue("10" == c.encoding())
-        self.assertTrue("1010" == b.encoding())
-        self.assertTrue("101" == g.encoding())
-        self.assertTrue("10110" == e.encoding())
-        self.assertTrue("1011" == h.encoding())
-        self.assertTrue("10111" == m.encoding())
-        self.assertTrue("1" == k.encoding())
-        self.assertTrue("11" == f.encoding())
+        self.assertTrue("" == a.encode())
+        self.assertTrue("10" == c.encode())
+        self.assertTrue("1010" == b.encode())
+        self.assertTrue("101" == g.encode())
+        self.assertTrue("10110" == e.encode())
+        self.assertTrue("1011" == h.encode())
+        self.assertTrue("10111" == m.encode())
+        self.assertTrue("1" == k.encode())
+        self.assertTrue("11" == f.encode())
 
     def test_decoder(self):
         """Ensure path decodes and inserts work appropriately."""
@@ -654,7 +654,7 @@ class TestNode(unittest.TestCase):
         d.splay()
         i = d.decode("0111010")
         i.reset()
-        self.assertTrue("10101010" == i.encoding())
+        self.assertTrue("10101010" == i.encode())
 
     def test_node_to_key(self):
         """Make sure node-to-key works properly."""
