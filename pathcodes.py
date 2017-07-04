@@ -318,6 +318,30 @@ class Node(object):
                 raise ValueError("Expected move to left, right, or parent")
         return x.root()  # Allow not to finish.
 
+    def cursor(x):
+        """Generate cursor movements."""
+        z = x.parent
+        visited = set()
+        while True:
+            visited.add(x)
+            if isinstance(x.left, Node) and x.left not in visited:
+                yield 'l'
+                x = x.left
+            elif isinstance(x.right, Node) and x.right not in visited:
+                yield 'r'
+                x = x.right
+            elif x.parent is not z:
+                yield 'p'
+                x = x.parent
+            else:
+                return
+
+
+r = Node().decode("110110110").root()
+print(list(r.cursor()))
+print(list(Node().cursor()))
+print(Node.from_cursor(r.cursor()).is_isomorphic_to(r))
+
 
 # Methods extracted due to python wanting to create a wrapper around them
 splay = Node.splay
@@ -690,6 +714,9 @@ class TestNode(unittest.TestCase):
             Node.from_cursor("lrrppllpppp")
         with self.assertRaises(ValueError):
             Node.from_cursor("lrrppllppl")
+
+    def test_cursor(self):
+        """Test that using a cursor can get us as we want."""
 
 class TestDecoder(unittest.TestCase):
     """Test the various methods of decoding."""
