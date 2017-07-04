@@ -340,12 +340,6 @@ class Node(object):
                 return
 
 
-r = Node().decode("110110110").root()
-print(r.cursor())
-print(list(Node().cursor()))
-print(Node.from_cursor(r.cursor()).is_isomorphic_to(r))
-
-
 # Methods extracted due to python wanting to create a wrapper around them
 splay = Node.splay
 simple_splay = Node.simple_splay
@@ -717,9 +711,18 @@ class TestNode(unittest.TestCase):
             Node.from_cursor("lrrppllpppp")
         with self.assertRaises(ValueError):
             Node.from_cursor("lrrppllppl")
+        t = Node.from_cursor("lllrpppprlprpp")
+        self.assertTrue(t.numbered_preorder() == (5, 4, 3, 1, 2, 7, 6, 8))
 
     def test_cursor(self):
         """Test that using a cursor can get us as we want."""
+        r = Node().decode("110110110").root()
+        self.assertTrue(r.cursor() == "rrlrrlrrlppppppppp")
+        self.assertTrue(r.is_isomorphic_to(Node.from_cursor(r.cursor())))
+        self.assertTrue(r.right.cursor() == "rlrrlrrlpppppppp")
+        t = Node.from_cursor("lllrpppprlprpp")
+        self.assertTrue(t.cursor() == "lllrpppprlprpp")
+
 
 class TestDecoder(unittest.TestCase):
     """Test the various methods of decoding."""
