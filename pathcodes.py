@@ -722,6 +722,10 @@ class TestNode(unittest.TestCase):
         self.assertTrue(r.right.cursor() == "rlrrlrrlpppppppp")
         t = Node.from_cursor("lllrpppprlprpp")
         self.assertTrue(t.cursor() == "lllrpppprlprpp")
+        self.assertTrue(t.left.cursor() == "llrppp")
+        self.assertTrue(Node().cursor() == '')
+        self.assertTrue(t.right.cursor() == 'lprp')
+        self.assertTrue(t.right.right.cursor() == '')
 
 
 class TestDecoder(unittest.TestCase):
