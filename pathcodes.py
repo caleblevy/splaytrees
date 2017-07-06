@@ -78,6 +78,25 @@ class Node(object):
     @maker(tuple)
     def inorder(x):
         """Traverse subtree rooted at x inorder."""
+        z = x.parent
+        visited = set()
+        while True:
+            if isinstance(x.left, Node) and x.left not in visited:
+                x = x.left
+            else:
+                if x not in visited:
+                    yield x
+                    visited.add(x)
+                if isinstance(x.right, Node) and x.right not in visited:
+                    x = x.right
+                elif x.parent is not z:
+                    x = x.parent
+                else:
+                    return
+
+    @maker(tuple)
+    def inorder2(x):
+        """Traverse subtree rooted at x inorder."""
         stack = []
         while True:
             # Reach left most node of current's subtree
@@ -100,6 +119,24 @@ class Node(object):
 
     @maker(tuple)
     def preorder(x):
+        """Return preorder traversal of subtree rooted at x."""
+        z = x.parent
+        visited = set()
+        while True:
+            if x not in visited:
+                yield x
+                visited.add(x)
+            if isinstance(x.left, Node) and x.left not in visited:
+                x = x.left
+            elif isinstance(x.right, Node) and x.right not in visited:
+                x = x.right
+            elif x.parent is not z:
+                x = x.parent
+            else:
+                return
+
+    @maker(tuple)
+    def preorder2(x):
         """Traverse subtree rooted at x inorder."""
         stack = []
         while True:
@@ -116,6 +153,25 @@ class Node(object):
 
     @maker(tuple)
     def postorder(x):
+        """Traverse subtree rooted at x postordered."""
+        z = x.parent
+        visited = set()
+        while True:
+            if isinstance(x.left, Node) and x.left not in visited:
+                x = x.left
+            elif isinstance(x.right, Node) and x.right not in visited:
+                x = x.right
+            else:
+                if x not in visited:
+                    yield x
+                    visited.add(x)
+                if x.parent is not z:
+                    x = x.parent
+                else:
+                    return
+
+    @maker(tuple)
+    def postorder2(x):
         """Return postorder of subtree rooted at x."""
         s1 = [x]
         s2 = []
