@@ -1,8 +1,16 @@
 """Test decoding subsequences."""
+
 from functools import partial
+from re import finditer
 import unittest
 
 from pathcodes import Node, splay, move_to_root, simple_splay, static
+
+
+def _count_overlapping(substring, string):
+    """Count all occurrences of string in substring."""
+    matches = finditer(r'(?=(%s))' % substring, string)
+    return sum(1 for _ in matches)
 
 
 def decoder(encodings, op=splay):
@@ -15,6 +23,22 @@ def decoder(encodings, op=splay):
         r = op(x)
     r = r.reset()
     return (r, nodes)
+
+
+def za_count(encodings):
+    """Count number of zig-zags on encoding paths."""
+    c = 0
+    for e in encodings:
+        c += _count_overlapping("01", e) + _count_overlapping("10", e)
+    return c
+
+
+def zi_count(encodings):
+    """count number of zig-zigs on encoding paths."""
+    c = 0
+    for e in encodings:
+        c += _count_overlapping("11", e) + _count_overlapping("00", e)
+    return c
 
 
 class TestDecoder(unittest.TestCase):
@@ -47,6 +71,15 @@ class TestDecoder(unittest.TestCase):
         for e, node in zip(code_2, nodes):
             self.assertTrue(e == node.encode())
             node.splay()
+
+    def test_counters(self):
+        """Ensure path counters correctly get zig-zigs and zig-zags."""
+        code_1 = ["1", "111", "11111", "1", "11111"]
+        self.assertTrue(zi_count(code_1) == 10)
+        self.assertTrue(za_count(code_1) == 0)
+        code_2 = ["0", "10", "001", "101"]
+        self.assertTrue(zi_count(code_2) == 1)
+        self.assertTrue(za_count(code_2) == 4)
 
 
 if __name__ == '__main__':
