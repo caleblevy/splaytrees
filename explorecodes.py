@@ -1,5 +1,6 @@
 from propersplay import SplayTree
 from pathcodes import Node
+from wilber import wilber2
 
 from treecodecs import decoder, encoder, za_count, zi_count
 from noted_list import perm
@@ -35,29 +36,44 @@ def make_keyless(splaytree):
 
 
 t = SplayTree(seq)
+
 r = make_keyless(t)
 kn = r.key_to_node()
-requested_nodes = list(map(kn.__getitem__, perm))
+requests = list(map(kn.__getitem__, perm))
+
+r_sub = Node.from_cursor(r.cursor())
+# assert r_sub.is_isomorphic_to(r)
+kn_sub = r_sub.key_to_node()
+sub_requests = list(map(kn_sub.__getitem__, subseq))
+
 
 
 code = []
-for node in requested_nodes:
+for node in requests:
     code.append(node.encode())
     node.splay()
 
-print(code)
-print(sum(len(e)+1 for e in code))
-subsequence = list(requested_nodes)
-subsequence.pop(20)
-r = r.reset()
 sub_code = []
-for node in subsequence:
+for node in sub_requests:
     sub_code.append(node.encode())
     node.splay()
 
-print(sum(len(e)+1 for e in sub_code))
+
+print('Splay X: ', sum(len(e)+1 for e in code))
+print('Splay Y: ', sum(len(e)+1 for e in sub_code))
 
 print("za X: ", za_count(code))
 print("za Y: ", za_count(sub_code))
 print("zi X: ", zi_count(code))
 print("zi Y: ", zi_count(sub_code))
+# print("wilber X: ", sum(wilber2(perm)))
+# print("wilber Y: ", sum(wilber2(subseq)))
+
+
+r = r.reset()
+r_sub = Node.from_cursor(r.cursor())
+print(code[20])
+print(code[19])
+print(code[21])
+print(sub_code[19])
+print(sub_code[21])
