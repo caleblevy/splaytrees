@@ -49,6 +49,7 @@ def encoder(nodes, op=splay):
         op(node)
     return encodings
 
+
 class TestDecoder(unittest.TestCase):
     """Test decoder works as expected."""
 
@@ -96,11 +97,13 @@ class TestDecoder(unittest.TestCase):
         self.assertTrue(code_1 == encoder(static_nodes, static))
         _, splay_nodes = decoder(code_1)
         self.assertTrue(code_1 == encoder(splay_nodes))
-        self.assertTrue(encoder(static_nodes, splay) ==
+        self.assertTrue(
+            encoder(static_nodes, splay) ==
             ["1", "11", "11", "0000", "11"])
         code_2 = ["0", "10", "001", "101"]
         _, static_nodes = decoder(code_2, static)
         self.assertTrue(code_2 == encoder(static_nodes, static))
+
 
 if __name__ == '__main__':
     unittest.main()
