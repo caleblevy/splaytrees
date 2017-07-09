@@ -56,3 +56,8 @@ for node in subsequence:
     node.splay()
 
 print(sum(len(e)+1 for e in sub_code))
+
+print("za X: ", za_count(code))
+print("za Y: ", za_count(sub_code))
+print("zi X: ", zi_count(code))
+print("zi Y: ", zi_count(sub_code))
