@@ -41,6 +41,14 @@ def zi_count(encodings):
     return c
 
 
+def encoder(nodes, op=splay):
+    """Given starting tree and nodes, encode them with given op."""
+    encodings = []
+    for node in nodes:
+        encodings.append(node.encode())
+        op(node)
+    return encodings
+
 class TestDecoder(unittest.TestCase):
     """Test decoder works as expected."""
 
@@ -81,6 +89,18 @@ class TestDecoder(unittest.TestCase):
         self.assertTrue(zi_count(code_2) == 1)
         self.assertTrue(za_count(code_2) == 4)
 
+    def test_encoder(self):
+        """Test that we properly encode everything."""
+        code_1 = ["1", "111", "11111", "1", "11111"]
+        _, static_nodes = decoder(code_1, static)
+        self.assertTrue(code_1 == encoder(static_nodes, static))
+        _, splay_nodes = decoder(code_1)
+        self.assertTrue(code_1 == encoder(splay_nodes))
+        self.assertTrue(encoder(static_nodes, splay) ==
+            ["1", "11", "11", "0000", "11"])
+        code_2 = ["0", "10", "001", "101"]
+        _, static_nodes = decoder(code_2, static)
+        self.assertTrue(code_2 == encoder(static_nodes, static))
 
 if __name__ == '__main__':
     unittest.main()
