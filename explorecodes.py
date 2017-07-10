@@ -77,3 +77,27 @@ print(code[19])
 print(code[21])
 print(sub_code[19])
 print(sub_code[21])
+
+
+left_path = Node.from_cursor('l'*(2**16 -1))
+kn = left_path.key_to_node()
+requests = [kn[16], kn[1], kn[2], kn[3], kn[4], kn[8], kn[16]]
+sub_requests = requests[1:]
+code = []
+for node in requests:
+    code.append(node.encode())
+    node.splay()
+    print(node.count_zig_zig())
+node.reset()
+sub_code = []
+for node in sub_requests:
+    sub_code.append(node.encode())
+    node.splay()
+
+print('Splay X: ', sum(len(e)+1 for e in code))
+print('Splay Y: ', sum(len(e)+1 for e in sub_code))
+
+print("za X: ", za_count(code))
+print("za Y: ", za_count(sub_code))
+print("zi X: ", zi_count(code))
+print("zi Y: ", zi_count(sub_code))
