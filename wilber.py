@@ -4,7 +4,7 @@ from random import shuffle
 
 from topdownsplay import Inf, NegInf
 from propersplay import complete_bst_preorder
-from pathcodes import SplayBound, MRBound
+from pathcodes import SplayBound, MRBound, Node
 
 
 def compute_kappa(s, i):
@@ -57,27 +57,35 @@ def bitrev(k):
 if __name__ == "__main__":
     print("Basic\n-------")
     a = list("aihjgfclkendbpmoi")
-    print(sum(wilber2(a)), sum(MRBound(a)), sum(SplayBound(a)))
-    print("Complete BSTs\n---------------")
-    for i in range(1, 12):
-        b = list(complete_bst_preorder(i))
-        b_w = wilber2(b)
-        b_m = MRBound(b)
-        b_s = SplayBound(b)
-        print(len(b), sum(b_w), sum(b_m), sum(b_s))
-    print("Full Perms\n----------------")
-    for i in range(1, 7):
-        b = range(i*1000)
-        shuffle(b)
-        b_w = wilber2(b)
-        b_m = MRBound(b)
-        b_s = SplayBound(b)
-        print(i*1000, sum(b_w), sum(b_m), sum(b_s))
-    print("Split Up Perms\n-------------")
-    for i in range(1, 7):
-        b = range(i*1000//4)*4
-        shuffle(b)
-        b_w = wilber2(b)
-        b_m = MRBound(b)
-        b_s = SplayBound(b)
-        print(i*1000, sum(b_w), sum(b_m), sum(b_s))
+    print('\n'.join(map(str, zip(wilber2(a), MRBound(a)))))
+    t = Node.from_cursor('r'*(len(set(a))-1))
+    key = {node: letter for node, letter in zip(t.preorder(), sorted(set(a)))}
+    print([key[n] for n in t.preorder()])
+    node = {letter: key for key, letter in key.items()}
+    for letter in a[:-1]:
+        node[letter].move_to_root()
+    print(t.root().numbered_preorder())
+    # print(sum(wilber2(a)), sum(MRBound(a)), sum(SplayBound(a)))
+    # print("Complete BSTs\n---------------")
+    # for i in range(1, 12):
+    #     b = list(complete_bst_preorder(i))
+    #     b_w = wilber2(b)
+    #     b_m = MRBound(b)
+    #     b_s = SplayBound(b)
+    #     print(len(b), sum(b_w), sum(b_m), sum(b_s))
+    # print("Full Perms\n----------------")
+    # for i in range(1, 7):
+    #     b = range(i*1000)
+    #     shuffle(b)
+    #     b_w = wilber2(b)
+    #     b_m = MRBound(b)
+    #     b_s = SplayBound(b)
+    #     print(i*1000, sum(b_w), sum(b_m), sum(b_s))
+    # print("Split Up Perms\n-------------")
+    # for i in range(1, 7):
+    #     b = range(i*1000//4)*4
+    #     shuffle(b)
+    #     b_w = wilber2(b)
+    #     b_m = MRBound(b)
+    #     b_s = SplayBound(b)
+    #     print(i*1000, sum(b_w), sum(b_m), sum(b_s))
