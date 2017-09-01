@@ -40,8 +40,10 @@ def splay_rotations(s):
     R = []
     for x in s:
         rots = d[x].splay()
-        R.extend((d_inv[x], d_inv[y]) for x, y in rots)
+        R.append(list((d_inv[x], d_inv[y]) for x, y in rots))
     return R
 
 
-# print splay_rotations(range(16, 0, -1))
+print splay_rotations(range(16, 0, -1))
+for rots in splay_rotations([1, 9, 8, 10, 7, 6, 3, 12, 11, 5, 14, 4, 2, 16, 13, 15, 9]):
+    print(rots)
