@@ -264,7 +264,7 @@ class Node(object):
             raise ValueError("Node already has left child")
         p = x.left
         x_init = p.parent_init
-        y = Node()
+        y = type(x)()
         y.parent_init = x_init
         if p is x_init.left_init:
             x_init.left_init = y
@@ -280,7 +280,7 @@ class Node(object):
             raise ValueError("Node already has right child")
         p = x.right
         x_init = p.parent_init
-        y = Node()
+        y = type(x)()
         y.parent_init = x_init
         if p is x_init.left_init:
             x_init.left_init = y
