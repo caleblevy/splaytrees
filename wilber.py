@@ -84,9 +84,6 @@ def bitReversalSequence(k):
     return sorted(range(2**k), key=partial(bitReversal, k=k))
 
 
-print bitReversalSequence(4)
-
-
 class TestWilber2(unittest.TestCase):
 
     def test_critical_nodes(self):
@@ -110,6 +107,13 @@ class TestWilber2(unittest.TestCase):
         """Test bit-reversal sequence agrees with Kozma."""
         B_16 = [0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15]
         self.assertEqual(bitReversalSequence(4), B_16)
+
+    def test_wilber2(self):
+        """Test on the bit-reversal sequence."""
+        for k in range(1, 8):
+            n = 2**k
+            w2 = sum(wilber2(bitReversalSequence(k)))
+            self.assertTrue(w2 >= k*n//2+1)
 
 
 if __name__ == "__main__":
