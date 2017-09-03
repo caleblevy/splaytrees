@@ -6,6 +6,8 @@ from topdownsplay import Inf, NegInf
 from propersplay import complete_bst_preorder
 from pathcodes import SplayBound, MRBound, Node
 
+import unittest
+
 
 def critical_nodes(s, i):
     """Compute the inside and crossing accesses and nodes of s."""
@@ -66,7 +68,28 @@ def bitrev(k):
     return ''.join(reversed(bin(k)[2:]))
 
 
+class TestWilber2(unittest.TestCase):
+
+    def test_critical_nodes(self):
+        """Test Wilber2 on paper example."""
+        s = list("aihjgfclkendbpmoi")
+        c, w, b, v = critical_nodes(s, 17)
+        c_wilber = [16, 13, 9, 6, 4, 3, 2]
+        b_wilber = [15, 10, 9, 5, 4, 3]
+        w_wilber = list("obkfjhi")
+        v_wilber = list("mekgjh")
+        self.assertEqual(c, c_wilber)
+        self.assertEqual(b, b_wilber)
+        self.assertEqual(w, w_wilber)
+        self.assertEqual(v, v_wilber)
+        for access, node in zip(c, w):
+            self.assertEqual(s[access-1], node)
+        for access, node in zip(b, v):
+            self.assertEqual(s[access-1], node)
+
+
 if __name__ == "__main__":
+    unittest.main()
     print("Basic\n-------")
     a = list("aihjgfclkendbpmoi")
     print('\n'.join(map(str, zip(wilber2(a), MRBound(a)))))
