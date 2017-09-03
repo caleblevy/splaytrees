@@ -58,11 +58,16 @@ def compute_kappa(s, i):
     return len(v)
 
 
-def wilber2(s):
-    """Computer wilber2 bound for access sequence s."""
-    m = len(s)
-    return [1 + compute_kappa(s, i) for i in range(1, m+1)]
+def scores(s):
+    """Return the scores of each access"""
+    if not s:
+        return []
+    return [compute_kappa(s, i) for i in range(1, len(s)+1)]
 
+
+def wilber2(s):
+    """Compute wilber2 bound for access sequence s."""
+    return len(s) + sum(scores(s))
 
 def binaryDigits(n):
     """Map integer n to list of binary digits."""
@@ -111,16 +116,15 @@ class TestWilber2(unittest.TestCase):
     def test_wilber2(self):
         """Test on the bit-reversal sequence."""
         for k in range(1, 8):
-            n = 2**k
-            w2 = sum(wilber2(bitReversalSequence(k)))
-            self.assertTrue(w2 >= k*n//2+1)
+            self.assertTrue(wilber2(bitReversalSequence(k)) >= k*(2**k)//2+1)
+        self.assertEqual(0, wilber2(list("")))
 
 
 if __name__ == "__main__":
     unittest.main()
     print("Basic\n-------")
     a = list("aihjgfclkendbpmoi")
-    print('\n'.join(map(str, zip(wilber2(a), MRBound(a)))))
+    print('\n'.join(map(str, zip(scores(a), MRBound(a)))))
     t = Node.from_cursor('r'*(len(set(a))-1))
     key = {node: letter for node, letter in zip(t.preorder(), sorted(set(a)))}
     print([key[n] for n in t.preorder()])
