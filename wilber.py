@@ -7,13 +7,13 @@ from propersplay import complete_bst_preorder
 from pathcodes import SplayBound, MRBound, Node
 
 
-def compute_kappa(s, i):
-    """Attempt to compute the score of node i of k."""
+def critical_nodes(s, i):
+    """Compute the inside and crossing accesses and nodes of s."""
     # Have 0 index placeholder for all lists, since Wilber's work assumes this.
     b = [None]*(i+1);  c = [None]*(i+1);  v = [None]*(i+1);  w = [None]*(i+1)
     s = [None] + s
     if i == 1:
-        return 0
+        return ([], [], [], [])
     c[1] = i-1
     w[1] = s[i-1]
     if w[1] < s[i]:
@@ -23,11 +23,11 @@ def compute_kappa(s, i):
     l = 1
     while True:
         if w[l] == s[i]:
-            return l-1
+            break
         elif w[l] < s[i]:
             Q = {j for j in range(1, c[l]) if s[i] <= s[j] < v[l-1]}
             if not Q:
-                return l-1
+                break
             c[l+1] = max(Q)
             w[l+1] = s[c[l+1]]
             v[l] = max(s[j] for j in range(c[l+1]+1, c[l]+1) if s[j] < s[i])
@@ -35,12 +35,24 @@ def compute_kappa(s, i):
         elif w[l] > s[i]:
             Q = {j for j in range(1, c[l]) if v[l-1] < s[j] <= s[i]}
             if not Q:
-                return l-1
+                break
             c[l+1] = max(Q)
             w[l+1] = s[c[l+1]]
             v[l] = min(s[j] for j in range(c[l+1]+1, c[l]+1) if s[j] > s[i])
             b[l] = max(j for j in range(c[l+1]+1, c[l]+1) if s[j] == v[l])
         l += 1
+    return (
+        c[1:l+1],
+        w[1:l+1],
+        b[1:l],
+        v[1:l]
+    )
+
+
+def compute_kappa(s, i):
+    """Compute the Wilber 2 score for access i of request sequence s."""
+    c, w, b, v = critical_nodes(s, i)
+    return len(v)
 
 
 def wilber2(s):
