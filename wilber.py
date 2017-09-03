@@ -1,5 +1,6 @@
 """Attempt to implement Wilber 2 in code."""
 
+from functools import partial
 from random import shuffle
 
 from topdownsplay import Inf, NegInf
@@ -63,9 +64,27 @@ def wilber2(s):
     return [1 + compute_kappa(s, i) for i in range(1, m+1)]
 
 
-def bitrev(k):
-    """Bit reversal key for k"""
-    return ''.join(reversed(bin(k)[2:]))
+def binaryDigits(n):
+    """Map integer n to list of binary digits."""
+    # Lifted from StackOverflow
+    return [int(d) for d in str(bin(n))[2:]]
+
+
+def bitReversal(n, k):
+    """Return reversed bit string for n with k binary digits padded."""
+    digits = binaryDigits(n)
+    b = len(digits)
+    if b > k:
+        raise ValueError("%s-bit vector cannot represent %s" % (k, n))
+    return list(reversed([0]*(k-b) + digits))
+
+
+def bitReversalSequence(k):
+    """Return bit reversed integers from 1 to 2**k-1"""
+    return sorted(range(2**k), key=partial(bitReversal, k=k))
+
+
+print bitReversalSequence(4)
 
 
 class TestWilber2(unittest.TestCase):
@@ -86,6 +105,11 @@ class TestWilber2(unittest.TestCase):
             self.assertEqual(s[access-1], node)
         for access, node in zip(b, v):
             self.assertEqual(s[access-1], node)
+
+    def test_bit_reversal_sequence(self):
+        """Test bit-reversal sequence agrees with Kozma."""
+        B_16 = [0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15]
+        self.assertEqual(bitReversalSequence(4), B_16)
 
 
 if __name__ == "__main__":
