@@ -1,4 +1,5 @@
 """Attempt to implement Wilber 2 in code."""
+from __future__ import print_function
 
 from functools import partial
 from random import shuffle
@@ -118,6 +119,27 @@ def splay_paths(s):
     return _paths(s, splay)
 
 
+def print_path(path):
+    """Pretty print the access path."""
+    x = path[0]
+    strings = [" "]
+
+
+def compare_mr_w2(s):
+    """Compare the paths of move-to-root with Wilber 2."""
+    print("Compare paths: ")
+    print("s =", s, '\n')
+    mrp = mr_paths(s)
+    for i, (x, path) in enumerate(zip(s, mrp), start=1):
+        prefix = str(i) + ":"
+        indent = " "*len(prefix)
+        c, w, b, v = critical_nodes(s, i)
+        print(prefix, "x =", x)
+        print(indent, "w =", w)
+        print(indent, "v =", v)
+        print(indent, "p =", path, '\n')
+
+
 class TestWilber2(unittest.TestCase):
 
     def test_critical_nodes(self):
@@ -151,38 +173,6 @@ class TestWilber2(unittest.TestCase):
 
 if __name__ == "__main__":
     # unittest.main()
-    print("Basic\n-------")
     a = list("aihjgfclkendbpmoi")
-    print mr_paths(a)
-    print('\n'.join(map(str, zip(scores(a), MRBound(a)))))
-    t = Node.from_cursor('r'*(len(set(a))-1))
-    key = {node: letter for node, letter in zip(t.preorder(), sorted(set(a)))}
-    print([key[n] for n in t.preorder()])
-    node = {letter: key for key, letter in key.items()}
-    for letter in a[:-1]:
-        node[letter].move_to_root()
-    print(t.root().numbered_preorder())
-    # print(sum(wilber2(a)), sum(MRBound(a)), sum(SplayBound(a)))
-    # print("Complete BSTs\n---------------")
-    # for i in range(1, 12):
-    #     b = list(complete_bst_preorder(i))
-    #     b_w = wilber2(b)
-    #     b_m = MRBound(b)
-    #     b_s = SplayBound(b)
-    #     print(len(b), sum(b_w), sum(b_m), sum(b_s))
-    # print("Full Perms\n----------------")
-    # for i in range(1, 7):
-    #     b = range(i*1000)
-    #     shuffle(b)
-    #     b_w = wilber2(b)
-    #     b_m = MRBound(b)
-    #     b_s = SplayBound(b)
-    #     print(i*1000, sum(b_w), sum(b_m), sum(b_s))
-    # print("Split Up Perms\n-------------")
-    # for i in range(1, 7):
-    #     b = range(i*1000//4)*4
-    #     shuffle(b)
-    #     b_w = wilber2(b)
-    #     b_m = MRBound(b)
-    #     b_s = SplayBound(b)
-    #     print(i*1000, sum(b_w), sum(b_m), sum(b_s))
+    s = [1, 9, 8, 10, 7, 6, 3, 12, 11, 5, 14, 4, 2, 16, 13, 15, 9]
+    compare_mr_w2(s)
