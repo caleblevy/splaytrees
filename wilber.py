@@ -119,12 +119,6 @@ def splay_paths(s):
     return _paths(s, splay)
 
 
-def print_path(path):
-    """Pretty print the access path."""
-    x = path[0]
-    strings = [" "]
-
-
 def compare_mr_w2(s):
     """Compare the paths of move-to-root with Wilber 2."""
     print("Compare paths: ")
