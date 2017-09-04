@@ -130,14 +130,17 @@ def compare_mr_w2(s):
     print("Compare paths: ")
     print("s =", s, '\n')
     mrp = mr_paths(s)
-    for i, (x, path) in enumerate(zip(s, mrp), start=1):
+    zigzags = [c-1 for c in MRBound(s)]
+    for i, (x, path, za) in enumerate(zip(s, mrp, zigzags), start=1):
         prefix = str(i) + ":"
         indent = " "*len(prefix)
         c, w, b, v = critical_nodes(s, i)
         print(prefix, "x =", x)
         print(indent, "w =", w)
         print(indent, "v =", v)
-        print(indent, "p =", path, '\n')
+        print(indent, "p =", path)
+        print(indent, "score = ", len(v))
+        print(indent, "zig-zags = ", za, '\n')
 
 
 class TestWilber2(unittest.TestCase):
@@ -176,3 +179,6 @@ if __name__ == "__main__":
     a = list("aihjgfclkendbpmoi")
     s = [1, 9, 8, 10, 7, 6, 3, 12, 11, 5, 14, 4, 2, 16, 13, 15, 9]
     compare_mr_w2(s)
+    r = range(2**10)
+    shuffle(r)
+    compare_mr_w2(r)
