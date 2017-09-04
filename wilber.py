@@ -133,8 +133,8 @@ def compare_mr_w2(s):
         print(indent, "w =", w)
         print(indent, "v =", v)
         print(indent, "p =", path)
-        print(indent, "score = ", len(v))
-        print(indent, "zig-zags = ", za, '\n')
+        print(indent, "score =", len(v))
+        print(indent, "zig-zags =", za, '\n')
 
 
 class TestWilber2(unittest.TestCase):
