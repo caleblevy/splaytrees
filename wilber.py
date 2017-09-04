@@ -5,7 +5,7 @@ from random import shuffle
 
 from topdownsplay import Inf, NegInf
 from propersplay import complete_bst_preorder
-from pathcodes import SplayBound, MRBound, Node
+from pathcodes import SplayBound, MRBound, Node, move_to_root, splay
 
 import unittest
 
@@ -89,6 +89,35 @@ def bitReversalSequence(k):
     return sorted(range(2**k), key=partial(bitReversal, k=k))
 
 
+def _paths(s, algo=move_to_root):
+    """Paths when using algo on s starting from right path."""
+    q = sorted(set(s))
+    n = len(q)
+    t = Node.from_cursor("r"*(n-1))
+    d = dict(zip(q, t.preorder()))
+    d_inv = {node: key for key, node in d.items()}
+    paths = []
+    for x in s:
+        y = d[x]
+        path = [y]
+        while y.parent is not None:
+            y = y.parent
+            path.append(y)
+        paths.append(tuple(d_inv[node] for node in path))
+        algo(d[x])
+    return paths
+
+
+def mr_paths(s):
+    """Paths when using move-to-root on s starting from right path."""
+    return _paths(s, move_to_root)
+
+
+def splay_paths(s):
+    """Paths when using splay on s starting from right path"""
+    return _paths(s, splay)
+
+
 class TestWilber2(unittest.TestCase):
 
     def test_critical_nodes(self):
@@ -121,9 +150,10 @@ class TestWilber2(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
     print("Basic\n-------")
     a = list("aihjgfclkendbpmoi")
+    print mr_paths(a)
     print('\n'.join(map(str, zip(scores(a), MRBound(a)))))
     t = Node.from_cursor('r'*(len(set(a))-1))
     key = {node: letter for node, letter in zip(t.preorder(), sorted(set(a)))}
