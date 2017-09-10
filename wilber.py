@@ -123,18 +123,23 @@ def compare_mr_w2(s):
     """Compare the paths of move-to-root with Wilber 2."""
     print("Compare paths: ")
     print("s =", s, '\n')
-    mrp = mr_paths(s)
-    zigzags = [c-1 for c in MRBound(s)]
-    for i, (x, path, za) in enumerate(zip(s, mrp, zigzags), start=1):
+    mrpaths = mr_paths(s)
+    sppaths = splay_paths(s)
+    mrcount = [c-1 for c in MRBound(s)]
+    spcount = [c-1 for c in SplayBound(s)]
+    for i, (x, mrp, spp, mrc, spc) in enumerate(zip(s, mrpaths, sppaths, mrcount, spcount), start=1):
         prefix = str(i) + ":"
         indent = " "*len(prefix)
         c, w, b, v = critical_nodes(s, i)
         print(prefix, "x =", x)
         print(indent, "w =", w)
         print(indent, "v =", v)
-        print(indent, "p =", path)
+        print(indent, "p =", mrp)
         print(indent, "score =", len(v))
-        print(indent, "zig-zags =", za, '\n')
+        print(indent, "mrcount =", mrc)
+        print(indent, "spath =", spp)
+        print(indent, "scount =", spc)
+        print()
 
 
 class TestWilber2(unittest.TestCase):
@@ -176,3 +181,16 @@ if __name__ == "__main__":
     r = range(2**10)
     shuffle(r)
     compare_mr_w2(r)
+    print(critical_nodes(
+        [9, 8, 10, 7, 6, 11, 5, 4, 2, 13, 15, 9],
+        12
+    ))
+    print(critical_nodes(s, 17))
+    print()
+    print()
+    print("W2 Subseq\n")
+    print(wilber2(r))
+    for i in range(len(r)):
+        t = r[:]
+        t.pop(i)
+        print("%s:"%(i+1), wilber2(t))
