@@ -456,6 +456,34 @@ def SimpleBound(X):
     return _ZigZag_counts(X, simple_splay)
 
 
+def _ZigZig_counts(X, optype):
+    """Record the encodings of move-to-root access sequence starting from right
+    path."""
+    keys = sorted(set(X))  # Elements
+    root = x = Node()
+    key_to_node = {}
+    for k in keys:
+        key_to_node[k] = x
+        x = x.insert_right()
+    paths = []
+    for k in X:
+        x = key_to_node[k]
+        paths.append(x.encode())
+        optype(x)
+    counts = [e.count("11") + e.count("00") for e in paths]
+    return counts
+
+
+def MRZigs(X):
+    """Return number of zig-zigs on move-to-root paths."""
+    return _ZigZig_counts(X, move_to_root)
+
+
+def SplayZigs(X):
+    """Return number of zig-zags on splay paths."""
+    return _ZigZig_counts(X, splay)
+
+
 ############
 # Decoders #
 ############

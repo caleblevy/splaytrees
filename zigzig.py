@@ -2,7 +2,7 @@
 bounded by size of initial tree + wilber 2."""
 from __future__ import print_function
 
-from pathcodes import Node, splay, SplayBound
+from pathcodes import Node, splay, SplayBound, SplayZigs
 
 
 def treeNodes(movements):
@@ -12,13 +12,17 @@ def treeNodes(movements):
     return dict(enumerate(t.inorder(), start=1))
 
 
-def rightPath(n): return treeNodes("r"*(n-1))
+def padded(k):
+    """Do splay zig-zig count on w2 example with added padding."""
+    s = [1, 9, 8, 10, 7, 6, 3, 12, 11, 5, 14, 4, 2, 16, 13, 15, 9]
+    return list(range(1, k+1)) + list(range(k, 0, -1)) + [x+k for x in s]
+    
 
 
 if __name__ == '__main__':
     s = [1, 9, 8, 10, 7, 6, 3, 12, 11, 5, 14, 4, 2, 16, 13, 15, 9]
-    s2 = [1, 2, 3, 4, 5, 4, 3, 2, 1] + [6+x for x in s]
-    print(SplayBound(s2))
-    print(SplayBound(s))
-    print(sum(SplayBound(s2)))
     print(sum(SplayBound(s)))
+    print(SplayBound(s))
+    print(SplayZigs(s))
+    print(sum(SplayZigs(padded(30))))
+    print(sum(SplayBound(padded(30))))
