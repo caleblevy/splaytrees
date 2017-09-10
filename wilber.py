@@ -120,8 +120,8 @@ def compare_mr_w2(s):
     print("s =", s, '\n')
     mrpaths = mr_paths(s)
     sppaths = splay_paths(s)
-    mrcount = [c-1 for c in MRBound(s)]
-    spcount = [c-1 for c in SplayBound(s)]
+    mrcount = MRBound(s)
+    spcount = SplayBound(s)
     for i, (x, mrp, spp, mrc, spc) in enumerate(zip(s, mrpaths, sppaths, mrcount, spcount), start=1):
         prefix = str(i) + ":"
         indent = " "*len(prefix)

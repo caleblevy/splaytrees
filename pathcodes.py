@@ -437,7 +437,7 @@ def _ZigZag_counts(X, optype):
         x = key_to_node[k]
         paths.append(x.encode())
         optype(x)
-    counts = [1 + e.count("10") + e.count("01") for e in paths]
+    counts = [e.count("10") + e.count("01") for e in paths]
     return counts
 
 
