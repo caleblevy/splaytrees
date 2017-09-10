@@ -63,6 +63,31 @@ def tree_nodes(movements):
     return dict(enumerate(t.inorder(), start=1))
 
 
+def max_ratio(n, k):
+    """Greedily splay continually at the node with largest ratio of number of
+    zig-zigs to number of zig-zags on the path. In case of tie, go for
+    'deepest' node."""
+    t = tree_nodes("r"*(n-1))
+    zig_counts = []
+    zag_counts = []
+    counts = []
+    s = []
+    for _ in range(k):
+        zig_depths = zigzig_depths(t[1].root())
+        zag_depths = zagzig_depths(t[1].root())
+        t_depths = depths(t[1].root())
+        ratio = {}
+        for i in range(1, n+1):
+            ratio[i] = (1.*zig_depths[i]/max(1, zag_depths[i]), -zag_depths[i], t_depths[i])
+        next_key = max(ratio, key=ratio.__getitem__)
+        zig_counts.append(zig_depths[next_key])
+        zag_counts.append(zag_depths[next_key])
+        counts.append(t_depths[next_key])
+        s.append(next_key)
+        t[next_key].splay()
+    return (s, counts, zig_counts, zag_counts)
+
+
 def padded(k):
     """Do splay zig-zig count on w2 example with added padding."""
     s = [1, 9, 8, 10, 7, 6, 3, 12, 11, 5, 14, 4, 2, 16, 13, 15, 9]
@@ -133,6 +158,7 @@ class TestDepths(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    max_ratio(10, 10)
     s = [1, 9, 8, 10, 7, 6, 3, 12, 11, 5, 14, 4, 2, 16, 13, 15, 9]
     print(sum(SplayBound(s)))
     print(SplayBound(s))
