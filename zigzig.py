@@ -5,6 +5,7 @@ from __future__ import print_function
 import unittest
 
 from pathcodes import Node, splay, SplayBound, SplayZigs
+from wilber import wilber2, scores
 
 
 def depths(x):
@@ -63,11 +64,12 @@ def tree_nodes(movements):
     return dict(enumerate(t.inorder(), start=1))
 
 
-def max_ratio(n, k):
+def max_ratio(n, k, t=None):
     """Greedily splay continually at the node with largest ratio of number of
     zig-zigs to number of zig-zags on the path. In case of tie, go for
     'deepest' node."""
-    t = tree_nodes("r"*(n-1))
+    if t is None:
+        t = tree_nodes("r"*(n-1))
     zig_counts = []
     zag_counts = []
     counts = []
@@ -157,11 +159,19 @@ class TestDepths(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    max_ratio(10, 10)
-    s = [1, 9, 8, 10, 7, 6, 3, 12, 11, 5, 14, 4, 2, 16, 13, 15, 9]
-    print(sum(SplayBound(s)))
-    print(SplayBound(s))
-    print(SplayZigs(s))
-    print(sum(SplayZigs(padded(30))))
-    print(sum(SplayBound(padded(30))))
+    # unittest.main()
+    t = tree_nodes('r'*(2**11-2))
+    print(t)
+    for i in range(11):
+        t[2**11 - 2**i].splay()
+    s, d, zi, za = max_ratio(4096, 4096)
+    print(za, zi)
+    print(1.*sum(zi)/sum(za))
+    print(1.*sum(zi)/wilber2(s))
+    print(sum(za), sum(scores(s)))
+    # s = [1, 9, 8, 10, 7, 6, 3, 12, 11, 5, 14, 4, 2, 16, 13, 15, 9]
+    # print(sum(SplayBound(s)))
+    # print(SplayBound(s))
+    # print(SplayZigs(s))
+    # print(sum(SplayZigs(padded(30))))
+    # print(sum(SplayBound(padded(30))))
