@@ -359,13 +359,13 @@ class Node(object):
         """Count number of sub-paths of tree rooted at x matching e."""
         return sum(1 for _ in x.matches(e))
 
-    def count_zig_zigs(x):
-        """Count number zig-zigs in tree rooted at x."""
-        return x._count_matches("00") + x._count_matches("11")
-
-    def count_zig_zags(x):
-        """Count number of zig-zags in tree rooted at x."""
-        return x._count_matches("01") + x._count_matches("10")
+    @maker(tuple)
+    def path(x):
+        """Return nodes on the path from x to the root."""
+        yield x
+        while x.parent is not None:
+            x = x.parent
+            yield x
 
     def is_isomorphic_to(x, y):
         """Determine whether x and y have the same preorders."""

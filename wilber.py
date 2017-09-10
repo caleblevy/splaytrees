@@ -99,12 +99,7 @@ def _paths(s, algo=move_to_root):
     d_inv = {node: key for key, node in d.items()}
     paths = []
     for x in s:
-        y = d[x]
-        path = [y]
-        while y.parent is not None:
-            y = y.parent
-            path.append(y)
-        paths.append(tuple(d_inv[node] for node in path))
+        paths.append(tuple(d_inv[node] for node in d[x].path()))
         algo(d[x])
     return paths
 
