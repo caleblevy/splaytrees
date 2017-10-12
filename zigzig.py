@@ -2,6 +2,11 @@
 bounded by size of initial tree + wilber 2."""
 from __future__ import print_function
 
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+
 import unittest
 
 from pathcodes import Node, splay, SplayBound, SplayZigs
@@ -74,6 +79,7 @@ def max_ratio(n, k, t=None):
     zag_counts = []
     counts = []
     s = []
+    encodings = []
     for _ in range(k):
         zig_depths = zigzig_depths(t[1].root())
         zag_depths = zagzig_depths(t[1].root())
@@ -86,8 +92,9 @@ def max_ratio(n, k, t=None):
         zag_counts.append(zag_depths[next_key])
         counts.append(t_depths[next_key])
         s.append(next_key)
+        encodings.append(t[next_key].encode())
         t[next_key].splay()
-    return (s, counts, zig_counts, zag_counts)
+    return (s, counts, zig_counts, zag_counts, encodings)
 
 
 def padded(k):
@@ -160,18 +167,7 @@ class TestDepths(unittest.TestCase):
 
 if __name__ == '__main__':
     # unittest.main()
-    t = tree_nodes('r'*(2**11-2))
-    print(t)
-    for i in range(11):
-        t[2**11 - 2**i].splay()
-    s, d, zi, za = max_ratio(4096, 4096)
-    print(za, zi)
-    print(1.*sum(zi)/sum(za))
-    print(1.*sum(zi)/wilber2(s))
-    print(sum(za), sum(scores(s)))
-    # s = [1, 9, 8, 10, 7, 6, 3, 12, 11, 5, 14, 4, 2, 16, 13, 15, 9]
-    # print(sum(SplayBound(s)))
-    # print(SplayBound(s))
-    # print(SplayZigs(s))
-    # print(sum(SplayZigs(padded(30))))
-    # print(sum(SplayBound(padded(30))))
+    z0 = 1
+    for k in range(1, 13):
+        (s, counts, zig_counts, zag_counts, encodings) = max_ratio(2**k-1, 2**k-1)
+        print(1.*sum(zig_counts)/(2**k-1 + sum(zag_counts)))
