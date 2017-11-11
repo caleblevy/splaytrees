@@ -2,6 +2,7 @@
 
 from random import shuffle
 from wilber import critical_nodes
+from pathcodes import Node
 
 
 def inside_nodes(s):
@@ -17,7 +18,7 @@ def randperm(n):
     shuffle(l)
     return l
 
-r = randperm(120)
+r = randperm(10000)
 print(r)
 
 for i in inside_nodes(r):
@@ -43,18 +44,29 @@ def augmented_sequence(s):
     """Augment s to a supersequence containing inside nodes."""
     t = []
     for x, b in zip(s, inside_nodes(s)):
-        t.extend(b)
+        t.extend(sorted(b))
         t.append(x)
     return remove_doubletaps(t)
 
-R = augmented_sequence(r)
-print(R)
-RR = augmented_sequence(R)
-print(RR)
-print(augmented_sequence(RR))
-print(augmented_sequence(augmented_sequence(RR)))
-
-
 for i in range(20):
-    print(len(R))
-    R = augmented_sequence(R)
+    print(len(r))
+    r = augmented_sequence(r)
+
+
+def first_appearances(s):
+    """Return subsequence of s consisting of first occurance of each item.
+    E.g. [1, 2, 4, 2, 3, 8, 4, 8, 5] -> [1, 2, 4, 3, 8, 5]"""
+    seen = set()
+    d = []
+    for x in s:
+        if x not in seen:
+            d.append(x)
+            seen.add(x)
+    return d
+
+
+print(first_appearances([1, 2, 4, 2, 3, 8, 4, 8, 5]))
+
+def move_to_root(s):
+    """Return the insertion tree sequence of x."""
+    
