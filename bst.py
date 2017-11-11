@@ -5,6 +5,10 @@ import functools
 import unittest
 
 
+Left = object()
+Right = object()
+
+
 def maker(maptype):
     """Turn a generator into a specified type of sequence."""
     def outputter(generator):
@@ -52,67 +56,49 @@ class Node(object):
 
     @left.setter
     def left(x, y):
-        if not is_node(y):
-            raise TypeError("Left child must be of type ThreadedNoded")
-        if y.parent is not None:
-            raise ValueError("Node y already has parent")
-        elif x <= y:
-            raise ValueError("Left child must be less than x")
-        detach(x.left)
-        x._left = y
-        y._parent = x
+        if y is None:
+            detach(x.left)
+        else:
+            _check_child(y)
+            detach(x.left)
+            x._left = y
+            y._parent = x
 
     @right.setter
     def right(x, y):
-        if not is_node(y):
-            raise TypeError("Left child must be of type ThreadedNoded")
-        if y.parent is not None:
-            raise ValueError("Node y already has parent")
-        elif y <= x:
-            raise ValueError("Right child must be greater than x")
-        detach(x.right)
-        x._right = y
-        y._parent = x
+        if y is None:
+            detach(x.right)
+        else:
+            _check_child(y)
+            detach(x.right)
+            x._right = y
+            y._parent = x
 
     def rotate(x):
         """Rotate the edge between x and its parent."""
         # Normalize to kozma's definition, page 8 of thesis
         y = x.parent
-        # Ensures x < y
-        if x is y.right:
-            x, y = y, x
-        if x is y.left:
-            # Shift around subtree
-            b = x.right
-            y.left = b
-            if is_node(b):
-                b.parent = y
-            # Switch up parent pointers
-            z = y.parent
-            x.parent = z
-            # y is the root
-            if z is not None:
-                if y is z.right:
-                    z.right = x
-                else:
-                    z.left = x
+        z = y.parent
+        w = x.right if x is y.left else x.left
+        y_dir = child_type(y)
+        x_dir = child_type(x)
+        detach(w)
+        detach(x)
+        detach(y)
+        # Do the main rotation
+        if x_dir is Left:
             x.right = y
-            y.parent = x
-        else:  # y is x.right
-            b = y.left
-            x.right = b
-            if is_node(b):
-                b.parent = x
-            # Switch up parent pointers
-            z = x.parent
-            y.parent = z
-            if z is not None:
-                if x is z.right:
-                    z.right = y
-                else:
-                    z.left = y
-            y.left = x
-            x.parent = y
+            y.left = w
+        elif x_dir is Right:
+            x.left = y
+            y.right = w
+        # Connect to pair's parent
+        if y_dir is Left:
+            z.left = x
+        elif y_dir is Right:
+            z.right = x
+        else:
+            return
 
 
 def is_node(x):
@@ -132,6 +118,25 @@ def detach(x):
         else:
             y._left = None
         x._parent = None
+
+
+def child_type(x):
+    """Return whether x is a left child, right child or None."""
+    y is x.parent
+    if y is None:
+        return None
+    elif x is y.right:
+        return Right
+    elif x is y.left:
+        return left
+    
+
+def _check_child(y):
+    """Check conditions on child node y."""
+    if not is_node(y):
+        raise TypeError("Child must be of type Node")
+    if y.parent is not None:
+        raise ValueError("Node y already has parent")
 
 
 class TestNode(unittest.TestCase):
@@ -190,6 +195,13 @@ class TestNode(unittest.TestCase):
         self.assertTrue(c.parent is a)
         self.assertTrue(b_new.parent is a)
         self.assertTrue(a.right.left is None)
+        l = a.left
+        r = a.right
+        a.left = None
+        a.right = None
+        self.assertTrue(l.parent is None)
+        self.assertTrue(r.parent is None)
+        self.assertTrue(a.left is a.right is a.parent is None)
 
     def test_error(self):
         """Test that the error checks work."""
@@ -199,8 +211,6 @@ class TestNode(unittest.TestCase):
         d = c.right = Node(9)
         with self.assertRaises(TypeError):
             c.left = 3
-        with self.assertRaises(ValueError):
-            d.left = Node(11)
         with self.assertRaises(ValueError):
             d.left = c
         self.assertTrue(a.right is b)
