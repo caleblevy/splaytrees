@@ -59,7 +59,10 @@ class Node(object):
         if y is None:
             detach(x.left)
         else:
-            _check_child(y)
+            if not is_node(y):
+                raise TypeError("invalid type for left child: %s" % type(y))
+            if y.parent is not None:
+                raise ValueError("Node y already has parent")
             detach(x.left)
             x._left = y
             y._parent = x
@@ -69,7 +72,10 @@ class Node(object):
         if y is None:
             detach(x.right)
         else:
-            _check_child(y)
+            if not is_node(y):
+                raise TypeError("invalide type for right child: %s" % type(y))
+            if y.parent is not None:
+                raise ValueError("Node y already has parent")
             detach(x.right)
             x._right = y
             y._parent = x
@@ -100,6 +106,45 @@ class Node(object):
         else:
             return
 
+    @maker(tuple)
+    def walk(x):
+        """Do all three edge traversals at once."""
+        z = x.parent
+        l = set()
+        p = set()
+        r = set()
+        while x is not z:
+            yield x
+            if x not in l:
+                l.add(x)
+                x = x.left or x
+            elif x not in r:
+                r.add(x)
+                x = x.right or x
+            else:
+                p.add(x)
+                x = x.parent
+
+    @maker(tuple)
+    def preorder(x):
+        """Return preorder of the subtree rooted at x."""
+        first = set()
+        for x in x.walk():
+            if x not in first:
+                yield x
+                first.add(x)
+
+    @maker(tuple)
+    def inorder(x):
+        """Return nodes of subtree rooted at x in symmetric order."""
+        first = set()
+        second = set()
+        for x in x.walk():
+            if x in first and x not in second:
+                yield x
+                second.add(x)
+            first.add(x)
+
 
 def is_node(x):
     return isinstance(x, Node)
@@ -122,21 +167,13 @@ def detach(x):
 
 def child_type(x):
     """Return whether x is a left child, right child or None."""
-    y is x.parent
+    y = x.parent
     if y is None:
         return None
     elif x is y.right:
         return Right
     elif x is y.left:
-        return left
-    
-
-def _check_child(y):
-    """Check conditions on child node y."""
-    if not is_node(y):
-        raise TypeError("Child must be of type Node")
-    if y.parent is not None:
-        raise ValueError("Node y already has parent")
+        return Left
 
 
 class TestNode(unittest.TestCase):
@@ -237,5 +274,13 @@ class TestNode(unittest.TestCase):
         # d = Node()
 
 
-if __name__ == '__main__':    
+if __name__ == '__main__':
+    r = Node(0)
+    a = r.right = Node(1)
+    b = a.left = Node(2)
+    c = a.right = Node(3)
+    # b.rotate()
+    print(list(n.key for n in a.walk()))
+    print(list(n.key for n in a.preorder()))
+    print(list(n.key for n in a.inorder()))
     unittest.main()
