@@ -23,6 +23,8 @@ def maker(maptype):
 class Node(object):
     """Node object maintaining all properties under rotation."""
 
+    __slots__ = ("_left", "_right", "_parent", "key")
+
     def __init__(x, key):
         x.key = key
         x._left = x._right = x._parent = None
@@ -107,51 +109,65 @@ class Node(object):
             return
 
     @maker(tuple)
-    def walk(x):
+    def _walk(x, order=None):
         """Do all three edge traversals at once."""
         z = x.parent
         l = r = False  # l is true if all node's in x.left are visited
         while True:
-            yield x
+            if order is None:
+                yield x
             if not l:
+                if order == -1:
+                    yield x
                 y = x.left
                 if y is None:
                     l = True
                 else:
+                    if order == "":
+                        yield "l"
                     x = y
             elif not r:
+                if order == 0:
+                    yield x
                 y = x.right
                 if y is None:
                     r = True
                 else:
+                    if order == "":
+                        yield "r"
                     x = y
+                    l = False
             else:
+                if order == 1:
+                    yield x
                 y = x.parent
                 if y is z:
                     return
                 elif x is y.left:
                     r = False
+                if order == "":
+                    yield "p"
                 x = y
 
-    @maker(tuple)
+    def walk(x):
+        """Depth first search of tree edges, always going left before right."""
+        return x._walk()
+
     def preorder(x):
         """Return preorder of the subtree rooted at x."""
-        first = set()
-        for x in x.walk():
-            if x not in first:
-                yield x
-                first.add(x)
+        return x._walk(-1)
 
-    @maker(tuple)
     def inorder(x):
         """Return nodes of subtree rooted at x in symmetric order."""
-        first = set()
-        second = set()
-        for x in x.walk():
-            if x in first and x not in second:
-                yield x
-                second.add(x)
-            first.add(x)
+        return x._walk(0)
+
+    def postorder(x):
+        """Return postorder of the subtree rooted at x."""
+        return x._walk(1)
+
+    def encode(x):
+        """Encode cursor movements traversing the subtree rooted at x."""
+        return "".join(x._walk(""))
 
 
 def is_node(x):
@@ -291,4 +307,6 @@ if __name__ == '__main__':
     print(list(n.key for n in a.walk()))
     print(list(n.key for n in a.preorder()))
     print(list(n.key for n in a.inorder()))
+    print(list(n.key for n in a.postorder()))
+    print(a.encode())
     unittest.main()
