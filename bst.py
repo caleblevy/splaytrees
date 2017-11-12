@@ -110,20 +110,28 @@ class Node(object):
     def walk(x):
         """Do all three edge traversals at once."""
         z = x.parent
-        l = set()
-        p = set()
-        r = set()
-        while x is not z:
+        l = r = False  # l is true if all node's in x.left are visited
+        while True:
             yield x
-            if x not in l:
-                l.add(x)
-                x = x.left or x
-            elif x not in r:
-                r.add(x)
-                x = x.right or x
+            if not l:
+                y = x.left
+                if y is None:
+                    l = True
+                else:
+                    x = y
+            elif not r:
+                y = x.right
+                if y is None:
+                    r = True
+                else:
+                    x = y
             else:
-                p.add(x)
-                x = x.parent
+                y = x.parent
+                if y is z:
+                    return
+                elif x is y.left:
+                    r = False
+                x = y
 
     @maker(tuple)
     def preorder(x):
