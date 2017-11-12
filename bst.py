@@ -205,6 +205,53 @@ class Node(object):
         """Output keys in postorder."""
         return x._walk_keys(1)
 
+    # Self-Adjustment
+
+    def _splay_step(x):
+        """Perform zig, zig-zag or zig-zig appropriately."""
+        y = x.parent
+        z = y.parent  # parent checked for in "splay"
+        # zig
+        if z is None:
+            x.rotate()
+        # zig-zag
+        elif (y is z.left and x is y.right) or (y is z.right and x is y.left):
+            x.rotate()
+            x.rotate()
+        # zig-zig
+        else:
+            y.rotate()
+            x.rotate()
+
+    def _simple_splay_step(x):
+        """Do a simple splay step."""
+        y = x.parent
+        z = y.parent  # parent checked for in "splay"
+        # zig
+        if z is None:
+            x.rotate()
+        elif (y is z.left and x is y.right) or (y is z.right and x is y.left):
+            x.rotate()
+        # zig-zig
+        else:
+            y.rotate()
+            x.rotate()
+
+    def splay(x):
+        """Proper bottom-up splay to the top."""
+        while x.parent is not None:
+            x._splay_step()
+
+    def simple_splay(x):
+        """Proper bottom-up simple splay to the top."""
+        while x.parent is not None:
+            x._simple_splay_step()
+
+    def move_to_root(x):
+        """Move straight to the root."""
+        while x.parent is not None:
+            x.rotate()
+
 
 def is_node(x):
     return isinstance(x, Node)
@@ -443,6 +490,55 @@ class TestNode(unittest.TestCase):
         """Test that we get proper subtree encodings."""
         [k, g, c, a, b, h, e, m, f] = _test_tree()
         self.assertTrue("lllprpprlprppprp" == k.subtree_encoding())
+
+    # Self Adjustment Tests
+
+    def test_splay(self):
+        """Test the splay method works."""
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        a.splay()
+        self.assertTrue((a, k, c, g, b, h, e, m, f) == a.preorder_nodes())
+        e.splay()
+        self.assertTrue((e, a, c, g, b, k, h, m, f) == e.preorder_nodes())
+        # sequential access
+        nodes = [a, c, b, g, e, h, m, k, f]
+        for x in nodes:
+            x.splay()
+        self.assertTrue((f, k, m, h, e, g, b, c, a) == f.preorder_nodes())
+        for x in nodes:
+            self.assertTrue(x.right is None)
+        # Test simple splay zig-zag.
+        a.splay()
+        b.splay()
+        self.assertTrue((b, a, c, h, g, e, k, m, f) == b.preorder_nodes())
+
+    def test_simple_splay(self):
+        """Test simple splay method works."""
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        a.simple_splay()
+        self.assertTrue((a, k, c, g, b, h, e, m, f) == a.preorder_nodes())
+        e.simple_splay()
+        # First difference from splay
+        self.assertTrue((e, a, g, c, b, k, h, m, f) == e.preorder_nodes())
+        # Test zig-zag difference
+        a.simple_splay()
+        h.simple_splay()
+        self.assertTrue((h, e, a, g, c, b, k, m, f) == h.preorder_nodes())
+        # sequential access
+        nodes = [a, c, b, g, e, h, m, k, f]
+        for x in nodes:
+            x.simple_splay()
+        self.assertTrue((f, k, m, h, e, g, b, c, a) == f.preorder_nodes())
+        for x in nodes:
+            self.assertTrue(x.right is None)
+
+    def test_move_to_root(self):
+        """Test properties of move-to-root"""
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        m.move_to_root()
+        self.assertTrue((m, g, c, a, b, h, e, k, f) == m.preorder_nodes())
+        e.move_to_root()
+        self.assertTrue((e, g, c, a, b, m, h, k, f) == e.preorder_nodes())
 
 
 if __name__ == '__main__':
