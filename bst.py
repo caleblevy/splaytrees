@@ -16,11 +16,12 @@ class Node(object):
     __slots__ = ("_left", "_right", "_parent", "key")
 
     def __init__(x, key):
+        assert not is_node(key)
         x.key = key
         x._left = x._right = x._parent = None
 
     def __repr__(x):
-        return "%s(%s)" % (x.__class__.__name__, x.key)
+        return "%s(%r)" % (x.__class__.__name__, x.key)
 
     # Ordering operations
 
@@ -95,7 +96,6 @@ class Node(object):
 
     def rotate(x):
         """Rotate the edge between x and its parent."""
-        # Normalize to kozma's definition, page 8 of thesis
         y = x.parent
         z = y.parent
         w = x.right if x is y.left else x.left
@@ -283,6 +283,81 @@ def child_type(x):
         return Left
 
 
+class Tree(object):
+    """A binary search tree."""
+
+    def __init__(T, iterable=None):
+        T.root = None
+        if iterable is not None:
+            for k in first_appearances(iterable):
+                T.splay(k)
+
+    def findsert(T, k):
+        """Find node in tree with key k, and create it if not present."""
+        x = T.root
+        y = None
+        while x is not None:
+            y = x
+            if k < x:
+                x = x.left
+            elif k > x:
+                x = x.right
+            else:
+                x = None
+        if y is None:
+            y = T.root = Node(k)
+        if y > k:
+            return y.insert_left(k)
+        elif y < k:
+            return y.insert_right(k)
+        else:
+            return y
+
+    def splay(T, k):
+        """Splay node with key k to top of tree."""
+        x = T.findsert(k)
+        x.splay()
+        T.root = x
+
+    def move_to_root(T, k):
+        """Rotate node with key k to the top of the tree."""
+        x = T.findsert(k)
+        x.move_to_root()
+        T.root = x
+
+    def simple_splay(T, k):
+        """Simple-splay node with key to the top of the tree."""
+        x = T.findsert(k)
+        x.simple_splay()
+        T.root = x
+
+    def inorder(T):
+        """Return tree keys in symmetric order."""
+        return T.root.inorder_keys()
+
+    def preorder(T):
+        """Return tree keys in preorder."""
+        return T.root.preorder_keys()
+
+    def postorder(T):
+        """Return tree keys in postorder."""
+        return T.root.postorder_keys()
+
+    def encoding(T):
+        """Return the lrp encoding of T."""
+        return T.root.subtree_encoding()
+
+
+def first_appearances(s):
+    """Return subsequence of s consisting of first occurance of each item.
+    E.g. [1, 2, 4, 2, 3, 8, 4, 8, 5] -> [1, 2, 4, 3, 8, 5]"""
+    seen = set()
+    for x in s:
+        if x not in seen:
+            yield x
+            seen.add(x)
+
+
 def _test_tree():
     """Tree used for unit tests."""
     #        k
@@ -303,6 +378,18 @@ def _test_tree():
     f = k.insert_right("f")
     return [k, g, c, a, b, h, e, m, f]
 
+
+T = Tree("kgcabhemkf")
+print(Tree("kgcabhemkf").root.inorder_keys())
+print(Tree("kgcabhemkf").root.preorder_keys())
+for k in "kgcabhemkf":
+    T.findsert(k)
+
+print T.findsert(Node("k"))
+print(T.inorder())
+
+print(Tree("kgcabhemkf").root.inorder_keys())
+print(Tree("kgcabhemkf").root.preorder_keys())
 
 class TestNode(unittest.TestCase):
 
