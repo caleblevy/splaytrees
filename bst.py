@@ -59,10 +59,7 @@ class Node(object):
         if y is None:
             detach(x.left)
         else:
-            if not is_node(y):
-                raise TypeError("invalid type for left child: %s" % type(y))
-            if y.parent is not None:
-                raise ValueError("Node y already has parent")
+            assert is_node(y) and y.parent is None
             detach(x.left)
             x._left = y
             y._parent = x
@@ -72,25 +69,20 @@ class Node(object):
         if y is None:
             detach(x.right)
         else:
-            if not is_node(y):
-                raise TypeError("invalide type for right child: %s" % type(y))
-            if y.parent is not None:
-                raise ValueError("Node y already has parent")
+            assert is_node(y) and y.parent is None
             detach(x.right)
             x._right = y
             y._parent = x
 
     def insert_left(x, k):
         """Insert new node with key k to the left of x."""
-        if x.left is not None:
-            raise ValueError("node already has left child")
+        assert x.left is None
         x.left = Node(k)
         return x.left
 
     def insert_right(x, k):
         """Insert new node with key k to the right of x."""
-        if x.right is not None:
-            raise ValueError("node already has right child")
+        assert x.right is None
         x.right = Node(k)
         return x.right
 
@@ -166,7 +158,6 @@ class Node(object):
         return "".join(x._walk(""))
 
     def _walk_nodes(x, order=None):
-        """Return tuple of the nodes in a given walk."""
         return tuple(x._walk(order))
 
     def walk_nodes(x):
@@ -174,15 +165,12 @@ class Node(object):
         return x._walk_nodes()
 
     def preorder_nodes(x):
-        """Return preorder of the subtree rooted at x."""
         return x._walk_nodes(-1)
 
     def inorder_nodes(x):
-        """Return nodes of subtree rooted at x in symmetric order."""
         return x._walk_nodes(0)
 
     def postorder_nodes(x):
-        """Return postorder of the subtree rooted at x."""
         return x._walk_nodes(1)
 
     def _walk_keys(x, order=None):
@@ -190,25 +178,20 @@ class Node(object):
         return tuple(n.key for n in x._walk(order))
 
     def walk_keys(x):
-        """Output tree keys in preorder."""
         return x._walk_keys()
 
     def preorder_keys(x):
-        """Output tree keys in preorder."""
         return x._walk_keys(-1)
 
     def inorder_keys(x):
-        """Output keys in symmetric order."""
         return x._walk_keys(0)
 
     def postorder_keys(x):
-        """Output keys in postorder."""
         return x._walk_keys(1)
 
     # Self-Adjustment
 
     def _splay_step(x):
-        """Perform zig, zig-zag or zig-zig appropriately."""
         y = x.parent
         z = y.parent  # parent checked for in "splay"
         # zig
@@ -224,7 +207,6 @@ class Node(object):
             x.rotate()
 
     def _simple_splay_step(x):
-        """Do a simple splay step."""
         y = x.parent
         z = y.parent  # parent checked for in "splay"
         # zig
@@ -238,17 +220,14 @@ class Node(object):
             x.rotate()
 
     def splay(x):
-        """Proper bottom-up splay to the top."""
         while x.parent is not None:
             x._splay_step()
 
     def simple_splay(x):
-        """Proper bottom-up simple splay to the top."""
         while x.parent is not None:
             x._simple_splay_step()
 
     def move_to_root(x):
-        """Move straight to the root."""
         while x.parent is not None:
             x.rotate()
 
@@ -292,6 +271,26 @@ class Tree(object):
             for k in first_appearances(iterable):
                 T.splay(k)
 
+    @classmethod
+    def from_encoding(cls, encoding):
+        x = Node(None)
+        for action in encoding:
+            if action == 'l':
+                x = x.insert_left(None)
+            elif action == 'r':
+                x = x.insert_right(None)
+            elif action == 'p':
+                x = x.parent
+            else:
+                raise ValueError("invalid movement, expected one of: l, r, p")
+        while x.parent is not None:
+            x = x.parent
+        for k, z in enumerate(x.inorder_nodes(), start=1):
+            z.key = k
+        T = cls()
+        T.root = x
+        return T
+
     def findsert(T, k):
         """Find node in tree with key k, and create it if not present."""
         x = T.root
@@ -314,37 +313,30 @@ class Tree(object):
             return y
 
     def splay(T, k):
-        """Splay node with key k to top of tree."""
         x = T.findsert(k)
         x.splay()
         T.root = x
 
     def move_to_root(T, k):
-        """Rotate node with key k to the top of the tree."""
         x = T.findsert(k)
         x.move_to_root()
         T.root = x
 
     def simple_splay(T, k):
-        """Simple-splay node with key to the top of the tree."""
         x = T.findsert(k)
         x.simple_splay()
         T.root = x
 
     def inorder(T):
-        """Return tree keys in symmetric order."""
         return T.root.inorder_keys()
 
     def preorder(T):
-        """Return tree keys in preorder."""
         return T.root.preorder_keys()
 
     def postorder(T):
-        """Return tree keys in postorder."""
         return T.root.postorder_keys()
 
     def encoding(T):
-        """Return the lrp encoding of T."""
         return T.root.subtree_encoding()
 
 
@@ -378,18 +370,6 @@ def _test_tree():
     f = k.insert_right("f")
     return [k, g, c, a, b, h, e, m, f]
 
-
-T = Tree("kgcabhemkf")
-print(Tree("kgcabhemkf").root.inorder_keys())
-print(Tree("kgcabhemkf").root.preorder_keys())
-for k in "kgcabhemkf":
-    T.findsert(k)
-
-print T.findsert(Node("k"))
-print(T.inorder())
-
-print(Tree("kgcabhemkf").root.inorder_keys())
-print(Tree("kgcabhemkf").root.preorder_keys())
 
 class TestNode(unittest.TestCase):
 
@@ -430,9 +410,9 @@ class TestNode(unittest.TestCase):
         b = a.right = Node(10)
         c = b.left = Node(4)
         d = c.right = Node(9)
-        with self.assertRaises(TypeError):
+        with self.assertRaises(AssertionError):
             c.left = 3
-        with self.assertRaises(ValueError):
+        with self.assertRaises(AssertionError):
             d.left = c
         self.assertTrue(a.right is b)
         self.assertTrue(b.left is c)
@@ -498,9 +478,9 @@ class TestNode(unittest.TestCase):
         x = Node("x")
         y = x.insert_right("y")
         z = y.insert_left("z")
-        with self.assertRaises(ValueError):
+        with self.assertRaises(AssertionError):
             x.insert_right("")
-        with self.assertRaises(ValueError):
+        with self.assertRaises(AssertionError):
             y.insert_left("")
         self.assertTrue(y.parent is x)
         self.assertTrue(z.parent is y)
@@ -626,6 +606,54 @@ class TestNode(unittest.TestCase):
         self.assertTrue((m, g, c, a, b, h, e, k, f) == m.preorder_nodes())
         e.move_to_root()
         self.assertTrue((e, g, c, a, b, m, h, k, f) == e.preorder_nodes())
+
+
+class TestTree(unittest.TestCase):
+    """Test the binary search tree."""
+
+    def test_from_encoding(self):
+        """Test a bst may be properly recreated from an encoding."""
+        T = Tree.from_encoding('lllprpprlprppprp')
+        self.assertEqual(9, len(T.inorder()))
+        self.assertEqual(tuple(range(1, 10)), T.inorder())
+        self.assertEqual((8, 4, 2, 1, 3, 6, 5, 7, 9), T.preorder())
+        Q = Tree.from_encoding('lllprpprlprpppr')
+        self.assertEqual(T.preorder(), Q.preorder())
+        # More tests from before
+        t1 = Tree.from_encoding("lllpprr")
+        t2 = Tree.from_encoding("lrrppll")
+        t3 = Tree.from_encoding("lrrppllp")
+        t4 = Tree.from_encoding("lrrppllppp")
+        self.assertEqual(t1.preorder(), t2.preorder())
+        self.assertEqual(t1.preorder(), t3.preorder())
+        self.assertEqual(t1.preorder(), t4.preorder())
+        with self.assertRaises(ValueError):
+            Tree.from_encoding("lrruull")
+        with self.assertRaises(AttributeError):
+            Tree.from_encoding("lrrppllpppp")
+        with self.assertRaises(AssertionError):
+            Tree.from_encoding("lrrppllppl")
+        t = Tree.from_encoding("lllrpppprlprpp")
+        self.assertEqual((5, 4, 3, 1, 2, 7, 6, 8), t.preorder())
+        self.assertEqual((1, ), Tree.from_encoding("").preorder())
+
+    def test_findsert(self):
+        """Test we can find and insert a node."""
+        T = Tree()
+        for char in "kgcabhemkf":
+            T.findsert(char)
+        self.assertEqual("abcefghkm", "".join(T.inorder()))
+        self.assertEqual("kgcabefhm", "".join(T.preorder()))
+        for char in "kgcabhemkf":
+            T.findsert(char)
+        self.assertEqual("abcefghkm", "".join(T.inorder()))
+        self.assertEqual("kgcabefhm", "".join(T.preorder()))
+        for char in "kgcabhemkf":
+            T.findsert(Node(char))
+        self.assertEqual("abcefghkm", "".join(T.inorder()))
+        self.assertEqual("kgcabefhm", "".join(T.preorder()))
+        with self.assertRaises(AssertionError):
+            T.findsert(Node("q"))
 
 
 if __name__ == '__main__':

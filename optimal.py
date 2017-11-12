@@ -18,7 +18,7 @@ def randperm(n):
     shuffle(l)
     return l
 
-r = randperm(10000)
+r = randperm(2000)
 print(r)
 
 for i in inside_nodes(r):
@@ -44,8 +44,7 @@ def augmented_sequence(s):
     """Augment s to a supersequence containing inside nodes."""
     t = []
     for x, b in zip(s, inside_nodes(s)):
-        t.extend(sorted(b))
-        t.append(x)
+        t.extend(sorted(b + (x,)))
     return remove_doubletaps(t)
 
 for i in range(20):
