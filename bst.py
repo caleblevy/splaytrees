@@ -267,6 +267,15 @@ class Tree(object):
         if iterable is not None:
             for k in first_appearances(iterable):
                 T.splay(k)
+        T.reset()
+
+    def __repr__(T):
+        return "%s(%r)" % (type(T).__name__, list(T.preorder()))
+
+    def __bool__(T):
+        return T.root is not None
+
+    __nonzero__ = __bool__
 
     @classmethod
     def from_encoding(cls, encoding):
@@ -324,19 +333,23 @@ class Tree(object):
         T.root = x
 
     def inorder(T):
-        return T.root.inorder_keys()
+        return T.root.inorder_keys() if T else ()
 
     def preorder(T):
-        return T.root.preorder_keys()
+        return T.root.preorder_keys() if T else ()
 
     def postorder(T):
-        return T.root.postorder_keys()
-
-    def encoding(T):
-        return T.root.subtree_encoding()
+        return T.root.postorder_keys() if T else ()
 
     def reset(T):
-        T.root = T.root.reset()
+        if T:
+            T.root = T.root.reset()
+
+    def checkpoint(T):
+        """Create new copy of T in current shape."""
+        T = Tree(T.preorder())
+        T.reset()
+        return T
 
 
 def first_appearances(s):
@@ -599,6 +612,35 @@ class TestTree(unittest.TestCase):
         self.assertEqual("kgcabefhm", "".join(T.preorder()))
         with self.assertRaises(AssertionError):
             T.findsert(Node("q"))
+
+    def test_empty_tree(self):
+        """Test methods on empty tree."""
+        T = Tree()
+        T.splay(1)
+        self.assertEqual((1, ), T.preorder())
+        self.assertEqual((), Tree().inorder())
+        self.assertEqual((), Tree().preorder())
+        self.assertEqual((), Tree().postorder())
+
+    def test_reset(self):
+        """Test tree is reset."""
+        T = Tree()
+        for k in "kgcabhemkf":
+            T.splay(k)
+        self.assertEqual("fecbakghm", "".join(T.preorder()))
+        T.reset()
+        self.assertEqual("abcefghkm", "".join(T.inorder()))
+        self.assertEqual("kgcabefhm", "".join(T.preorder()))
+
+    def test_checkpoint(self):
+        """Test tree is copied in the appropriate state."""
+        T = Tree("kgcabhemkf")
+        for k in T.inorder():
+            T.splay(k)
+        Q = T.checkpoint()
+        self.assertEqual("mkhgfecba", "".join(Q.preorder()))
+        Q.reset()
+        self.assertEqual("mkhgfecba", "".join(Q.preorder()))
 
 
 if __name__ == '__main__':
