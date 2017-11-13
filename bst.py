@@ -5,10 +5,6 @@ import functools
 import unittest
 
 
-Left = False
-Right = True
-
-
 class Placeholder(object):
     """Slot for a null node, allowing them to be linked together."""
 
@@ -261,32 +257,6 @@ class Node(object):
 
 def is_node(x):
     return isinstance(x, Node)
-
-
-def detach(x):
-    """Detach node x from its parent."""
-    if not is_node(x):
-        return
-    y = x.parent
-    if y is None:
-        return
-    else:
-        if x is y.right:
-            y.right = None
-        else:
-            y.left = None
-        x.parent = None
-
-
-def child_type(x):
-    """Return whether x is a left child, right child or None."""
-    y = x.parent
-    if y is None:
-        return None
-    elif x is y.right:
-        return Right
-    elif x is y.left:
-        return Left
 
 
 class Tree(object):
