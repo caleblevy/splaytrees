@@ -9,16 +9,29 @@ Left = False
 Right = True
 
 
+class Placeholder(object):
+    """Slot for a null node, allowing them to be linked together."""
+
+    __slots__ = ("parent_init")
+
+    def __init__(p):
+        p.parent_init = None
+
+
 @functools.total_ordering
 class Node(object):
     """Node object maintaining all properties under rotation."""
 
-    __slots__ = ("_left", "_right", "_parent", "key")
+    __slots__ = ("parent", "left", "right", "key",
+                 "parent_init", "left_init", "right_init")
 
     def __init__(x, key):
         assert not is_node(key)
         x.key = key
-        x._left = x._right = x._parent = None
+        x.parent = x.parent_init = None
+        x.left = x.left_init = Placeholder()
+        x.right = x.right_init = Placeholder()
+        x.left.parent_init = x.right.parent_init = x
 
     def __repr__(x):
         return "%s(%r)" % (x.__class__.__name__, x.key)
@@ -42,74 +55,81 @@ class Node(object):
 
     # Pointer Adjustment
 
-    @property
-    def left(x):
-        return x._left
-
-    @property
-    def right(x):
-        return x._right
-
-    @property
-    def parent(x):
-        return x._parent
-
-    @left.setter
-    def left(x, y):
-        if y is None:
-            detach(x.left)
-        else:
-            assert is_node(y) and y.parent is None
-            detach(x.left)
-            x._left = y
-            y._parent = x
-
-    @right.setter
-    def right(x, y):
-        if y is None:
-            detach(x.right)
-        else:
-            assert is_node(y) and y.parent is None
-            detach(x.right)
-            x._right = y
-            y._parent = x
-
     def insert_left(x, k):
         """Insert new node with key k to the left of x."""
         assert x.left is None
         x.left = Node(k)
         return x.left
 
+    def insert_left(x, k):
+        """Insert a node to the left of x."""
+        assert not is_node(x.left)
+        p = x.left
+        x_init = p.parent_init
+        y = Node(k)
+        y.parent_init = x_init
+        if p is x_init.left_init:
+            x_init.left_init = y
+        else:
+            x_init.right_init = y
+        x.left = y
+        y.parent = x
+        return y
+
     def insert_right(x, k):
         """Insert new node with key k to the right of x."""
-        assert x.right is None
-        x.right = Node(k)
-        return x.right
+        assert not is_node(x.right)
+        p = x.right
+        x_init = p.parent_init
+        y = Node(k)
+        y.parent_init = x_init
+        if p is x_init.left_init:
+            x_init.left_init = y
+        else:
+            x_init.right_init = y
+        x.right = y
+        y.parent = x
+        return y
 
     def rotate(x):
         """Rotate the edge between x and its parent."""
+        # Normalize to kozma's definition, page 8 of thesis
         y = x.parent
-        z = y.parent
-        w = x.right if x is y.left else x.left
-        y_dir = child_type(y)
-        x_dir = child_type(x)
-        detach(w)
-        detach(x)
-        detach(y)
-        # Do the main rotation
-        if x_dir is Left:
-            x.right = y
+        # Ensures x < y
+        if x is y.right:
+            x, y = y, x
+        if x is y.left:
+            # Shift around subtree
+            w = x.right
             y.left = w
-        elif x_dir is Right:
-            x.left = y
-            y.right = w
-        # Connect to pair's parent
-        if y_dir is Left:
-            z.left = x
-        elif y_dir is Right:
-            z.right = x
-        else:
-            return
+            if is_node(w):
+                w.parent = y
+            # Switch up parent pointers
+            z = y.parent
+            x.parent = z
+            # y is the root
+            if z is not None:
+                if y is z.right:
+                    z.right = x
+                else:
+                    z.left = x
+            x.right = y
+            y.parent = x
+        else:  # y is x.right
+            w = y.left
+            x.right = w
+            if is_node(w):
+                w.parent = x
+            # Switch up parent pointers
+            z = x.parent
+            y.parent = z
+            if z is not None:
+                if x is z.right:
+                    z.right = y
+                else:
+                    z.left = y
+            y.left = x
+            x.parent = y
 
     # The various walks
 
@@ -124,7 +144,7 @@ class Node(object):
                 if order == -1:
                     yield x
                 y = x.left
-                if y is None:
+                if not is_node(y):
                     l = True
                 else:
                     if order == "":
@@ -134,7 +154,7 @@ class Node(object):
                 if order == 0:
                     yield x
                 y = x.right
-                if y is None:
+                if not is_node(y):
                     r = True
                 else:
                     if order == "":
@@ -157,37 +177,29 @@ class Node(object):
         """Encode cursor movements traversing the subtree rooted at x."""
         return "".join(x._walk(""))
 
-    def _walk_nodes(x, order=None):
-        return tuple(x._walk(order))
-
     def walk_nodes(x):
-        """Depth first search of tree edges, always going left before right."""
-        return x._walk_nodes()
+        return tuple(x._walk())
 
     def preorder_nodes(x):
-        return x._walk_nodes(-1)
+        return tuple(x._walk(-1))
 
     def inorder_nodes(x):
-        return x._walk_nodes(0)
+        return tuple(x._walk(0))
 
     def postorder_nodes(x):
-        return x._walk_nodes(1)
-
-    def _walk_keys(x, order=None):
-        """Return tuple of the keys a given walk."""
-        return tuple(n.key for n in x._walk(order))
+        return tuple(x._walk(1))
 
     def walk_keys(x):
-        return x._walk_keys()
+        return tuple(n.key for n in x._walk())
 
     def preorder_keys(x):
-        return x._walk_keys(-1)
+        return tuple(n.key for n in x._walk(-1))
 
     def inorder_keys(x):
-        return x._walk_keys(0)
+        return tuple(n.key for n in x._walk(0))
 
     def postorder_keys(x):
-        return x._walk_keys(1)
+        return tuple(n.key for n in x._walk(1))
 
     # Self-Adjustment
 
@@ -231,6 +243,21 @@ class Node(object):
         while x.parent is not None:
             x.rotate()
 
+    def root(x):
+        """Return the root of x."""
+        while x.parent is not None:
+            x = x.parent
+        return x
+
+    def reset(x):
+        """Reset the tree containing x to its initial state."""
+        r = x.root()
+        for node in r.inorder_nodes():
+            node.parent = node.parent_init
+            node.left = node.left_init
+            node.right = node.right_init
+        return r.root()
+
 
 def is_node(x):
     return isinstance(x, Node)
@@ -238,17 +265,17 @@ def is_node(x):
 
 def detach(x):
     """Detach node x from its parent."""
-    if x is None:
+    if not is_node(x):
         return
     y = x.parent
     if y is None:
         return
     else:
-        if x is y._right:
-            y._right = None
+        if x is y.right:
+            y.right = None
         else:
-            y._left = None
-        x._parent = None
+            y.left = None
+        x.parent = None
 
 
 def child_type(x):
@@ -283,8 +310,7 @@ class Tree(object):
                 x = x.parent
             else:
                 raise ValueError("invalid movement, expected one of: l, r, p")
-        while x.parent is not None:
-            x = x.parent
+        x = x.root()
         for k, z in enumerate(x.inorder_nodes(), start=1):
             z.key = k
         T = cls()
@@ -295,7 +321,7 @@ class Tree(object):
         """Find node in tree with key k, and create it if not present."""
         x = T.root
         y = None
-        while x is not None:
+        while is_node(x):
             y = x
             if k < x:
                 x = x.left
@@ -338,6 +364,9 @@ class Tree(object):
 
     def encoding(T):
         return T.root.subtree_encoding()
+
+    def reset(T):
+        T.root = T.root.reset()
 
 
 def first_appearances(s):
@@ -404,75 +433,6 @@ class TestNode(unittest.TestCase):
 
     # Pointer Change Tests
 
-    def test_assignment_errors(self):
-        """Test that the error checks work."""
-        a = Node(5)
-        b = a.right = Node(10)
-        c = b.left = Node(4)
-        d = c.right = Node(9)
-        with self.assertRaises(AssertionError):
-            c.left = 3
-        with self.assertRaises(AssertionError):
-            d.left = c
-        self.assertTrue(a.right is b)
-        self.assertTrue(b.left is c)
-        self.assertTrue(c.right is d)
-        self.assertTrue(
-            a.left is
-            b.right is
-            c.left is
-            d.left is
-            d.right is
-            a.parent is
-            None
-        )
-        self.assertTrue(c is d.parent)
-        self.assertTrue(b is c.parent)
-        self.assertTrue(a is b.parent)
-
-    def test_pointer_changes(self):
-        """Ensure ThreadedNode has correct left/right pointers."""
-        a = Node(5)
-        b = Node(7)
-        c = Node(3)
-        d = Node(6)
-        e = Node(4)
-        a.right = b
-        a.right.left = d
-        a.left = c
-        a.left.right = e
-        self.assertTrue(a.right is b)
-        self.assertTrue(a.right.left is d)
-        self.assertTrue(a.right.right is None)
-        self.assertTrue(a.right.left.left is None)
-        self.assertTrue(a.left is c)
-        self.assertTrue(a.left.right is e)
-        self.assertTrue(a.left.left is None)
-        self.assertTrue(a.left.right.left is None)
-        # Test parents
-        self.assertTrue(a.parent is None)
-        self.assertTrue(b.parent is a)
-        self.assertTrue(d.parent is b)
-        self.assertTrue(c.parent is a)
-        self.assertTrue(e.parent is c)
-        b_new = Node(8)
-        a.right = b_new
-        # Test on removed block b
-        self.assertTrue(b.left is d)
-        self.assertTrue(b.parent is None)
-        self.assertTrue(d.parent is b)
-        # Test on old block
-        self.assertTrue(c.parent is a)
-        self.assertTrue(b_new.parent is a)
-        self.assertTrue(a.right.left is None)
-        l = a.left
-        r = a.right
-        a.left = None
-        a.right = None
-        self.assertTrue(l.parent is None)
-        self.assertTrue(r.parent is None)
-        self.assertTrue(a.left is a.right is a.parent is None)
-
     def test_insert(self):
         """Test insert methods work as expected."""
         x = Node("x")
@@ -487,7 +447,7 @@ class TestNode(unittest.TestCase):
         self.assertTrue(x.parent is None)
         null_slots = [x.left, y.right, z.left, z.right]
         for obj in null_slots:
-            self.assertTrue(obj is None)
+            self.assertFalse(is_node(obj))
         self.assertTrue(x.right is y)
         self.assertTrue(y.left is z)
 
@@ -502,7 +462,7 @@ class TestNode(unittest.TestCase):
         self.assertTrue(g.left is a)
         self.assertTrue(c.parent is a)
         self.assertTrue(a.parent is g)
-        self.assertTrue(a.left is None)
+        self.assertFalse(is_node(a.left))
         self.assertTrue(a.right is c)
         h.rotate()
         self.assertTrue(h.parent is k)
@@ -573,7 +533,7 @@ class TestNode(unittest.TestCase):
             x.splay()
         self.assertTrue((f, k, m, h, e, g, b, c, a) == f.preorder_nodes())
         for x in nodes:
-            self.assertTrue(x.right is None)
+            self.assertFalse(is_node(x.right))
         # Test simple splay zig-zag.
         a.splay()
         b.splay()
@@ -597,7 +557,7 @@ class TestNode(unittest.TestCase):
             x.simple_splay()
         self.assertTrue((f, k, m, h, e, g, b, c, a) == f.preorder_nodes())
         for x in nodes:
-            self.assertTrue(x.right is None)
+            self.assertFalse(is_node(x.right))
 
     def test_move_to_root(self):
         """Test properties of move-to-root"""
@@ -606,6 +566,21 @@ class TestNode(unittest.TestCase):
         self.assertTrue((m, g, c, a, b, h, e, k, f) == m.preorder_nodes())
         e.move_to_root()
         self.assertTrue((e, g, c, a, b, m, h, k, f) == e.preorder_nodes())
+
+    def test_reset(self):
+        """Test tree is properly reset"""
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        orig = k.preorder_nodes()
+        k.reset()
+        self.assertTrue(orig == k.preorder_nodes())
+        a.splay()
+        self.assertFalse(orig == k.preorder_nodes())
+        a.reset()
+        self.assertTrue(orig == k.preorder_nodes())
+        for x in k.inorder_nodes():
+            x.splay()
+        x.reset()
+        self.assertTrue(orig == k.preorder_nodes())
 
 
 class TestTree(unittest.TestCase):
