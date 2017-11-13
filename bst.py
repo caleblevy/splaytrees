@@ -259,7 +259,6 @@ class Node(object):
             x.rotate()
 
     def root(x):
-        """Return the root of x."""
         while x.parent is not None:
             x = x.parent
         return x
@@ -268,7 +267,6 @@ class Node(object):
 
     @maker(tuple)
     def path(x):
-        """Path from nodes to root."""
         while x is not None:
             yield x
             x = x.parent
@@ -282,8 +280,8 @@ class Node(object):
             if z is None:
                 yield y
             else:
-                if ((y is z.left and x is y.right) or 
-                    (y is z.right and x is y.left)):
+                if ((y is z.left and x is y.right) or
+                        (y is z.right and x is y.left)):
                     yield y
             x = y
             y = x.parent
@@ -307,6 +305,11 @@ class Node(object):
 
 def is_node(x):
     return isinstance(x, Node)
+
+
+def depth(x):
+    """Number of nodes on path from x to the root."""
+    return len(x.path())
 
 
 class Tree(object):
@@ -418,6 +421,34 @@ def first_appearances(s):
         if x not in seen:
             yield x
             seen.add(x)
+
+
+def wilber2(s):
+    """Compute the Wilber bounds for sequence s."""
+    w2 = 0
+    T = Tree()
+    seen = set()
+    for k in s:
+        x = T.find(k)
+        w2 += len(x.crossing_nodes())
+        if k not in seen:
+            w2 -= 1
+            seen.add(k)
+        x.move_to_root()
+        T.root = x
+    return w2+1 if T else w2
+
+
+def crossing_count(s):
+    """Compute the crossing lower bound for Wilber2."""
+    w2 = 0
+    T = Tree()
+    for k in s:
+        x = T.find(k)
+        w2 += len(x.crossing_nodes())
+        x.move_to_root()
+        T.root = x
+    return w2
 
 
 def _test_tree():
@@ -688,7 +719,7 @@ class TestTree(unittest.TestCase):
         self.assertEqual((), Tree().inorder())
         self.assertEqual((), Tree().preorder())
         self.assertEqual((), Tree().postorder())
-        self.assertEqual((), Tree.from_encoding(None).preorder())
+        self.assertEqual((), Tree.from_encoding().preorder())
         self.assertEqual((1, ), Tree.from_encoding("").preorder())
 
     def test_reset(self):
@@ -713,8 +744,7 @@ class TestTree(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    T = Tree([4,3,1,2])
-    print(T.find(2).inside_nodes())
-    print(T.find(2).crossing_nodes())
-    print(T.find(2).critical_subpath())
+    s = list("aihjgfclkendbpmoi")
+    print(wilber2(s))
+    print(crossing_count(s))
     unittest.main()
