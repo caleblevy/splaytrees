@@ -5,6 +5,16 @@ import functools
 import unittest
 
 
+def maker(maptype):
+    """Turn a generator into a specified type of sequence."""
+    def outputter(generator):
+        @functools.wraps(generator)
+        def mapper(*args, **kwargs):
+            return maptype(generator(*args, **kwargs))
+        return mapper
+    return outputter
+
+
 class Placeholder(object):
     """Slot for a null node, allowing them to be linked together."""
 
@@ -127,6 +137,15 @@ class Node(object):
             y.left = x
             x.parent = y
 
+    def reset(x):
+        """Reset the tree containing x to its initial state."""
+        r = x.root()
+        for node in r.inorder_nodes():
+            node.parent = node.parent_init
+            node.left = node.left_init
+            node.right = node.right_init
+        return r.root()
+
     # The various walks
 
     def _walk(x, order=None):
@@ -245,14 +264,45 @@ class Node(object):
             x = x.parent
         return x
 
-    def reset(x):
-        """Reset the tree containing x to its initial state."""
-        r = x.root()
-        for node in r.inorder_nodes():
-            node.parent = node.parent_init
-            node.left = node.left_init
-            node.right = node.right_init
-        return r.root()
+    # Path encodings.
+
+    @maker(tuple)
+    def path(x):
+        """Path from nodes to root."""
+        while x is not None:
+            yield x
+            x = x.parent
+
+    @maker(tuple)
+    def crossing_nodes(x):
+        yield x
+        y = x.parent
+        while y is not None:
+            z = y.parent
+            if z is None:
+                yield y
+            else:
+                if ((y is z.left and x is y.right) or 
+                    (y is z.right and x is y.left)):
+                    yield y
+            x = y
+            y = x.parent
+
+    @maker(tuple)
+    def inside_nodes(x):
+        for x in x.crossing_nodes():
+            if x.parent is not None:
+                yield x.parent
+
+    @maker(tuple)
+    def critical_subpath(x):
+        y = x.parent
+        for x in x.crossing_nodes():
+            if x is not y:
+                yield x
+            y = x.parent
+            if y is not None:
+                yield y
 
 
 def is_node(x):
@@ -278,7 +328,10 @@ class Tree(object):
     __nonzero__ = __bool__
 
     @classmethod
-    def from_encoding(cls, encoding):
+    def from_encoding(cls, encoding=None):
+        T = cls()
+        if encoding is None:
+            return T
         x = Node(None)
         for action in encoding:
             if action == 'l':
@@ -292,11 +345,10 @@ class Tree(object):
         x = x.root()
         for k, z in enumerate(x.inorder_nodes(), start=1):
             z.key = k
-        T = cls()
         T.root = x
         return T
 
-    def findsert(T, k):
+    def find(T, k):
         """Find node in tree with key k, and create it if not present."""
         x = T.root
         y = None
@@ -318,17 +370,17 @@ class Tree(object):
             return y
 
     def splay(T, k):
-        x = T.findsert(k)
+        x = T.find(k)
         x.splay()
         T.root = x
 
     def move_to_root(T, k):
-        x = T.findsert(k)
+        x = T.find(k)
         x.move_to_root()
         T.root = x
 
     def simple_splay(T, k):
-        x = T.findsert(k)
+        x = T.find(k)
         x.simple_splay()
         T.root = x
 
@@ -340,6 +392,12 @@ class Tree(object):
 
     def postorder(T):
         return T.root.postorder_keys() if T else ()
+
+    def encoding(T):
+        if T:
+            return T.root.encoding()
+        else:
+            return None
 
     def reset(T):
         if T:
@@ -464,6 +522,21 @@ class TestNode(unittest.TestCase):
         for x, y in parent_pairs:
             self.assertTrue(x.parent is y)
 
+    def test_reset(self):
+        """Test tree is properly reset"""
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        orig = k.preorder_nodes()
+        k.reset()
+        self.assertTrue(orig == k.preorder_nodes())
+        a.splay()
+        self.assertFalse(orig == k.preorder_nodes())
+        a.reset()
+        self.assertTrue(orig == k.preorder_nodes())
+        for x in k.inorder_nodes():
+            x.splay()
+        x.reset()
+        self.assertTrue(orig == k.preorder_nodes())
+
     # Test walks
 
     def test_inorder(self):
@@ -550,20 +623,14 @@ class TestNode(unittest.TestCase):
         e.move_to_root()
         self.assertTrue((e, g, c, a, b, m, h, k, f) == e.preorder_nodes())
 
-    def test_reset(self):
-        """Test tree is properly reset"""
+    # Test Path Functions
+
+    def test_path(self):
+        """Test the path is correctly yielded."""
         [k, g, c, a, b, h, e, m, f] = _test_tree()
-        orig = k.preorder_nodes()
-        k.reset()
-        self.assertTrue(orig == k.preorder_nodes())
-        a.splay()
-        self.assertFalse(orig == k.preorder_nodes())
-        a.reset()
-        self.assertTrue(orig == k.preorder_nodes())
-        for x in k.inorder_nodes():
-            x.splay()
-        x.reset()
-        self.assertTrue(orig == k.preorder_nodes())
+        self.assertTrue((k, ) == k.path())
+        self.assertTrue((a, c, g, k) == a.path())
+        self.assertTrue((b, c, g, k) == b.path())
 
 
 class TestTree(unittest.TestCase):
@@ -595,23 +662,23 @@ class TestTree(unittest.TestCase):
         self.assertEqual((5, 4, 3, 1, 2, 7, 6, 8), t.preorder())
         self.assertEqual((1, ), Tree.from_encoding("").preorder())
 
-    def test_findsert(self):
+    def test_find(self):
         """Test we can find and insert a node."""
         T = Tree()
         for char in "kgcabhemkf":
-            T.findsert(char)
+            T.find(char)
         self.assertEqual("abcefghkm", "".join(T.inorder()))
         self.assertEqual("kgcabefhm", "".join(T.preorder()))
         for char in "kgcabhemkf":
-            T.findsert(char)
+            T.find(char)
         self.assertEqual("abcefghkm", "".join(T.inorder()))
         self.assertEqual("kgcabefhm", "".join(T.preorder()))
         for char in "kgcabhemkf":
-            T.findsert(Node(char))
+            T.find(Node(char))
         self.assertEqual("abcefghkm", "".join(T.inorder()))
         self.assertEqual("kgcabefhm", "".join(T.preorder()))
         with self.assertRaises(AssertionError):
-            T.findsert(Node("q"))
+            T.find(Node("q"))
 
     def test_empty_tree(self):
         """Test methods on empty tree."""
@@ -621,6 +688,8 @@ class TestTree(unittest.TestCase):
         self.assertEqual((), Tree().inorder())
         self.assertEqual((), Tree().preorder())
         self.assertEqual((), Tree().postorder())
+        self.assertEqual((), Tree.from_encoding(None).preorder())
+        self.assertEqual((1, ), Tree.from_encoding("").preorder())
 
     def test_reset(self):
         """Test tree is reset."""
@@ -644,4 +713,8 @@ class TestTree(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    T = Tree([4,3,1,2])
+    print(T.find(2).inside_nodes())
+    print(T.find(2).crossing_nodes())
+    print(T.find(2).critical_subpath())
     unittest.main()
