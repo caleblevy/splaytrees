@@ -548,7 +548,7 @@ def mr_inside_cost(s):
 
 
 def mr_critical_cost(s):
-    return sum(len(x.critical_subpath(x)) for x in mr_nodes(s))
+    return sum(len(x.critical_subpath()) for x in mr_nodes(s))
 
 
 def splay_cost(s):
@@ -564,7 +564,7 @@ def splay_inside_cost(s):
 
 
 def splay_critical_cost(s):
-    return sum(len(x.critical_subpath(x)) for x in splay_nodes(s))
+    return sum(len(x.critical_subpath()) for x in splay_nodes(s))
     
 
 
