@@ -5,18 +5,7 @@ import unittest
 
 from bst import *
 
-
-def all_costs(s):
-    """Print all costs for s in a pretty fashion."""
-    print("Move-to-Root:")
-    print("  Crossing:", mr_crossing_cost(s))
-    print("  Inside:", mr_inside_cost(s))
-    print("  Critical:", mr_critical_cost(s))
-    print("Splay:")
-    print("  Crossing:", splay_crossing_cost(s))
-    print("  Inside:", splay_inside_cost(s))
-    print("  Critical:", splay_critical_cost(s))
-    print("  Total:", splay_cost(s))
+# Depths
 
 
 def depths(T):
@@ -78,11 +67,49 @@ class TestDepths(unittest.TestCase):
         t.splay(16)
         t.splay(28)
         t_levels = levels(t)
-        print(t.preorder())
         self.assertEqual(4, t_levels[13])
         self.assertEqual(1, t_levels[2])
         self.assertEqual(3, t_levels[11])
         self.assertEqual(2, t_levels[29])
+
+
+# Pretty Printing
+
+
+def keys(iterable):
+    """Return keys of given iterable."""
+    return tuple(x.key for x in iterable)
+
+
+def all_costs(s):
+    """Print all costs for s in a pretty fashion."""
+    print("Move-to-Root:")
+    print("  Crossing:", mr_crossing_cost(s))
+    print("  Inside:", mr_inside_cost(s))
+    print("  Critical:", mr_critical_cost(s))
+    print("Splay:")
+    print("  Crossing:", splay_crossing_cost(s))
+    print("  Inside:", splay_inside_cost(s))
+    print("  Critical:", splay_critical_cost(s))
+    print("  Total:", splay_cost(s))
+
+
+def compare_paths(s):
+    """Print paths of splay and move-to-root in dual fashion."""
+    print("Compare paths: ")
+    print("s =", s, '\n')
+    for i, (x, y) in enumerate(dual_nodes(s)):
+        prefix = str(i) + ":"
+        indent = " "*len(prefix)
+        print(prefix, "k =", x.key)
+        print(indent, "c =", keys(x.crossing_sorted()))
+        print(indent, "  =", keys(y.crossing_sorted()))
+        print(indent, "b =", keys(x.inside_sorted()))
+        print(indent, "  =", keys(y.inside_sorted()))
+        print(indent, "a =", keys(x.critical_sorted()))
+        print(indent, "  =", keys(y.critical_sorted()), '\n')
+        print(indent, "p =", list(sorted(keys(y.path()))))
+        print()
 
 
 if __name__ == '__main__':
@@ -94,4 +121,10 @@ if __name__ == '__main__':
     for x in mr_nodes(s):
         print(x.crossing_nodes())
     all_costs(s)
+    compare_paths(s)
+
+    from random import shuffle
+    r = list(range(5000))
+    shuffle(r)
+    compare_paths(r)
     unittest.main()
