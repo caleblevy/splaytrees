@@ -810,7 +810,9 @@ def _new_path(encoding):
 
 class TestWilber(unittest.TestCase):
     """Test Wilber bounds and related functionality."""
-    from wilber import critical_nodes, wilber2
+    from wilber import critical_nodes
+    from wilber import wilber2 as w2
+    from random import shuffle
 
     def test_crossings(self):
         """Test nodes correctly cross."""
@@ -863,11 +865,37 @@ class TestWilber(unittest.TestCase):
             z.critical_split()
         )
 
+    def test_wilber_example(self):
+        """Test Wilber2 on paper example."""
+        s = list("aihjgfclkendbpmoi")
+        for (t, _) in mr_execution(s[:-1]):
+            pass
+        x = t.find("i")
+        w = tuple(reversed("obkfjhi"))
+        v = tuple(reversed("mekgjh"))
+        self.assertEqual(w, x.crossing_nodes())
+        self.assertEqual(v, x.inside_nodes())
+        self.assertEqual(37, wilber2(s))
+
+    def compare_to_wilber2(self):
+        """Compare paths and counts to wilber2 exactly."""
+        s = list("aihjgfclkendbpmoi")
+        self.assertEqual(w2(s), wilber2(s))
+        seen = set()
+        for i, (_, x) in enumerate(mr_execution(s), start=1):
+            b_w2 = tuple(critical_nodes(s, i)[3])
+            c_w2 = tuple(critical_nodes(s, i)[1])
+            b = tuple(reversed(x.inside_nodes()))
+            c = tuple(reversed(x.crossing_nodes()))
+            if x.key not in seen:
+                b = b[:-1]
+                c = c[:-1]
+            self.assertEqual(b_w2, b)
+            self.assertEqual(c_w2, c)
+        r = list(range(50)) + list(range(1, 70, 5))
+        shuffle(r)
+        self.assertEqual(w2(r), wilber2(r))
+
 
 if __name__ == '__main__':
-    s = list("aihjgfclkendbpmoi")
-    print(wilber2(s))
-    print(crossing_count(s))
-    for T, x in mr_execution(s):
-        print(x, x.inside_split())
     unittest.main()
