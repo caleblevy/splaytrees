@@ -62,12 +62,6 @@ class Node(object):
     # Pointer Adjustment
 
     def insert_left(x, k):
-        """Insert new node with key k to the left of x."""
-        assert x.left is None
-        x.left = Node(k)
-        return x.left
-
-    def insert_left(x, k):
         """Insert a node to the left of x."""
         assert not is_node(x.left)
         p = x.left
@@ -302,14 +296,29 @@ class Node(object):
             if y is not None:
                 yield y
 
+    def crossing_split(x):
+        """Split crossing nodes into left, right and center."""
+        c = x.crossing_nodes()
+        l = c[1::2]
+        r = c[2::2]
+        z = x.parent
+        if z is not None and x is z.left:
+            l, r = r, l
+        return (x, l, r)
+
+    def inside_split(x):
+        """Split inside nodes into left and right."""
+        b = x.inside_nodes()
+        l = b[0::2]
+        r = b[1::2]
+        z = x.parent
+        if z is not None and x is z.left:
+            l, r = r, l
+        return (l, r)
+
 
 def is_node(x):
     return isinstance(x, Node)
-
-
-def depth(x):
-    """Number of nodes on path from x to the root."""
-    return len(x.path())
 
 
 class Tree(object):
@@ -423,32 +432,44 @@ def first_appearances(s):
             seen.add(x)
 
 
+def mr_execution(s):
+    """Return Tree structures and nodes found by Move-to-Root."""
+    T = Tree()
+    for k in s:
+        x = T.find(k)
+        yield (T, x)
+        x.move_to_root()
+        T.root = x
+
+
+def splay_execution(s):
+    """Return Tree structures and nodes found by splay."""
+    T = Tree()
+    for k in s:
+        x = T.find(k)
+        yield (T, x)
+        x.splay()
+        T.root = x
+
+
 def wilber2(s):
     """Compute the Wilber bounds for sequence s."""
     w2 = 0
-    T = Tree()
     seen = set()
-    for k in s:
-        x = T.find(k)
+    for _, x in mr_execution(s):
         w2 += len(x.crossing_nodes())
-        if k not in seen:
+        if x.key not in seen:
             w2 -= 1
-            seen.add(k)
-        x.move_to_root()
-        T.root = x
-    return w2+1 if T else w2
+            seen.add(x.key)
+    return w2+1 if w2 else w2
 
 
 def crossing_count(s):
     """Compute the crossing lower bound for Wilber2."""
-    w2 = 0
-    T = Tree()
-    for k in s:
-        x = T.find(k)
-        w2 += len(x.crossing_nodes())
-        x.move_to_root()
-        T.root = x
-    return w2
+    cc = 0
+    for (_, x) in mr_execution(s):
+        cc += len(x.crossing_nodes())
+    return cc
 
 
 def _test_tree():
@@ -743,8 +764,56 @@ class TestTree(unittest.TestCase):
         self.assertEqual("mkhgfecba", "".join(Q.preorder()))
 
 
+def _new_path(encoding):
+    """Return new path, since interface not set up."""
+    T = Tree.from_encoding(encoding)
+    return T.find(T.postorder()[0])
+
+
+class TestWilber(unittest.TestCase):
+    """Test Wilber bounds and related functionality."""
+    from wilber import critical_nodes, wilber2
+
+    def test_crossings(self):
+        """Test nodes correctly cross."""
+        x = _new_path("rrrllrlrrllrlr")
+        self.assertEqual(
+            (9, 8, 10, 7, 12, 5, 13, 4, 15, 1),
+            x.crossing_nodes())
+        y = _new_path("lllrrr")
+        self.assertEqual((4, 1, 7), y.crossing_nodes())
+        x_l = (8, 7, 5, 4, 1)
+        x_r = (10, 12, 13, 15)
+        self.assertEqual((9, x_l, x_r), x.crossing_split())
+        self.assertEqual((4, (1, ), (7, )), y.crossing_split())
+        n = Node(None)
+        self.assertEqual((n, ), n.crossing_nodes())
+
+    def test_inside(self):
+        """Test parents of crossing nodes."""
+        x = _new_path("rrrllrlrrllrlr")
+        y = _new_path("lllrrr")
+        self.assertEqual((8, 10, 7, 11, 6, 13, 4, 14, 3), x.inside_nodes())
+        self.assertEqual((3, 5), y.inside_nodes())
+        self.assertEqual(((8, 7, 6, 4, 3), (10, 11, 13, 14)), x.inside_split())
+        self.assertEqual(((3 ,), (5, )), y.inside_split())
+        n = Node(None)
+        self.assertEqual((), n.inside_nodes())
+
+    def test_critical(self):
+        """Test the critical nodes."""
+        x = _new_path("rrrllrlrrllrlr")
+        y = _new_path("lllrrr")
+        self.assertEqual(
+            (9, 8, 10, 7, 11, 12, 6, 5, 13, 4, 14, 15, 3, 1),
+            x.critical_subpath())
+        self.assertEqual((4, 3, 1, 5, 7), y.critical_subpath())
+
+
 if __name__ == '__main__':
     s = list("aihjgfclkendbpmoi")
     print(wilber2(s))
     print(crossing_count(s))
+    for T, x in mr_execution(s):
+        print(x, x.inside_split())
     unittest.main()
