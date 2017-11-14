@@ -357,6 +357,18 @@ class Node(object):
             r = r[1:]
         return (x, tuple(l), tuple(r))
 
+    def crossing_sorted(x):
+        x, l, r = x.crossing_split()
+        return tuple(reversed(l)) + (x, ) + r
+
+    def inside_sorted(x):
+        l, r = x.inside_split()
+        return tuple(reversed(l)) + r
+
+    def critical_sorted(x):
+        x, l, r = x.critical_split()
+        return tuple(reversed(l)) + (x, ) + r
+
 
 def is_node(x):
     return isinstance(x, Node)
@@ -565,7 +577,6 @@ def splay_inside_cost(s):
 
 def splay_critical_cost(s):
     return sum(len(x.critical_subpath()) for x in splay_nodes(s))
-    
 
 
 def last(iterable):
@@ -896,6 +907,11 @@ class TestWilber(unittest.TestCase):
         z = _new_path("llrlrrll")
         self.assertEqual((4, 6, 2, 7, 1, 9), z.crossing_nodes())
         self.assertEqual((4, (2, 1), (6, 7, 9)), z.crossing_split())
+        self.assertEqual(
+            (1, 4, 5, 7, 8, 9, 10, 12, 13, 15),
+            x.crossing_sorted())
+        self.assertEqual((1, 4, 7), y.crossing_sorted())
+        self.assertEqual((1, 2, 4, 6, 7, 9), z.crossing_sorted())
 
     def test_inside(self):
         """Test parents of crossing nodes."""
@@ -910,6 +926,11 @@ class TestWilber(unittest.TestCase):
         z = _new_path("llrlrrll")
         self.assertEqual((5, 3, 7, 1, 8), z.inside_nodes())
         self.assertEqual(((3, 1), (5, 7, 8)), z.inside_split())
+        self.assertEqual(
+            (3, 4, 6, 7, 8, 10, 11, 13, 14),
+            x.inside_sorted())
+        self.assertEqual((3, 5), y.inside_sorted())
+        self.assertEqual((1, 3, 5, 7, 8), z.inside_sorted())
 
     def test_critical(self):
         """Test the critical nodes."""
@@ -925,10 +946,12 @@ class TestWilber(unittest.TestCase):
         self.assertEqual((4, (3, 1), (5, 7)), y.critical_split())
         z = _new_path("llrlrrll")
         self.assertEqual((4, 5, 6, 3, 2, 7, 1, 8, 9), z.critical_subpath())
+        self.assertEqual((4, (3, 2, 1), (5, 6, 7, 8, 9)), z.critical_split())
         self.assertEqual(
-            (4, (3, 2, 1), (5, 6, 7, 8, 9)),
-            z.critical_split()
-        )
+            (1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
+            x.critical_sorted())
+        self.assertEqual((1, 3, 4, 5, 7), y.critical_sorted())
+        self.assertEqual((1, 2, 3, 4, 5, 6, 7, 8, 9), z.critical_sorted())
 
     def test_wilber_example(self):
         """Test Wilber2 on paper example."""
