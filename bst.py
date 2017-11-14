@@ -328,27 +328,19 @@ class Node(object):
         l = []
         r = []
         for y in y.crossing_nodes():
-            if not b:
-                if y is not z:
+            if y is not z:
+                if not b:
                     l.append(y)
-                z = y.parent
-                if z is not None:
-                    if y is z.left:
-                        r.append(z)
-                    else:
-                        l.append(z)
-                b = True
-            else:
-                if y is not z:
+                else:
                     r.append(y)
-                z = y.parent
-                if z is not None:
-                    if y is z.left:
-                        r.append(z)
-                    else:
-                        l.append(z)
-                b = False
-        if x == l[0]:
+            b = not b
+            z = y.parent
+            if z is not None:
+                if y is z.left:
+                    r.append(z)
+                else:
+                    l.append(z)
+        if x is l[0]:
             l = l[1:]
         else:
             r = r[1:]
@@ -488,6 +480,13 @@ def splay_execution(s):
         yield (T, x)
         x.splay()
         T.root = x
+
+
+def dual_execution(s):
+    """Compare splay and move-to-root executions."""
+    s = list(s)
+    for (T, x), (S, y) in zip(mr_execution(s), splay_execution(s)):
+        yield (x, y)
 
 
 def wilber2(s):
