@@ -316,6 +316,44 @@ class Node(object):
             l, r = r, l
         return (l, r)
 
+    def critical_split(x):
+        y = x
+        z = y.parent
+        if z is None:
+            return (x, (), ())
+        elif y is z.left:
+            b = False
+        else:
+            b = True
+        l = []
+        r = []
+        for y in y.crossing_nodes():
+            if not b:
+                if y is not z:
+                    l.append(y)
+                z = y.parent
+                if z is not None:
+                    if y is z.left:
+                        r.append(z)
+                    else:
+                        l.append(z)
+                b = True
+            else:
+                if y is not z:
+                    r.append(y)
+                z = y.parent
+                if z is not None:
+                    if y is z.left:
+                        r.append(z)
+                    else:
+                        l.append(z)
+                b = False
+        if x == l[0]:
+            l = l[1:]
+        else:
+            r = r[1:]
+        return (x, tuple(l), tuple(r))
+
 
 def is_node(x):
     return isinstance(x, Node)
@@ -782,12 +820,15 @@ class TestWilber(unittest.TestCase):
             x.crossing_nodes())
         y = _new_path("lllrrr")
         self.assertEqual((4, 1, 7), y.crossing_nodes())
-        x_l = (8, 7, 5, 4, 1)
-        x_r = (10, 12, 13, 15)
-        self.assertEqual((9, x_l, x_r), x.crossing_split())
+        self.assertEqual(
+            (9, (8, 7, 5, 4, 1), (10, 12, 13, 15)),
+            x.crossing_split())
         self.assertEqual((4, (1, ), (7, )), y.crossing_split())
         n = Node(None)
         self.assertEqual((n, ), n.crossing_nodes())
+        z = _new_path("llrlrrll")
+        self.assertEqual((4, 6, 2, 7, 1, 9), z.crossing_nodes())
+        self.assertEqual((4, (2, 1), (6, 7, 9)), z.crossing_split())
 
     def test_inside(self):
         """Test parents of crossing nodes."""
@@ -796,9 +837,12 @@ class TestWilber(unittest.TestCase):
         self.assertEqual((8, 10, 7, 11, 6, 13, 4, 14, 3), x.inside_nodes())
         self.assertEqual((3, 5), y.inside_nodes())
         self.assertEqual(((8, 7, 6, 4, 3), (10, 11, 13, 14)), x.inside_split())
-        self.assertEqual(((3 ,), (5, )), y.inside_split())
+        self.assertEqual(((3, ), (5, )), y.inside_split())
         n = Node(None)
         self.assertEqual((), n.inside_nodes())
+        z = _new_path("llrlrrll")
+        self.assertEqual((5, 3, 7, 1, 8), z.inside_nodes())
+        self.assertEqual(((3, 1), (5, 7, 8)), z.inside_split())
 
     def test_critical(self):
         """Test the critical nodes."""
@@ -808,6 +852,16 @@ class TestWilber(unittest.TestCase):
             (9, 8, 10, 7, 11, 12, 6, 5, 13, 4, 14, 15, 3, 1),
             x.critical_subpath())
         self.assertEqual((4, 3, 1, 5, 7), y.critical_subpath())
+        self.assertEqual(
+            (9, (8, 7, 6, 5, 4, 3, 1), (10, 11, 12, 13, 14, 15)),
+            x.critical_split())
+        self.assertEqual((4, (3, 1), (5, 7)), y.critical_split())
+        z = _new_path("llrlrrll")
+        self.assertEqual((4, 5, 6, 3, 2, 7, 1, 8, 9), z.critical_subpath())
+        self.assertEqual(
+            (4, (3, 2, 1), (5, 6, 7, 8, 9)),
+            z.critical_split()
+        )
 
 
 if __name__ == '__main__':
