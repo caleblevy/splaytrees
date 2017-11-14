@@ -437,7 +437,7 @@ class Tree(object):
 
     def encoding(T):
         if T:
-            return T.root.encoding()
+            return T.root.subtree_encoding()
         else:
             return None
 
@@ -462,8 +462,11 @@ def first_appearances(s):
             seen.add(x)
 
 
+# Executors and nodes
+
+
 def mr_execution(s):
-    """Return Tree structures and nodes found by Move-to-Root."""
+    """Return tree and node state of move-to-root execution."""
     T = Tree()
     for k in s:
         x = T.find(k)
@@ -473,7 +476,7 @@ def mr_execution(s):
 
 
 def splay_execution(s):
-    """Return Tree structures and nodes found by splay."""
+    """Return tree and node state of splay execution."""
     T = Tree()
     for k in s:
         x = T.find(k)
@@ -483,17 +486,37 @@ def splay_execution(s):
 
 
 def dual_execution(s):
-    """Compare splay and move-to-root executions."""
+    """Return tree and node state of move-to-root and splay in parallel."""
     s = list(s)
-    for (T, x), (S, y) in zip(mr_execution(s), splay_execution(s)):
+    mr = mr_execution(s)
+    sp = splay_execution(s)
+    for k in s:
+        yield next(mr), next(sp)
+
+
+def mr_nodes(s):
+    for (_, x) in mr_execution(s):
+        yield x
+
+
+def splay_nodes(s):
+    for (_, x) in splay_execution(s):
+        yield x
+
+
+def dual_nodes(s):
+    for (M, x), (S, y) in dual_execution(s):
         yield (x, y)
 
 
+# Different Counts
+
+
 def wilber2(s):
-    """Compute the Wilber bounds for sequence s."""
+    """Compute the value of Wilber's second lower bound."""
     w2 = 0
     seen = set()
-    for _, x in mr_execution(s):
+    for x in mr_nodes(s):
         w2 += len(x.crossing_nodes())
         if x.key not in seen:
             w2 -= 1
@@ -501,12 +524,44 @@ def wilber2(s):
     return w2+1 if w2 else w2
 
 
-def crossing_count(s):
-    """Compute the crossing lower bound for Wilber2."""
-    cc = 0
-    for (_, x) in mr_execution(s):
-        cc += len(x.crossing_nodes())
-    return cc
+def mr_cost(s):
+    return sum(len(x.path()) for x in mr_nodes(s))
+
+
+def mr_crossing_cost(s):
+    return sum(len(x.crossing_nodes()) for x in mr_nodes(s))
+
+
+def mr_inside_cost(s):
+    return sum(len(x.inside_nodes()) for x in mr_nodes(s))
+
+
+def mr_critical_cost(s):
+    return sum(len(x.critical_subpath(x)) for x in mr_nodes(s))
+
+
+def splay_cost(s):
+    return sum(len(x.path()) for x in splay_nodes(s))
+
+
+def splay_crossing_cost(s):
+    return sum(len(x.crossing_nodes()) for x in splay_nodes(s))
+
+
+def splay_inside_cost(s):
+    return sum(len(x.inside_nodes()) for x in splay_nodes(s))
+
+
+def splay_critical_cost(s):
+    return sum(len(x.critical_subpath(x)) for x in splay_nodes(s))
+    
+
+
+def last(iterable):
+    """Return the last element of an iterable."""
+    for x in iterable:
+        pass
+    return x
 
 
 def _test_tree():
@@ -881,7 +936,7 @@ class TestWilber(unittest.TestCase):
         s = list("aihjgfclkendbpmoi")
         self.assertEqual(w2(s), wilber2(s))
         seen = set()
-        for i, (_, x) in enumerate(mr_execution(s), start=1):
+        for i, x in enumerate(mr_execution(s), start=1):
             b_w2 = tuple(critical_nodes(s, i)[3])
             c_w2 = tuple(critical_nodes(s, i)[1])
             b = tuple(reversed(x.inside_nodes()))
@@ -897,4 +952,11 @@ class TestWilber(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    s = tuple(range(1, 63)) + (1, 2, 4, 8, 16, 32)
+    (M, x), (S, y) = last(dual_execution(s))
+    print(M.encoding())
+    print(S.encoding())
+    s = list("aihjgfclkendbpmoi")
+    for x in mr_nodes(s):
+        print(x.crossing_nodes())
     unittest.main()
