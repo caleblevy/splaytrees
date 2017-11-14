@@ -4,6 +4,17 @@ tree."""
 import functools
 import unittest
 
+__all__ = [
+    "Node",
+    "Tree",
+    "mr_execution", "splay_execution", "dual_execution",
+    "mr_nodes", "splay_nodes", "dual_nodes",
+    "mr_cost", "mr_crossing_cost", "mr_inside_cost", "mr_critical_cost",
+    "splay_cost", "splay_crossing_cost", "splay_inside_cost",
+    "splay_critical_cost",
+    "last"
+]
+
 
 def maker(maptype):
     """Turn a generator into a specified type of sequence."""
@@ -952,11 +963,4 @@ class TestWilber(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    s = tuple(range(1, 63)) + (1, 2, 4, 8, 16, 32)
-    (M, x), (S, y) = last(dual_execution(s))
-    print(M.encoding())
-    print(S.encoding())
-    s = list("aihjgfclkendbpmoi")
-    for x in mr_nodes(s):
-        print(x.crossing_nodes())
     unittest.main()
