@@ -1,6 +1,7 @@
 """Attempt(s) to separate Splay from Wilber2 using zig-zags."""
 from __future__ import print_function
 
+import random
 import unittest
 
 from bst import *
@@ -81,7 +82,7 @@ def keys(iterable):
     return tuple(x.key for x in iterable)
 
 
-def all_costs(s):
+def compare_costs(s):
     """Print all costs for s in a pretty fashion."""
     print("Move-to-Root:")
     print("  Crossing:", mr_crossing_cost(s))
@@ -94,37 +95,50 @@ def all_costs(s):
     print("  Total:", splay_cost(s))
 
 
-def compare_paths(s):
+def compare_executions(s):
     """Print paths of splay and move-to-root in dual fashion."""
-    print("Compare paths: ")
+    print("Compare executions: ")
     print("s =", s, '\n')
-    for i, (x, y) in enumerate(dual_nodes(s)):
-        prefix = str(i) + ":"
-        indent = " "*len(prefix)
-        print(prefix, "k =", x.key)
-        print(indent, "c =", keys(x.crossing_sorted()))
-        print(indent, "  =", keys(y.crossing_sorted()))
-        print(indent, "b =", keys(x.inside_sorted()))
-        print(indent, "  =", keys(y.inside_sorted()))
-        print(indent, "a =", keys(x.critical_sorted()))
-        print(indent, "  =", keys(y.critical_sorted()), '\n')
-        print(indent, "p =", list(sorted(keys(y.path()))))
-        print()
+    for i, (x, y) in enumerate(dual_nodes(s), start=1):
+        compare_paths(x, y, str(i) + ":")
+
+
+def compare_paths(x, y, prefix=""):
+    indent = " "*len(prefix)
+    print(prefix, "k =", x.key)
+    print(indent, "c =", keys(x.crossing_sorted()))
+    print(indent, "  =", keys(y.crossing_sorted()))
+    print(indent, "b =", keys(x.inside_sorted()))
+    print(indent, "  =", keys(y.inside_sorted()))
+    print(indent, "a =", keys(x.critical_sorted()))
+    print(indent, "  =", keys(y.critical_sorted()), '\n')
+    print(indent, "p =", list(sorted(keys(y.path()))))
+    print()
+
+
+def break_wilber(k, e):
+    """Try to break Wilber starting with sequential access on 2**k-1 nodes."""
+    n = 2**k-1
+    s = list(range(1, n+1))
+    m = 1
+    while m < n:
+        s.append(m)
+        m *= 2
+    (M, _), (S, _) = last(dual_execution(s))
+    for i in range(e):
+        d = depths(S)
+        l = levels(M)
+        ratios = {i: (d[i]/(l[i] + random.random())) for i in range(1, n+1)}
+        k = max(ratios, key=ratios.__getitem__)
+        s.append(k)
+        x = M.find(k)
+        y = S.find(k)
+        compare_paths(x, y, str(i) + ":")
+        M.move_to_root(k)
+        S.splay(k)
+    compare_costs(s)
 
 
 if __name__ == '__main__':
-    s = tuple(range(1, 63)) + (1, 2, 4, 8, 16, 32)
-    (M, x), (S, y) = last(dual_execution(s))
-    print(M.encoding())
-    print(S.encoding())
-    s = list("aihjgfclkendbpmoi")
-    for x in mr_nodes(s):
-        print(x.crossing_nodes())
-    all_costs(s)
-    compare_paths(s)
-
-    from random import shuffle
-    r = list(range(5000))
-    shuffle(r)
-    compare_paths(r)
+    break_wilber(14, 1000)
     unittest.main()
