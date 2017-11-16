@@ -128,7 +128,7 @@ def break_wilber(k, e):
     for i in range(e):
         d = depths(S)
         l = levels(M)
-        ratios = {i: (d[i]/(l[i] + random.random())) for i in range(1, n+1)}
+        ratios = {i: d[i] - l[i] for i in range(1, n+1)}
         k = max(ratios, key=ratios.__getitem__)
         s.append(k)
         x = M.find(k)
@@ -140,5 +140,13 @@ def break_wilber(k, e):
 
 
 if __name__ == '__main__':
-    break_wilber(14, 1000)
+    break_wilber(15, 1000)
+    from random import randint, shuffle
+    # def randseq(k, n):
+    #     return [random.randint(1, k) for _ in range(n)]
+    # print(randseq(100,1000))
+    # compare_costs(randseq(1000, 10000))
+    # r = range(5000)
+    # shuffle(r)
+    # compare_costs(r)
     unittest.main()

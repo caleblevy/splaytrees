@@ -9,6 +9,7 @@ __all__ = [
     "Tree",
     "mr_execution", "splay_execution", "dual_execution",
     "mr_nodes", "splay_nodes", "dual_nodes",
+    "wilber2",
     "mr_cost", "mr_crossing_cost", "mr_inside_cost", "mr_critical_cost",
     "splay_cost", "splay_crossing_cost", "splay_inside_cost",
     "splay_critical_cost",
