@@ -6,74 +6,6 @@ import unittest
 
 from bst import *
 
-# Depths
-
-
-def depths(T):
-    """Return depths of nodes of subtree rooted at x."""
-    d = {}
-    if not T:
-        return d
-    nodes = iter(T.root.preorder_nodes())
-    d[next(nodes).key] = 1
-    for x in nodes:
-        d[x.key] = d[x.parent.key] + 1
-    return d
-
-
-def levels(T):
-    """Number or turns to get from root to node."""
-    d = {}
-    if not T:
-        return d
-    nodes = iter(T.root.preorder_nodes())
-    d[next(nodes).key] = 1
-    for x in nodes:
-        y = x.parent
-        z = y.parent
-        if z is None:
-            d[x.key] = 1
-        elif (x is y.left and y is z.right) or (x is y.right and y is z.left):
-            d[x.key] = d[y.key] + 1
-        else:
-            d[x.key] = d[y.key]
-    return d
-
-
-class TestDepths(unittest.TestCase):
-    """Test the regular, zig-zig and zig-zag depth mappings"""
-
-    def test_depths(self):
-        """Test node depths."""
-        d = depths(Tree([1]))
-        self.assertEqual({1: 1}, d)
-        t = Tree.from_encoding("r"*30)
-        t.splay(31)
-        t.splay(16)
-        t.splay(28)
-        t_depths = depths(t)
-        self.assertEqual(7, t_depths[15])
-        self.assertEqual(7, t_depths[23])
-        self.assertEqual(8, t_depths[13])
-
-    def test_levels(self):
-        """Test number zig-zags on splay paths is correct."""
-        d = levels(Tree([1]))
-        self.assertEqual({1: 1}, d)
-        t = Tree.from_encoding("r"*30)
-        rp_levels = levels(t)
-        for k in range(1, 32):
-            self.assertEqual(1, rp_levels[k])
-        t.splay(31)
-        t.splay(16)
-        t.splay(28)
-        t_levels = levels(t)
-        self.assertEqual(4, t_levels[13])
-        self.assertEqual(1, t_levels[2])
-        self.assertEqual(3, t_levels[11])
-        self.assertEqual(2, t_levels[29])
-
-
 # Pretty Printing
 
 
@@ -126,8 +58,8 @@ def break_wilber(k, e):
         m *= 2
     (M, _), (S, _) = last(dual_execution(s))
     for i in range(e):
-        d = depths(S)
-        l = levels(M)
+        d = S.depths()
+        l = M.levels()
         ratios = {i: d[i] - l[i] for i in range(1, n+1)}
         k = max(ratios, key=ratios.__getitem__)
         s.append(k)

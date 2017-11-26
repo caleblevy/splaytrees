@@ -842,6 +842,10 @@ class TestNode(unittest.TestCase):
         e.move_to_root()
         self.assertTrue((e, g, c, a, b, m, h, k, f) == e.preorder_nodes())
 
+
+class TestDepths(unittest.TestCase):
+    """Test the depths."""
+
     def test_depths(self):
         """Test node depths."""
         d = Node(None).depths()
