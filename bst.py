@@ -370,6 +370,46 @@ class Node(object):
         x, l, r = x.critical_split()
         return tuple(reversed(l)) + (x, ) + r
 
+    # Depths, heights, turns
+
+    def depths(x):
+        """Return depths of nodes of subtree rooted at x."""
+        d = {}
+        nodes = iter(x.preorder_nodes())
+        d[next(nodes).key] = 1
+        for x in nodes:
+            d[x.key] = d[x.parent.key] + 1
+        return d
+
+    def levels(x):
+        """Number or turns to get from root to node."""
+        d = {}
+        nodes = iter(x.preorder_nodes())
+        d[next(nodes).key] = 1
+        p = x.parent
+        for x in nodes:
+            y = x.parent
+            z = y.parent
+            if z is p:
+                d[x.key] = 1
+            elif ((x is y.left and y is z.right)
+                    or (x is y.right and y is z.left)):
+                d[x.key] = d[y.key] + 1
+            else:
+                d[x.key] = d[y.key]
+        return d
+
+    def heights(x):
+        """Return heights of node x."""
+        h = {}
+        for x in x.postorder_nodes():
+            l = x.left
+            r = x.right
+            h_l = h[l.key] if is_node(l) else -1
+            h_r = h[r.key] if is_node(r) else -1
+            h[x.key] = 1 + max(h_r, h_l)
+        return h
+
 
 def is_node(x):
     return isinstance(x, Node)
@@ -474,6 +514,18 @@ class Tree(object):
         T = Tree(T.preorder())
         T.reset()
         return T
+
+    def depths(T):
+        if not T:
+            return {}
+        else:
+            return T.root.depths()
+
+    def levels(T):
+        if not T:
+            return {}
+        else:
+            return T.root.levels()
 
 
 def first_appearances(s):
@@ -790,14 +842,42 @@ class TestNode(unittest.TestCase):
         e.move_to_root()
         self.assertTrue((e, g, c, a, b, m, h, k, f) == e.preorder_nodes())
 
-    # Test Path Functions
+    def test_depths(self):
+        """Test node depths."""
+        d = Node(None).depths()
+        self.assertEqual({None: 1}, d)
+        t = Tree.from_encoding("r"*30)
+        t.splay(31)
+        t.splay(16)
+        t.splay(28)
+        t_depths = t.root.depths()
+        self.assertEqual(7, t_depths[15])
+        self.assertEqual(7, t_depths[23])
+        self.assertEqual(8, t_depths[13])
+        sub_depths = t.find(22).depths()
+        self.assertEqual(4, sub_depths[25])
+        self.assertEqual(2, sub_depths[20])
 
-    def test_path(self):
-        """Test the path is correctly yielded."""
-        [k, g, c, a, b, h, e, m, f] = _test_tree()
-        self.assertTrue((k, ) == k.path())
-        self.assertTrue((a, c, g, k) == a.path())
-        self.assertTrue((b, c, g, k) == b.path())
+    def test_levels(self):
+        """Test number zig-zags on splay paths is correct."""
+        d = Node(None).levels()
+        self.assertEqual({None: 1}, d)
+        t = Tree.from_encoding("r"*30)
+        rp_depths = t.find(1).levels()
+        for k in range(1, 32):
+            self.assertEqual(1, rp_depths[k])
+        t.splay(31)
+        t.splay(16)
+        t.splay(28)
+        t_depths = t.root.levels()
+        self.assertEqual(4, t_depths[13])
+        self.assertEqual(1, t_depths[2])
+        self.assertEqual(3, t_depths[11])
+        self.assertEqual(2, t_depths[29])
+        sub_depths = t.find(14).levels()
+        self.assertEqual(1, sub_depths[15])
+        self.assertEqual(2, sub_depths[13])
+        self.assertEqual(1, sub_depths[12])
 
 
 class TestTree(unittest.TestCase):
@@ -890,6 +970,13 @@ class TestWilber(unittest.TestCase):
     from wilber import critical_nodes
     from wilber import wilber2 as w2
     from random import shuffle
+
+    def test_path(self):
+        """Test the path is correctly yielded."""
+        [k, g, c, a, b, h, e, m, f] = _test_tree()
+        self.assertTrue((k, ) == k.path())
+        self.assertTrue((a, c, g, k) == a.path())
+        self.assertTrue((b, c, g, k) == b.path())
 
     def test_crossings(self):
         """Test nodes correctly cross."""
