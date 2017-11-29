@@ -1,0 +1,863 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+\providecommand{\thmautorefname}{Theorem}
+\providecommand{\corautorefname}{Corollary}
+\providecommand{\lemautorefname}{Lemma}
+\end_preamble
+\use_default_options true
+\begin_modules
+algolyx
+theorems-ams
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 2
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Inserting in Postorder by Splaying Takes Linear Time
+\end_layout
+
+\begin_layout Author
+Caleb Levy
+\end_layout
+
+\begin_layout Abstract
+Define 
+\emph on
+splay insertion 
+\emph default
+by first inserting a node into a tree at the location where the binary search
+ hits a null node, and then splaying that node.
+ We prove that starting from an empty tree, splay-insertion of a sequence
+ 
+\begin_inset Formula $X$
+\end_inset
+
+ which is a postorder for some tree takes 
+\begin_inset Formula $3\left|X\right|$
+\end_inset
+
+ rotations.
+\end_layout
+
+\begin_layout Section
+Postorder and Pattern Avoidance
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\root}{\operatorname{root}}
+{\textnormal{root}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\leftnode}{\operatorname{left}}
+{\textnormal{left}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\rightnode}{\operatorname{right}}
+{\textnormal{right}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\postorder}{\operatorname{postorder}}
+{\textnormal{postorder}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\treap}{\operatorname{treap}}
+{\textnormal{treap}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We define the postorder sequence of a tree 
+\begin_inset Formula $T$
+\end_inset
+
+ in the usual recursive way: letting 
+\begin_inset Formula $x=\root\left(T\right)$
+\end_inset
+
+, we define 
+\begin_inset Formula $\postorder\left(T\right)=\left(\postorder\left(\leftnode\left(x\right)\right),\postorder\left(\rightnode\left(x\right)\right),x\right)$
+\end_inset
+
+, where the postorder of an empty tree is empty.
+ 
+\end_layout
+
+\begin_layout Standard
+The following definitions and theorems are modelled directly after 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "Lemma 1.4"
+key "Kozma2016a"
+
+\end_inset
+
+.
+ Two sequences 
+\begin_inset Formula $A=\left(a_{1}\dots a_{n}\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $B=\left(b_{1}\dots b_{n}\right)$
+\end_inset
+
+ of the same length are 
+\emph on
+order-isomorphic 
+\emph default
+if their entries have the same relative order, i.e.
+ 
+\begin_inset Formula $a_{i}<a_{j}\iff b_{i}<b_{j}$
+\end_inset
+
+.
+ Hence 
+\begin_inset Formula $\left(581\right)$
+\end_inset
+
+ is order-isomorphic to 
+\begin_inset Formula $\left(231\right)$
+\end_inset
+
+.
+ A sequence 
+\begin_inset Formula $A$
+\end_inset
+
+ is 
+\emph on
+
+\begin_inset Formula $\pi$
+\end_inset
+
+-avoiding 
+\emph default
+if it has no subsequence that is order-isomorphic with 
+\begin_inset Formula $\pi$
+\end_inset
+
+, otherwise we say it contains 
+\begin_inset Formula $\pi$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $A$
+\end_inset
+
+ is 
+\begin_inset Formula $\pi$
+\end_inset
+
+-avoiding, then all subsequences of 
+\begin_inset Formula $A$
+\end_inset
+
+ are 
+\begin_inset Formula $\pi$
+\end_inset
+
+-avoding.
+\end_layout
+
+\begin_layout Theorem
+A sequence 
+\begin_inset Formula $X$
+\end_inset
+
+ is a postorder if and only if it is 
+\begin_inset Formula $312$
+\end_inset
+
+-avoding.
+\end_layout
+
+\begin_layout Proof
+We define a bijection that maps arbitrary 
+\begin_inset Formula $312$
+\end_inset
+
+-avoiding permutations to a BST over 
+\begin_inset Formula $\left[n\right]$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $\pi$
+\end_inset
+
+ be a 
+\begin_inset Formula $312$
+\end_inset
+
+-avoiding permutation of length 
+\begin_inset Formula $n$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $L=\left(\pi_{1}\dots\pi_{k}\right)$
+\end_inset
+
+ be the longest contiguous subsequence of 
+\begin_inset Formula $\pi$
+\end_inset
+
+ consisting of elements less than 
+\begin_inset Formula $\pi_{n}$
+\end_inset
+
+.
+ Observe that all elements in 
+\begin_inset Formula $R=\left(\pi_{k+1}\dots\pi_{n-1}\right)$
+\end_inset
+
+ are greater than 
+\begin_inset Formula $\pi_{n}$
+\end_inset
+
+, for otherwise 
+\begin_inset Formula $\pi$
+\end_inset
+
+ would have a subsequence order-isomorphic to 
+\begin_inset Formula $312$
+\end_inset
+
+.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+In particular, 
+\begin_inset Formula $\left(\pi_{k+1},\pi_{m},\pi_{n}\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $k+1<m<n$
+\end_inset
+
+ would be isomorphic to 
+\begin_inset Formula $312$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ (One of both 
+\begin_inset Formula $L$
+\end_inset
+
+ and 
+\begin_inset Formula $R$
+\end_inset
+
+ may be empty.) By induction, we build a BST with 
+\begin_inset Formula $\pi_{n}$
+\end_inset
+
+ as the root and the BSTs recursively built from 
+\begin_inset Formula $L$
+\end_inset
+
+ and 
+\begin_inset Formula $R$
+\end_inset
+
+ as the left, respectively right subtree of the root.
+ (The BST built of an empty sequence is empty.) The map is injective by induction.
+\end_layout
+
+\begin_layout Proof
+The reverse mapping is as follows: given a BST 
+\begin_inset Formula $T$
+\end_inset
+
+, build a permutation 
+\begin_inset Formula $\pi$
+\end_inset
+
+, with 
+\begin_inset Formula $\pi_{n}=\root\left(T\right)$
+\end_inset
+
+, preceeded by the sequences 
+\begin_inset Formula $\pi_{L}$
+\end_inset
+
+ and 
+\begin_inset Formula $\pi_{R}$
+\end_inset
+
+ built recursively from the left, respectively right subtree of 
+\begin_inset Formula $\root\left(T\right)$
+\end_inset
+
+.
+ (The sequence built of an empty BST is empty).
+ The resulting permutation of 
+\begin_inset Formula $\pi$
+\end_inset
+
+ is known as the postorder sequence.
+\end_layout
+
+\begin_layout Proof
+We argue that 
+\begin_inset Formula $\pi$
+\end_inset
+
+ is 
+\begin_inset Formula $312$
+\end_inset
+
+-avoiding.
+ By induction, 
+\begin_inset Formula $\pi_{L}$
+\end_inset
+
+ and 
+\begin_inset Formula $\pi_{R}$
+\end_inset
+
+ are 
+\begin_inset Formula $312$
+\end_inset
+
+-avoiding.
+ Suppose for contradiction that 
+\begin_inset Formula $\pi$
+\end_inset
+
+ contains a subsequence 
+\begin_inset Formula $\left(x,y,z\right)$
+\end_inset
+
+ such that 
+\begin_inset Formula $y<z<x$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $z=\pi_{n}$
+\end_inset
+
+, then 
+\begin_inset Formula $x$
+\end_inset
+
+ cannot be in 
+\begin_inset Formula $\pi_{L}$
+\end_inset
+
+, since entries of 
+\begin_inset Formula $\pi_{L}$
+\end_inset
+
+ are smaller than 
+\begin_inset Formula $z$
+\end_inset
+
+.
+ But then 
+\begin_inset Formula $y$
+\end_inset
+
+ is in 
+\begin_inset Formula $\pi_{R}$
+\end_inset
+
+, contradicting 
+\begin_inset Formula $y<z$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $z$
+\end_inset
+
+ is in 
+\begin_inset Formula $\pi_{R}$
+\end_inset
+
+, then 
+\begin_inset Formula $x$
+\end_inset
+
+ must be in 
+\begin_inset Formula $\pi_{L}$
+\end_inset
+
+ (since otherwise 
+\begin_inset Formula $\pi_{R}$
+\end_inset
+
+ would contain 
+\begin_inset Formula $312$
+\end_inset
+
+), this time contradicting that 
+\begin_inset Formula $z<x$
+\end_inset
+
+.
+ Thus 
+\begin_inset Formula $x$
+\end_inset
+
+, 
+\begin_inset Formula $y$
+\end_inset
+
+, and 
+\begin_inset Formula $z$
+\end_inset
+
+ are in 
+\begin_inset Formula $\pi_{L}$
+\end_inset
+
+, contradicting that 
+\begin_inset Formula $\pi_{L}$
+\end_inset
+
+ is 
+\begin_inset Formula $312$
+\end_inset
+
+-avoiding.
+\end_layout
+
+\begin_layout Section
+Insertion Trees
+\end_layout
+
+\begin_layout Standard
+An insertion tree for a permutation 
+\begin_inset Formula $\pi$
+\end_inset
+
+ is the binary search tree obtained by starting from an empty tree and inserting
+ nodes in order of their first appearence in 
+\begin_inset Formula $\pi$
+\end_inset
+
+, with no further adjustment in between.
+ Alternatively, if 
+\begin_inset Formula $\pi\in S_{n}$
+\end_inset
+
+, then the insertion tree 
+\begin_inset Formula $T$
+\end_inset
+
+ for 
+\begin_inset Formula $\pi$
+\end_inset
+
+ is 
+\begin_inset Formula $\treap\left(\left(1\dots n\right),\pi\right)=\treap\left(\pi\right)$
+\end_inset
+
+, as defined by Kozma.
+ Let 
+\begin_inset Formula $x\prec_{\pi}y$
+\end_inset
+
+, or simply 
+\begin_inset Formula $x\prec y$
+\end_inset
+
+ denote that 
+\begin_inset Formula $x$
+\end_inset
+
+ precedes 
+\begin_inset Formula $y$
+\end_inset
+
+ in 
+\begin_inset Formula $\pi$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The following lemma has been observed in a more general form many times.
+ We sketch its proof here for completeness.
+\end_layout
+
+\begin_layout Lemma
+Let 
+\begin_inset Formula $\pi$
+\end_inset
+
+ be a permutation.
+ Then both the paths encountered by using splay-insert on the nodes of 
+\begin_inset Formula $\pi$
+\end_inset
+
+ starting from an empty tree, and the final tree produced by doing so, will
+ be identical to splaying the sequence 
+\begin_inset Formula $\pi$
+\end_inset
+
+ starting from 
+\begin_inset Formula $\treap\left(\pi\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+We prove by induction on the length of 
+\begin_inset Formula $\pi$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $\pi=\varnothing$
+\end_inset
+
+ then there are no splay paths and both procedures end in an empty tree.
+ Assume the lemma is true for permutations of length at most 
+\begin_inset Formula $n-1$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Let 
+\begin_inset Formula $\pi=\left(\pi_{1}\dots\pi_{n}\right)$
+\end_inset
+
+, and denote 
+\begin_inset Formula $\pi_{<n}=\left(\pi_{1}\dots\pi_{n-1}\right)$
+\end_inset
+
+.
+ Define 
+\begin_inset Formula $T_{0}=\treap\left(\pi\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $T_{0}'=\treap\left(\pi_{<n}\right)$
+\end_inset
+
+, and for 
+\begin_inset Formula $1\le i\le n-1$
+\end_inset
+
+ let 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $T_{i}'$
+\end_inset
+
+ be the trees obtained by splaying 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ in 
+\begin_inset Formula $T_{i-1}$
+\end_inset
+
+ and 
+\begin_inset Formula $T_{i-1}'$
+\end_inset
+
+, respectively.
+ We claim that 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ is formed by adding 
+\begin_inset Formula $\pi_{n}$
+\end_inset
+
+ as a leaf of 
+\begin_inset Formula $T_{i}'$
+\end_inset
+
+.
+ Clearly this is true of 
+\begin_inset Formula $i=0$
+\end_inset
+
+.
+ Observe the following two properties of splaying:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+splaying cannot alter the shapes of subtrees rooted at children of nodes
+ along a splay path, and 
+\end_layout
+
+\begin_layout Enumerate
+the final positions of all nodes in a splay path, and all subtrees of nodes
+ on the splay path, depend solely on the shape of the splay path prior to
+ splaying (assuming distinct null subtrees).
+\end_layout
+
+\end_deeper
+\begin_layout Proof
+Suppose the claim is true for 
+\begin_inset Formula $1\le i\le k-1<n-1$
+\end_inset
+
+, so that 
+\begin_inset Formula $T_{k-1}$
+\end_inset
+
+ is formed by adding 
+\begin_inset Formula $\pi_{n}$
+\end_inset
+
+ as a leaf to 
+\begin_inset Formula $T_{k-1}'$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+As 
+\begin_inset Formula $\pi_{k}$
+\end_inset
+
+ is not a leaf, the access paths for 
+\begin_inset Formula $\pi_{k}$
+\end_inset
+
+ in 
+\begin_inset Formula $T_{k-1}$
+\end_inset
+
+ and 
+\begin_inset Formula $T_{k-1}'$
+\end_inset
+
+ will be identical.
+\end_layout
+
+\begin_layout Itemize
+All subtrees hanging from the access path in 
+\begin_inset Formula $T_{k-1}$
+\end_inset
+
+ will be identical to those in 
+\begin_inset Formula $T_{k-1}'$
+\end_inset
+
+, except that one of the subtrees in 
+\begin_inset Formula $T_{k-1}$
+\end_inset
+
+ will contain 
+\begin_inset Formula $\pi_{n}$
+\end_inset
+
+ added as a leaf.
+\end_layout
+
+\begin_layout Itemize
+After the splay, the nodes of the access paths in 
+\begin_inset Formula $T_{k}$
+\end_inset
+
+ and 
+\begin_inset Formula $T_{k}'$
+\end_inset
+
+ will have the same positions, and the subtrees of the access paths will
+ also be positioned identically, with both sets unaltered in their shape.
+\end_layout
+
+\end_deeper
+\begin_layout Proof
+Hence all nodes in 
+\begin_inset Formula $T_{k}$
+\end_inset
+
+ and 
+\begin_inset Formula $T_{k}'$
+\end_inset
+
+ will have identical positions, except 
+\begin_inset Formula $\pi_{n}$
+\end_inset
+
+ which is situated as a leaf of 
+\begin_inset Formula $T_{k}'$
+\end_inset
+
+.
+ We conclude: the splay paths encountered by 
+\emph on
+splay-inserting
+\emph default
+ the nodes of 
+\begin_inset Formula $\pi_{<n}$
+\end_inset
+
+ are the same as the splay paths encountered by splaying the nodes of 
+\begin_inset Formula $\pi_{<n}$
+\end_inset
+
+ starting from 
+\begin_inset Formula $\treap\left(\pi_{<n}\right)$
+\end_inset
+
+, which are the same as the splay paths encountered by splaying 
+\begin_inset Formula $\pi_{<n}$
+\end_inset
+
+ starting from 
+\begin_inset Formula $\treap\left(\pi\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Further, 
+\begin_inset Formula $T_{n-1}$
+\end_inset
+
+ is the same as 
+\begin_inset Formula $T_{n-1}'$
+\end_inset
+
+ with 
+\begin_inset Formula $\pi_{n}$
+\end_inset
+
+ inserted as a leaf.
+ When we call 
+\emph on
+splay-insert
+\emph default
+ on 
+\begin_inset Formula $\pi_{n}$
+\end_inset
+
+, we will insert it as a leaf in 
+\begin_inset Formula $T_{n-1}'$
+\end_inset
+
+.
+ By the symmetric order constraints, its position will be identical to 
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "/Users/clevy/Grad/library"
+options "plain"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
