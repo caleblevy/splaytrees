@@ -577,7 +577,11 @@ An insertion tree for a permutation
 
 \begin_layout Standard
 The following lemma has been observed in a more general form many times.
- We sketch its proof here for completeness.
+ Despite being very intuitively straightforward, the proof given here is
+ surprisingly tedious.
+ I suspect it can be made more elegant.
+ I provide the proof here for completeness, since it is central to proving
+ postorder insertion takes linear time.
 \end_layout
 
 \begin_layout Lemma
@@ -591,7 +595,7 @@ Let
 \end_inset
 
  starting from an empty tree, and the final tree produced by doing so, will
- be identical to splaying the sequence 
+ be identical those obtained by splaying the sequence 
 \begin_inset Formula $\pi$
 \end_inset
 
@@ -642,7 +646,7 @@ Let
 \begin_inset Formula $1\le i\le n-1$
 \end_inset
 
- let 
+ denote by 
 \begin_inset Formula $T_{i}$
 \end_inset
 
@@ -650,7 +654,7 @@ Let
 \begin_inset Formula $T_{i}'$
 \end_inset
 
- be the trees obtained by splaying 
+ the trees obtained by splaying 
 \begin_inset Formula $\pi_{i}$
 \end_inset
 
@@ -681,7 +685,7 @@ Let
 \end_inset
 
 .
- Observe the following two properties of splaying:
+ Consider the following two properties of splaying:
 \end_layout
 
 \begin_deeper
@@ -693,7 +697,7 @@ splaying cannot alter the shapes of subtrees rooted at children of nodes
 \begin_layout Enumerate
 the final positions of all nodes in a splay path, and all subtrees of nodes
  on the splay path, depend solely on the shape of the splay path prior to
- splaying (assuming distinct null subtrees).
+ splaying.
 \end_layout
 
 \end_deeper
@@ -715,16 +719,12 @@ Suppose the claim is true for
 \end_inset
 
 .
- 
+ Observe that: 
 \end_layout
 
 \begin_deeper
 \begin_layout Itemize
-As 
-\begin_inset Formula $\pi_{k}$
-\end_inset
-
- is not a leaf, the access paths for 
+the access paths for 
 \begin_inset Formula $\pi_{k}$
 \end_inset
 
@@ -740,7 +740,7 @@ As
 \end_layout
 
 \begin_layout Itemize
-All subtrees hanging from the access path in 
+all subtrees hanging from the access path in 
 \begin_inset Formula $T_{k-1}$
 \end_inset
 
@@ -769,7 +769,8 @@ After the splay, the nodes of the access paths in
 \end_inset
 
  will have the same positions, and the subtrees of the access paths will
- also be positioned identically, with both sets unaltered in their shape.
+ also be positioned identically, with both sets of subtrees unaltered in
+ their shape.
 \end_layout
 
 \end_deeper
@@ -786,16 +787,104 @@ Hence all nodes in
 \begin_inset Formula $\pi_{n}$
 \end_inset
 
- which is situated as a leaf of 
+ which is situated as a leaf of some subtree in 
 \begin_inset Formula $T_{k}'$
 \end_inset
 
 .
- We conclude: the splay paths encountered by 
+ We thus have that 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ is obtained by inserting 
+\begin_inset Formula $\pi_{n}$
+\end_inset
+
+ as a leaf of 
+\begin_inset Formula $T_{i}'$
+\end_inset
+
+ for 
+\begin_inset Formula $1\le i\le n-1$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Proof
+We may now summarize
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+The 
 \emph on
-splay-inserting
+splay paths
 \emph default
- the nodes of 
+ encountered by splaying 
+\begin_inset Formula $\pi_{<n}$
+\end_inset
+
+ starting from 
+\begin_inset Formula $\treap\left(\pi\right)$
+\end_inset
+
+ are identical to those encountered by splaying 
+\begin_inset Formula $\pi_{<n}$
+\end_inset
+
+ starting from 
+\begin_inset Formula $\treap\left(\pi_{<n}\right)$
+\end_inset
+
+.
+ (By the above arguments.)
+\end_layout
+
+\begin_layout Enumerate
+The 
+\emph on
+tree 
+\begin_inset Formula $T_{n-1}$
+\end_inset
+
+ produced
+\emph default
+ by splaying 
+\begin_inset Formula $\pi_{<n}$
+\end_inset
+
+ starting from 
+\begin_inset Formula $\treap\left(\pi\right)$
+\end_inset
+
+ is the same as the tree 
+\begin_inset Formula $T_{n-1}'$
+\end_inset
+
+ produced by splaying 
+\begin_inset Formula $\pi_{<n}$
+\end_inset
+
+ starting from 
+\begin_inset Formula $\treap\left(\pi_{<n}\right)$
+\end_inset
+
+ and then inserting 
+\begin_inset Formula $\pi_{n}$
+\end_inset
+
+ as a leaf.
+ (By the above arguments.)
+\end_layout
+
+\begin_layout Enumerate
+The 
+\emph on
+splay paths 
+\emph default
+encountered by splay-inserting the nodes of 
 \begin_inset Formula $\pi_{<n}$
 \end_inset
 
@@ -807,7 +896,34 @@ splay-inserting
 \begin_inset Formula $\treap\left(\pi_{<n}\right)$
 \end_inset
 
-, which are the same as the splay paths encountered by splaying 
+.
+ (By the original inductive hypothesis.)
+\end_layout
+
+\begin_layout Enumerate
+The 
+\emph on
+tree produced
+\emph default
+ by splay-inserting the nodes of 
+\begin_inset Formula $\pi_{<n}$
+\end_inset
+
+ is the same as that produced by splaying the sequence 
+\begin_inset Formula $\pi_{<n}$
+\end_inset
+
+ starting from 
+\begin_inset Formula $\treap\left(\pi_{<n}\right)$
+\end_inset
+
+.
+ (By the original inductive hypothesis.)
+\end_layout
+
+\end_deeper
+\begin_layout Proof
+Hence, the splay paths encountered by splaying 
 \begin_inset Formula $\pi_{<n}$
 \end_inset
 
@@ -815,37 +931,49 @@ splay-inserting
 \begin_inset Formula $\treap\left(\pi\right)$
 \end_inset
 
+ are the same as 
+\emph on
+splay-inserting
+\emph default
+ 
+\begin_inset Formula $\pi_{<n}$
+\end_inset
+
 .
-\end_layout
-
-\begin_layout Proof
-Further, 
-\begin_inset Formula $T_{n-1}$
-\end_inset
-
- is the same as 
-\begin_inset Formula $T_{n-1}'$
-\end_inset
-
- with 
-\begin_inset Formula $\pi_{n}$
-\end_inset
-
- inserted as a leaf.
- When we call 
+ When we go to 
 \emph on
 splay-insert
 \emph default
- on 
+ 
 \begin_inset Formula $\pi_{n}$
 \end_inset
 
-, we will insert it as a leaf in 
+, we will insert it as a leaf into 
 \begin_inset Formula $T_{n-1}'$
 \end_inset
 
 .
- By the symmetric order constraints, its position will be identical to 
+ By the symmetric order constraints, its position will be identical to that
+ of the leaf 
+\begin_inset Formula $\pi_{n}$
+\end_inset
+
+ in 
+\begin_inset Formula $T_{n-1}$
+\end_inset
+
+.
+ To complete the proof, we note that splaying the same node 
+\begin_inset Formula $\pi_{n}$
+\end_inset
+
+ in identical trees will result in identical splay paths and identical trees.
+\end_layout
+
+\begin_layout Standard
+Most of the busywork in that proof seems to be showing that if I add a leaf
+ to the starting tree, and then splay the same sequence, then there will
+ be no difference in the execution.
 \end_layout
 
 \begin_layout Standard
