@@ -669,29 +669,15 @@ Let
 \end_inset
 
 .
- Clearly this is true of 
+\end_layout
+
+\begin_layout Proof
+Clearly this is true of 
 \begin_inset Formula $i=0$
 \end_inset
 
 .
- Consider the following two properties of splaying:
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-splaying cannot alter the shapes of subtrees rooted at children of nodes
- along a splay path, and 
-\end_layout
-
-\begin_layout Enumerate
-the final positions of all nodes in a splay path, and all subtrees of nodes
- on the splay path, depend solely on the shape of the splay path prior to
- splaying.
-\end_layout
-
-\end_deeper
-\begin_layout Proof
-Suppose the claim is true for 
+ Suppose the claim is true for 
 \begin_inset Formula $1\le i\le k-1<n-1$
 \end_inset
 
@@ -708,7 +694,7 @@ Suppose the claim is true for
 \end_inset
 
 .
- Observe that: 
+ In particular, this ensures that 
 \end_layout
 
 \begin_deeper
@@ -725,15 +711,19 @@ the access paths for
 \begin_inset Formula $T_{k-1}'$
 \end_inset
 
- will be identical.
+ are identical, and
 \end_layout
 
 \begin_layout Itemize
-all subtrees hanging from the access path in 
+all subtrees hanging from the access path for 
+\begin_inset Formula $\pi_{k}$
+\end_inset
+
+ in 
 \begin_inset Formula $T_{k-1}$
 \end_inset
 
- will be identical to those in 
+ are identical to those in 
 \begin_inset Formula $T_{k-1}'$
 \end_inset
 
@@ -741,30 +731,41 @@ all subtrees hanging from the access path in
 \begin_inset Formula $T_{k-1}$
 \end_inset
 
- will contain 
+ contains 
 \begin_inset Formula $\pi_{n}$
 \end_inset
 
  added as a leaf.
 \end_layout
 
-\begin_layout Itemize
-After the splay, the nodes of the access paths in 
-\begin_inset Formula $T_{k}$
-\end_inset
+\end_deeper
+\begin_layout Proof
+Recall that:
+\end_layout
 
- and 
-\begin_inset Formula $T_{k}'$
-\end_inset
+\begin_deeper
+\begin_layout Enumerate
+splaying cannot alter the shapes of subtrees rooted at children of nodes
+ along a splay path, and 
+\end_layout
 
- will have the same positions, and the subtrees of the access paths will
- also be positioned identically, with both sets of subtrees unaltered in
- their shape.
+\begin_layout Enumerate
+the final positions of all nodes in a splay path, and all subtrees of nodes
+ on the splay path, depend solely on the shape of the splay path prior to
+ splaying.
 \end_layout
 
 \end_deeper
 \begin_layout Proof
-Hence all nodes in 
+Using the above bullet points, we conclude that after splaying 
+\begin_inset Formula $\pi_{k}$
+\end_inset
+
+, the nodes of the access paths for 
+\begin_inset Formula $\pi_{k}$
+\end_inset
+
+ in both 
 \begin_inset Formula $T_{k}$
 \end_inset
 
@@ -772,11 +773,21 @@ Hence all nodes in
 \begin_inset Formula $T_{k}'$
 \end_inset
 
- will have identical positions, except 
+ have the same positions, and the subtrees of the access paths are also
+ positioned identically, with both sets of subtrees unaltered in their shapes.
+ Hence all nodes in 
+\begin_inset Formula $T_{k}$
+\end_inset
+
+ and 
+\begin_inset Formula $T_{k}'$
+\end_inset
+
+ have identical positions, spare that 
 \begin_inset Formula $\pi_{n}$
 \end_inset
 
- which is situated as a leaf of some subtree in 
+ is situated as a leaf of some subtree in 
 \begin_inset Formula $T_{k}'$
 \end_inset
 
@@ -886,7 +897,11 @@ encountered by splay-inserting the nodes of
 \end_inset
 
 .
- (By the original inductive hypothesis.)
+ (By the inductive hypothesis on 
+\begin_inset Formula $\pi_{n-1}$
+\end_inset
+
+.)
 \end_layout
 
 \begin_layout Enumerate
@@ -907,7 +922,11 @@ tree produced
 \end_inset
 
 .
- (By the original inductive hypothesis.)
+ (By the inductive hypothesis on 
+\begin_inset Formula $\pi_{n-1}$
+\end_inset
+
+.)
 \end_layout
 
 \end_deeper
@@ -1388,12 +1407,12 @@ postorder
 status collapsed
 
 \begin_layout Plain Layout
-In fact, this tree may be obtained by reversing the labels on the tooth
- of each comb and then rotating the whole tree 
+In fact, this tree may be obtained by reversing the labels on each tooth
+ of the comb, and then rotating the whole tree 
 \begin_inset Formula $90^{\circ}$
 \end_inset
 
- counterclockwise!
+ counterclockwise.
 \end_layout
 
 \end_inset
@@ -1600,6 +1619,13 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "MatchingPostorder"
+
+\end_inset
+
+
 \begin_inset Formula $\textsc{MatchingPostorder}$
 \end_inset
 
@@ -1803,8 +1829,11 @@ Correctness
 
 \end_inset
 
-The algorithm 
-\begin_inset Formula $\textsc{MatchingPostorder}$
+Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
 \end_inset
 
  never pops from an empty stack.
@@ -1957,8 +1986,11 @@ Termination
 
 \end_inset
 
-The algorithm 
-\begin_inset Formula $\textsc{MatchingPostorder}$
+Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
 \end_inset
 
  always terminates.
@@ -2026,11 +2058,7 @@ while
 \begin_inset Formula $n$
 \end_inset
 
- iterations, at which point 
-\begin_inset Formula $\textsc{MatchingPostorder}$
-\end_inset
-
- terminates.
+ iterations, at which point loop terminates.
 \end_layout
 
 \begin_layout Corollary
@@ -2266,8 +2294,11 @@ Every element in the comb
 \begin_inset Formula $C$
 \end_inset
 
- appears in the output of 
-\begin_inset Formula $\textsc{MatchingPostorder}$
+ appears in the output of Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
 \end_inset
 
 .
@@ -2372,8 +2403,11 @@ The bins of
 \end_layout
 
 \begin_layout Theorem
-The algorithm 
-\begin_inset Formula $\textsc{MatchingPostorder}$
+Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
 \end_inset
 
  outputs a permutation of the nodes of 
@@ -2417,10 +2451,82 @@ reference "Termination"
 , the algorithm then terminates.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Theorem
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
 Outputs are Matching Postorders
 \end_layout
 
+\end_inset
+
+Suppose that 
+\begin_inset Formula $C$
+\end_inset
+
+ has 
+\begin_inset Formula $n$
+\end_inset
+
+ elements, and for 
+\begin_inset Formula $1\le i\le n$
+\end_inset
+
+, let 
+\begin_inset Formula $\pi_{\le i}=\left(\pi_{1}\dots\pi_{i}\right)$
+\end_inset
+
+ denote the items printed during the first 
+\begin_inset Formula $i$
+\end_inset
+
+ executions of Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop2"
+
+\end_inset
+
+ by Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
+\end_inset
+
+.
+ Then for 
+\begin_inset Formula $1\le i\le n$
+\end_inset
+
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $\pi_{\le i}$
+\end_inset
+
+ is 
+\begin_inset Formula $312$
+\end_inset
+
+-avoiding, and
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\treap\left(\pi_{\le i}\right)$
+\end_inset
+
+ is a connected subtree of the root of 
+\begin_inset Formula $C$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
 \begin_layout Standard
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
