@@ -1423,6 +1423,330 @@ Each division of bins on a comb corresponds to an interval partition of
  nodes.
 \end_layout
 
+\begin_layout Section
+Traversing the Comb
+\end_layout
+
+\begin_layout Standard
+By itself, the structure of a comb does not help us very much.
+ If 
+\begin_inset Formula $\tau$
+\end_inset
+
+ is an 
+\emph on
+arbitrary 
+\emph default
+permutation (such as the bit reversal permutation described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Wilber1989"
+
+\end_inset
+
+), then even the optimal
+\emph on
+ 
+\emph default
+algorithm can take super-linear time starting from 
+\begin_inset Formula $\treap\left(\tau\right)$
+\end_inset
+
+ (or any other tree).
+ Further, computing the costs of splaying a postorder starting from an arbitrary
+ 
+\emph on
+comb
+\emph default
+ does not seem much easier than starting from any other tree.
+\end_layout
+
+\begin_layout Standard
+Given a comb 
+\begin_inset Formula $C=\left(B_{1},\dots,B_{k}\right)$
+\end_inset
+
+, we want to characterize all permutations 
+\begin_inset Formula $\pi$
+\end_inset
+
+ so that 
+\begin_inset Formula $\pi$
+\end_inset
+
+ is a postorder such that 
+\begin_inset Formula $\treap\left(\pi\right)=C$
+\end_inset
+
+.
+ The solution is both intricate and elegant.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Formula $\textsc{MakeMatchingPostorder}$
+\end_inset
+
+
+\begin_inset Formula $\left(C\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Input A nonempty comb 
+\begin_inset Formula $C$
+\end_inset
+
+ with bins 
+\begin_inset Formula $B_{1}\dots B_{k}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Algorithm (num)
+* Initialize stacks 
+\begin_inset Formula $S={\{}{\}}$
+\end_inset
+
+, 
+\begin_inset Formula $B={\{}B_{1}\dots B_{k}{\}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Algorithm (num)
+* 
+\begin_inset Formula $\textsc{MultiPush}\left(S,\textsc{Pop}\left(B\right)\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Algorithm (num)
+while 
+\begin_inset Formula $S\ne\varnothing$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Algorithm (num)
+* 
+\series bold
+print 
+\series default
+
+\begin_inset Formula $\textsc{Pop}\left(S\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Algorithm (num)
+if 
+\begin_inset Formula $S=\varnothing$
+\end_inset
+
+ and 
+\begin_inset Formula $B\ne\varnothing$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Algorithm (num)
+* 
+\begin_inset Formula $\textsc{MultiPush}\left(S,\textsc{Pop}\left(B\right)\right)$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Algorithm (num)
+elseif 
+\begin_inset Formula $B=\varnothing$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Algorithm (num)
+* 
+\begin_inset Formula $\textsc{DoNothing}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Algorithm (num)
+else
+\end_layout
+
+\begin_deeper
+\begin_layout Algorithm (num)
+* Choose between 
+\begin_inset Formula $\textsc{DoNothing}$
+\end_inset
+
+ and 
+\begin_inset Formula $\textsc{MultiPush}\left(S,\textsc{Pop}\left(B\right)\right)$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Algorithm (num)
+endif
+\end_layout
+
+\end_deeper
+\begin_layout Algorithm (num)
+endwhile
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A few notes and conventions.
+ The top of a stack is on the 
+\emph on
+left
+\emph default
+.
+ Each bin 
+\begin_inset Formula $B_{i}$
+\end_inset
+
+ is treated as a stack of items 
+\begin_inset Formula $\left\{ b_{i-1}+1,b_{i-1}+2,\dots,b_{i}\right\} $
+\end_inset
+
+.
+ The stack 
+\begin_inset Formula $B$
+\end_inset
+
+ is treated as a 
+\begin_inset Quotes eld
+\end_inset
+
+stack of bins.
+\begin_inset Quotes erd
+\end_inset
+
+ The subroutine 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\textsc{MultiPush}$
+\end_inset
+
+ is described as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Formula $\textsc{MultiPush}\left(Q,R\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Input Two stacks 
+\begin_inset Formula $Q$
+\end_inset
+
+ and 
+\begin_inset Formula $R$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Algorithm (num)
+while 
+\begin_inset Formula $R\ne\varnothing$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Algorithm (num)
+* 
+\begin_inset Formula $\textsc{Push}\left(Q,\textsc{Pop}\left(R\right)\right)$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Algorithm (num)
+endwhile
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
