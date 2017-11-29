@@ -1479,204 +1479,20 @@ Given a comb
 \end_inset
 
 .
- The solution is both intricate and elegant.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float algorithm
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset Formula $\textsc{MakeMatchingPostorder}$
-\end_inset
-
-
-\begin_inset Formula $\left(C\right)$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Description
-Input A nonempty comb 
+ We will call these 
+\emph on
+matching postorders 
+\emph default
+for 
 \begin_inset Formula $C$
 \end_inset
 
- with bins 
-\begin_inset Formula $B_{1}\dots B_{k}$
-\end_inset
-
- 
-\end_layout
-
-\begin_layout Algorithm (num)
-* Initialize stacks 
-\begin_inset Formula $S={\{}{\}}$
-\end_inset
-
-, 
-\begin_inset Formula $B={\{}B_{1}\dots B_{k}{\}}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Algorithm (num)
-* 
-\begin_inset Formula $\textsc{MultiPush}\left(S,\textsc{Pop}\left(B\right)\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Algorithm (num)
-while 
-\begin_inset Formula $S\ne\varnothing$
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout Algorithm (num)
-* 
-\series bold
-print 
-\series default
-
-\begin_inset Formula $\textsc{Pop}\left(S\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Algorithm (num)
-if 
-\begin_inset Formula $S=\varnothing$
-\end_inset
-
- and 
-\begin_inset Formula $B\ne\varnothing$
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout Algorithm (num)
-* 
-\begin_inset Formula $\textsc{MultiPush}\left(S,\textsc{Pop}\left(B\right)\right)$
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\begin_layout Algorithm (num)
-elseif 
-\begin_inset Formula $B=\varnothing$
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout Algorithm (num)
-* 
-\begin_inset Formula $\textsc{DoNothing}$
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\begin_layout Algorithm (num)
-else
-\end_layout
-
-\begin_deeper
-\begin_layout Algorithm (num)
-* Choose between 
-\begin_inset Formula $\textsc{DoNothing}$
-\end_inset
-
- and 
-\begin_inset Formula $\textsc{MultiPush}\left(S,\textsc{Pop}\left(B\right)\right)$
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\begin_layout Algorithm (num)
-endif
-\end_layout
-
-\end_deeper
-\begin_layout Algorithm (num)
-endwhile
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-A few notes and conventions.
- The top of a stack is on the 
-\emph on
-left
-\emph default
 .
- Each bin 
-\begin_inset Formula $B_{i}$
-\end_inset
-
- is treated as a stack of items 
-\begin_inset Formula $\left\{ b_{i-1}+1,b_{i-1}+2,\dots,b_{i}\right\} $
-\end_inset
-
-.
- The stack 
-\begin_inset Formula $B$
-\end_inset
-
- is treated as a 
-\begin_inset Quotes eld
-\end_inset
-
-stack of bins.
-\begin_inset Quotes erd
-\end_inset
-
- The subroutine 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-
+ The following subroutine, 
 \begin_inset Formula $\textsc{MultiPush}$
 \end_inset
 
- is described as follows:
+, will be useful:
 \end_layout
 
 \begin_layout Standard
@@ -1684,10 +1500,6 @@ stack of bins.
 wide false
 sideways false
 status open
-
-\begin_layout Plain Layout
-
-\end_layout
 
 \begin_layout Plain Layout
 \begin_inset Caption Standard
@@ -1738,13 +1550,875 @@ while
 endwhile
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A few notes and conventions for what follows.
+ The top of a stack is on the 
+\emph on
+left
+\emph default
+.
+ Each bin 
+\begin_inset Formula $B_{i}$
+\end_inset
+
+ is treated as a stack of items 
+\begin_inset Formula $\left\{ b_{i-1}+1,b_{i-1}+2,\dots,b_{i}\right\} $
+\end_inset
+
+.
+ The stack 
+\begin_inset Formula $B$
+\end_inset
+
+ is treated as a 
+\begin_inset Quotes eld
+\end_inset
+
+stack of bins.
+\begin_inset Quotes erd
+\end_inset
+
+ The keyword 
+\begin_inset Formula $\textsc{Continue}$
+\end_inset
+
+ merely means to continue to the next iteration of the loop.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+wide false
+sideways false
+status open
+
 \begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Formula $\textsc{MatchingPostorder}$
+\end_inset
+
+
+\begin_inset Formula $\left(C\right)$
+\end_inset
+
 
 \end_layout
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Description
+Input A nonempty comb 
+\begin_inset Formula $C$
+\end_inset
+
+ with bins 
+\begin_inset Formula $B_{1}\dots B_{k}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Algorithm (num)
+* Initialize stacks 
+\begin_inset Formula $S={\{}{\}}$
+\end_inset
+
+, 
+\begin_inset Formula $B={\{}B_{1}\dots B_{k}{\}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Algorithm (num)
+* 
+\begin_inset Formula $\textsc{MultiPush}\left(S,\textsc{Pop}\left(B\right)\right)$
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "Pop1"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Algorithm (num)
+while 
+\begin_inset Formula $S\ne\varnothing$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Algorithm (num)
+* 
+\series bold
+print 
+\series default
+
+\begin_inset Formula $\textsc{Pop}\left(S\right)$
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "Pop2"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Algorithm (num)
+if 
+\begin_inset Formula $S=\varnothing$
+\end_inset
+
+ and 
+\begin_inset Formula $B\ne\varnothing$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Algorithm (num)
+* 
+\begin_inset Formula $\textsc{MultiPush}\left(S,\textsc{Pop}\left(B\right)\right)$
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "Pop3"
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Algorithm (num)
+elseif 
+\begin_inset Formula $B=\varnothing$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Algorithm (num)
+* 
+\begin_inset Formula $\textsc{Continue}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Algorithm (num)
+else
+\end_layout
+
+\begin_deeper
+\begin_layout Algorithm (num)
+* Choose between 
+\begin_inset Formula $\textsc{Continue}$
+\end_inset
+
+ and 
+\begin_inset Formula $\textsc{MultiPush}\left(S,\textsc{Pop}\left(B\right)\right)$
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "Pop4"
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Algorithm (num)
+endif
+\end_layout
+
+\end_deeper
+\begin_layout Algorithm (num)
+endwhile
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We will prove that a permutation 
+\begin_inset Formula $\pi$
+\end_inset
+
+ is compatible with comb 
+\begin_inset Formula $C$
+\end_inset
+
+ if and only if it is a possible output of 
+\begin_inset Formula $\textsc{MatchingPostorder}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Outputs are Permutations
+\end_layout
+
+\begin_layout Standard
+Before proving our main results, we need to perform more basic sanity checks
+ on our algorithm.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Correctness
+\end_layout
+
+\end_inset
+
+The algorithm 
+\begin_inset Formula $\textsc{MatchingPostorder}$
+\end_inset
+
+ never pops from an empty stack.
+\end_layout
+
+\begin_layout Proof
+There are four locations in the program at which a 
+\begin_inset Formula $\textsc{Pop}$
+\end_inset
+
+ can occur: Lines 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop1"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop2"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop3"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop4"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+The first 
+\begin_inset Formula $\textsc{Pop}$
+\end_inset
+
+ is in the initialization step at Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop1"
+
+\end_inset
+
+.
+ Because the comb is nonempty, it will have at least one bin, and therefore
+ 
+\begin_inset Formula $B$
+\end_inset
+
+ will be nonempty when 
+\begin_inset Formula $\textsc{Pop}\left(B\right)$
+\end_inset
+
+ is called.
+ The check in the 
+\series bold
+while
+\series default
+ loop that 
+\begin_inset Formula $S\ne\varnothing$
+\end_inset
+
+ ensures that 
+\begin_inset Formula $S$
+\end_inset
+
+ is nonempty whenever 
+\begin_inset Formula $\textsc{Pop}\left(S\right)$
+\end_inset
+
+ is called in Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop2"
+
+\end_inset
+
+.
+ If 
+\begin_inset Formula $S$
+\end_inset
+
+ 
+\emph on
+is
+\emph default
+ empty, then the algorithm terminates, and no more pops are performed.
+\end_layout
+
+\begin_layout Proof
+The call 
+\begin_inset Formula $\textsc{Pop}\left(B\right)$
+\end_inset
+
+ in Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop3"
+
+\end_inset
+
+ is only performed after verifying in the preceeding line that 
+\begin_inset Formula $B$
+\end_inset
+
+ is nonempty.
+ Similarly, we are only allowed to proceed to Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop4"
+
+\end_inset
+
+ if 
+\begin_inset Formula $B$
+\end_inset
+
+ is nonempty, at which point we are allowed to choose to pop an element
+ from 
+\begin_inset Formula $B$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "Termination"
+
+\end_inset
+
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Termination
+\end_layout
+
+\end_inset
+
+The algorithm 
+\begin_inset Formula $\textsc{MatchingPostorder}$
+\end_inset
+
+ always terminates.
+\end_layout
+
+\begin_layout Proof
+At every iteration of the 
+\series bold
+while
+\series default
+ loop, one element is removed from 
+\begin_inset Formula $S$
+\end_inset
+
+.
+ The only way elements may be added to 
+\begin_inset Formula $S$
+\end_inset
+
+ is by a 
+\begin_inset Formula $\textsc{MultiPush}$
+\end_inset
+
+ from a bin on top of 
+\begin_inset Formula $B$
+\end_inset
+
+.
+ There are at most 
+\begin_inset Formula $k$
+\end_inset
+
+ bins totalling 
+\begin_inset Formula $n$
+\end_inset
+
+ elements which may be added to 
+\begin_inset Formula $S$
+\end_inset
+
+.
+ Once a bin is added to 
+\begin_inset Formula $S$
+\end_inset
+
+, it is removed from 
+\begin_inset Formula $B$
+\end_inset
+
+ and its elements are emptied.
+ Hence 
+\begin_inset Formula $S$
+\end_inset
+
+ may increase in size at most 
+\begin_inset Formula $n$
+\end_inset
+
+ times, and decreases in size at every iteration of the while loop.
+ Thus 
+\begin_inset Formula $S$
+\end_inset
+
+ will be empty after at most 
+\begin_inset Formula $n$
+\end_inset
+
+ iterations, at which point 
+\begin_inset Formula $\textsc{MatchingPostorder}$
+\end_inset
+
+ terminates.
+\end_layout
+
+\begin_layout Corollary
+\begin_inset CommandInset label
+LatexCommand label
+name "S-is-emptied"
+
+\end_inset
+
+Once a bin is added to 
+\begin_inset Formula $S$
+\end_inset
+
+, every element in that bin will eventually be popped from 
+\begin_inset Formula $S$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Proof
+The algorithm always terminates, and the only way for it to terminate is
+ when 
+\begin_inset Formula $S$
+\end_inset
+
+ is empty.
+ The only mechanism by which items are removed from 
+\begin_inset Formula $S$
+\end_inset
+
+ is when they are popped at Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop2"
+
+\end_inset
+
+.
+ Hence once the items of a bin are added to 
+\begin_inset Formula $S$
+\end_inset
+
+, they will all eventually be popped.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "All-bins-added"
+
+\end_inset
+
+Every bin is added to 
+\begin_inset Formula $S$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+We will use induction on 
+\begin_inset Formula $k$
+\end_inset
+
+.
+ Observe that when 
+\begin_inset Formula $k=1$
+\end_inset
+
+, the bin 
+\begin_inset Formula $B_{1}$
+\end_inset
+
+ is added to 
+\begin_inset Formula $S$
+\end_inset
+
+ in the initialization stage.
+ Suppose that for combs with 
+\begin_inset Formula $k-1$
+\end_inset
+
+ bins, all bins will be added to 
+\begin_inset Formula $S$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Let 
+\begin_inset Formula $C$
+\end_inset
+
+ be a comb with 
+\begin_inset Formula $k$
+\end_inset
+
+ bins, and consider the execution of the algorithm immediately after 
+\begin_inset Formula $B_{k-1}$
+\end_inset
+
+ is added to 
+\begin_inset Formula $S$
+\end_inset
+
+, either in Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop1"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop3"
+
+\end_inset
+
+ or 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop4"
+
+\end_inset
+
+.
+ In all three cases, 
+\begin_inset Formula $S$
+\end_inset
+
+ is nonempty, and the algorithm will proceed to Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop2"
+
+\end_inset
+
+ after the 
+\series bold
+while
+\series default
+ loop.
+\end_layout
+
+\begin_layout Proof
+After Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop2"
+
+\end_inset
+
+, one of three things will happen.
+ First, if 
+\begin_inset Formula $S$
+\end_inset
+
+ is empty, then the algorithm will move to Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop3"
+
+\end_inset
+
+, and add 
+\begin_inset Formula $B_{k}$
+\end_inset
+
+ to the stack.
+ If 
+\begin_inset Formula $S$
+\end_inset
+
+ is nonempty, we will proceed to 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop4"
+
+\end_inset
+
+.
+ If the algorithm chooses to add 
+\begin_inset Formula $B_{k}$
+\end_inset
+
+ to the stack, we are done.
+ Otherwise, the algorithm may choose to continue to the next iteration of
+ the 
+\series bold
+while
+\series default
+ loop.
+ Each time it does so, 
+\begin_inset Formula $S$
+\end_inset
+
+ will decrease by one element.
+ Hence we can only choose not to add 
+\begin_inset Formula $B_{k}$
+\end_inset
+
+ to the stack a finite number of times before eventually triggering Line
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop3"
+
+\end_inset
+
+, which will add 
+\begin_inset Formula $B_{k}$
+\end_inset
+
+ to 
+\begin_inset Formula $S$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Corollary
+\begin_inset CommandInset label
+LatexCommand label
+name "Items-appear-at-least-once"
+
+\end_inset
+
+Every element in the comb 
+\begin_inset Formula $C$
+\end_inset
+
+ appears in the output of 
+\begin_inset Formula $\textsc{MatchingPostorder}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Every element in comb 
+\begin_inset Formula $C$
+\end_inset
+
+ is in one of the bins.
+ Every bin is added to 
+\begin_inset Formula $S$
+\end_inset
+
+ by Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "All-bins-added"
+
+\end_inset
+
+.
+ Once a bin is added to 
+\begin_inset Formula $S$
+\end_inset
+
+, all of the bin's elements will eventually be popped from 
+\begin_inset Formula $S$
+\end_inset
+
+ by Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "S-is-emptied"
+
+\end_inset
+
+.
+ Every element popped from 
+\begin_inset Formula $S$
+\end_inset
+
+ is printed in the output, hence all elements in 
+\begin_inset Formula $C$
+\end_inset
+
+ appear in the output.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "Items-appear-at-most-once"
+
+\end_inset
+
+No element of 
+\begin_inset Formula $C$
+\end_inset
+
+ appears more than once in the output.
+\end_layout
+
+\begin_layout Proof
+The bins of 
+\begin_inset Formula $C$
+\end_inset
+
+ form an interval partition of 
+\begin_inset Formula $\left[n\right]$
+\end_inset
+
+, hence each element appears in exactly one bin, and only once in that bin.
+ As each bin is destroyed once its elements are added to 
+\begin_inset Formula $S$
+\end_inset
+
+, the elements of a bin can only be added to 
+\begin_inset Formula $S$
+\end_inset
+
+ once.
+ The 
+\begin_inset Formula $\textsc{MultiPush}$
+\end_inset
+
+ of popped bins is the only mechanism by which items enter 
+\begin_inset Formula $S$
+\end_inset
+
+.
+ Taken together, these mean that no element of 
+\begin_inset Formula $C$
+\end_inset
+
+ enters 
+\begin_inset Formula $S$
+\end_inset
+
+ more than once.
+\end_layout
+
+\begin_layout Theorem
+The algorithm 
+\begin_inset Formula $\textsc{MatchingPostorder}$
+\end_inset
+
+ outputs a permutation of the nodes of 
+\begin_inset Formula $C$
+\end_inset
+
+ and then terminates.
+\end_layout
+
+\begin_layout Proof
+By Corollary 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Items-appear-at-least-once"
+
+\end_inset
+
+, every node in 
+\begin_inset Formula $C$
+\end_inset
+
+ appears in the output, and by Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Items-appear-at-most-once"
+
+\end_inset
+
+, no node appears more than once, meaning 
+\begin_inset Formula $\textsc{MatchingPostorder}$
+\end_inset
+
+ outputs a permutation.
+ By Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Termination"
+
+\end_inset
+
+, the algorithm then terminates.
+\end_layout
+
+\begin_layout Subsection
+Outputs are Matching Postorders
 \end_layout
 
 \begin_layout Standard
