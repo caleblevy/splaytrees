@@ -157,6 +157,15 @@ Postorder and Pattern Avoidance
 \end_layout
 
 \begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\parent}{\operatorname{parent}}
+{\textnormal{parent}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 We define the postorder sequence of a tree 
 \begin_inset Formula $T$
 \end_inset
@@ -552,27 +561,7 @@ An insertion tree for a permutation
 \end_inset
 
 , as defined by Kozma.
- Let 
-\begin_inset Formula $x\prec_{\pi}y$
-\end_inset
-
-, or simply 
-\begin_inset Formula $x\prec y$
-\end_inset
-
- denote that 
-\begin_inset Formula $x$
-\end_inset
-
- precedes 
-\begin_inset Formula $y$
-\end_inset
-
- in 
-\begin_inset Formula $\pi$
-\end_inset
-
-.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -813,7 +802,7 @@ Hence all nodes in
 \end_layout
 
 \begin_layout Proof
-We may now summarize
+We may now summarize:
 \end_layout
 
 \begin_deeper
@@ -974,6 +963,464 @@ splay-insert
 Most of the busywork in that proof seems to be showing that if I add a leaf
  to the starting tree, and then splay the same sequence, then there will
  be no difference in the execution.
+\end_layout
+
+\begin_layout Section
+Combs (Insertion Trees of Postorders)
+\end_layout
+
+\begin_layout Standard
+Knowing that splay-insertion of a postorder 
+\begin_inset Formula $\pi$
+\end_inset
+
+ is identical to splaying 
+\begin_inset Formula $\pi$
+\end_inset
+
+ starting from 
+\begin_inset Formula $\treap\left(\pi\right)$
+\end_inset
+
+, it is natural to enquire about the nature of 
+\begin_inset Formula $\treap\left(\pi\right)$
+\end_inset
+
+.
+ In 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Chaudhuri1991"
+
+\end_inset
+
+, Chaudhuri and and Hoft show that splaying a search tree in its own 
+\emph on
+preorder
+\emph default
+ takes linear time.
+ The fact 
+\begin_inset Formula $\treap\left(\operatorname{preorder}\left(T\right)\right)=T$
+\end_inset
+
+ may obscure the fact that this is identical 
+\emph on
+splay-inserting
+\emph default
+ in preorder, but their problem is fundamentally identical.
+ The insertion trees produced by postorders have a very simple, and somewhat
+ surprising structure.
+ In what follows, 
+\begin_inset Formula $x\prec_{\pi}y$
+\end_inset
+
+, or simply 
+\begin_inset Formula $x\prec y$
+\end_inset
+
+ denotes that 
+\begin_inset Formula $x$
+\end_inset
+
+ precedes 
+\begin_inset Formula $y$
+\end_inset
+
+ in 
+\begin_inset Formula $\pi$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Lemma
+Let 
+\begin_inset Formula $\pi$
+\end_inset
+
+ be a postorder.
+ Then all descendents of left children in 
+\begin_inset Formula $\treap\left(\pi\right)$
+\end_inset
+
+ are left children.
+\end_layout
+
+\begin_layout Proof
+We show that we would otherwise obtain a contradiction.
+ Let 
+\begin_inset Formula $w$
+\end_inset
+
+ be a left child in 
+\begin_inset Formula $\treap\left(\pi\right)$
+\end_inset
+
+ with a proper descendent 
+\begin_inset Formula $z$
+\end_inset
+
+ which is a right child.
+ Let 
+\begin_inset Formula $y=\parent\left(z\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $x=\parent\left(w\right)$
+\end_inset
+
+.
+ As 
+\begin_inset Formula $z$
+\end_inset
+
+ is 
+\begin_inset Formula $y$
+\end_inset
+
+'s right child, 
+\begin_inset Formula $y<z$
+\end_inset
+
+.
+ Because both 
+\begin_inset Formula $y$
+\end_inset
+
+ and 
+\begin_inset Formula $z$
+\end_inset
+
+ are descendents of 
+\begin_inset Formula $w=\leftnode\left(x\right)$
+\end_inset
+
+, they are both in 
+\begin_inset Formula $x$
+\end_inset
+
+'s left subtree, hence 
+\begin_inset Formula $y<z<x$
+\end_inset
+
+.
+ Further, 
+\begin_inset Formula $y$
+\end_inset
+
+ is an ancestor of 
+\begin_inset Formula $z$
+\end_inset
+
+, and 
+\begin_inset Formula $x$
+\end_inset
+
+ is an ancestor of 
+\begin_inset Formula $y$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+By the properties of the heap-order, 
+\begin_inset Formula $y$
+\end_inset
+
+ can be an ancestor of 
+\begin_inset Formula $z$
+\end_inset
+
+ only if 
+\begin_inset Formula $y\prec_{\pi}z$
+\end_inset
+
+, and similarly we must have 
+\begin_inset Formula $x\prec_{\pi}y$
+\end_inset
+
+.
+ We thus have that 
+\begin_inset Formula $\left(x,y,z\right)$
+\end_inset
+
+ is a subsequence of 
+\begin_inset Formula $\pi$
+\end_inset
+
+, and from the above, 
+\begin_inset Formula $\left(xyz\right)$
+\end_inset
+
+ is order-isomorphic to 
+\begin_inset Formula $312$
+\end_inset
+
+, meaning 
+\begin_inset Formula $\pi$
+\end_inset
+
+ is not a postorder.
+\end_layout
+
+\begin_layout Standard
+From the above, if 
+\begin_inset Formula $\pi$
+\end_inset
+
+ is a postorder, 
+\begin_inset Formula $T=\treap\left(T\right)$
+\end_inset
+
+, the path from 
+\begin_inset Formula $\root\left(T\right)$
+\end_inset
+
+ to 
+\begin_inset Formula $x\in T$
+\end_inset
+
+ always consists first of zero or more right children followed by zero or
+ more left children.
+ The shape this describes in general is a 
+\begin_inset Quotes eld
+\end_inset
+
+right path
+\begin_inset Quotes erd
+\end_inset
+
+ with 
+\begin_inset Quotes eld
+\end_inset
+
+left paths
+\begin_inset Quotes erd
+\end_inset
+
+ hanging from it to fill in the gaps.
+ I will call any such structure a (
+\begin_inset Quotes eld
+\end_inset
+
+left-toothed
+\begin_inset Quotes erd
+\end_inset
+
+) 
+\emph on
+comb
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $C$
+\end_inset
+
+ be a comb with nodes 
+\begin_inset Formula $\left[n\right]$
+\end_inset
+
+.
+ Its structure is fully specified by the nodes 
+\begin_inset Formula $1\le b_{1}<b_{2}<\cdots<b_{k}=n$
+\end_inset
+
+ on its right path.
+ For convenience we define 
+\begin_inset Formula $b_{0}=0$
+\end_inset
+
+.
+ The following hold trivially:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $b_{1}=\root\left(C\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $b_{i+1}=\rightnode\left(b_{i}\right)$
+\end_inset
+
+,
+\begin_inset space \qquad{}
+\end_inset
+
+for 
+\begin_inset Formula $1\le i<k$
+\end_inset
+
+ when 
+\begin_inset Formula $k>1$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $j=\leftnode\left(j+1\right)$
+\end_inset
+
+, 
+\begin_inset space \qquad{}
+\end_inset
+
+for 
+\begin_inset Formula $b_{i-1}<j<b_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $1\le i\le k$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We will refer to the interval 
+\begin_inset Formula $B_{i}=(b_{i-1},b_{i}]$
+\end_inset
+
+ as the 
+\begin_inset Formula $i\textsuperscript{th}$
+\end_inset
+
+ 
+\emph on
+bin
+\emph default
+ on the comb; visually it corresponds to the 
+\begin_inset Formula $i\textsuperscript{th}$
+\end_inset
+
+ 
+\begin_inset Quotes eld
+\end_inset
+
+tooth
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+These combs have several other properties which are not proven here or used
+ for this investigation, but which are interesting:
+\end_layout
+
+\begin_layout Itemize
+For a postorder 
+\begin_inset Formula $\pi$
+\end_inset
+
+, the comb given by 
+\begin_inset Formula $\treap\left(\pi\right)$
+\end_inset
+
+ corresponds to the maximal subsequence 
+\begin_inset Formula $\left(\pi_{a_{1}}\dots\pi_{a_{k}}\right)$
+\end_inset
+
+ of 
+\begin_inset Formula $\pi$
+\end_inset
+
+ so that 
+\begin_inset Formula $\pi_{j}<\pi_{a_{i}}$
+\end_inset
+
+ for 
+\begin_inset Formula $j<a_{i}$
+\end_inset
+
+, for 
+\begin_inset Formula $1\le i\le k$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+For every comb 
+\begin_inset Formula $C$
+\end_inset
+
+, there is a corresponding postorder sequence whose insertion tree is 
+\begin_inset Formula $C$
+\end_inset
+
+.
+ In fact, the 
+\emph on
+preorder
+\emph default
+ of 
+\begin_inset Formula $C$
+\end_inset
+
+ is also a 
+\emph on
+postorder
+\emph default
+ whose insertion tree is 
+\begin_inset Formula $C$
+\end_inset
+
+.
+ Note, however, that the tree whose postorder sequence is 
+\begin_inset Formula $C$
+\end_inset
+
+'s preorder will not (in general) be 
+\begin_inset Formula $C$
+\end_inset
+
+.
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+In fact, this tree may be obtained by reversing the labels on the tooth
+ of each comb and then rotating the whole tree 
+\begin_inset Formula $90^{\circ}$
+\end_inset
+
+ counterclockwise!
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Each division of bins on a comb corresponds to an interval partition of
+ 
+\begin_inset Formula $\left[n\right]$
+\end_inset
+
+, which itself corresponds to some subset of 
+\begin_inset Formula $\left[n-1\right]$
+\end_inset
+
+.
+ Hence there are 
+\begin_inset Formula $2^{n-1}$
+\end_inset
+
+ combs on 
+\begin_inset Formula $n$
+\end_inset
+
+ nodes.
 \end_layout
 
 \begin_layout Standard
