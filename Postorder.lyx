@@ -2710,61 +2710,77 @@ By the heap-condition on first-access time and the symmetric order on the
 \end_inset
 
 .
-\end_layout
+\begin_inset Newline newline
+\end_inset
 
-\begin_layout Enumerate
-(The bins form left paths.) As 
+
+\begin_inset Newline newline
+\end_inset
+
+Summarizing, 
 \begin_inset Formula $b_{1}$
 \end_inset
 
- is the root, the nodes 
-\begin_inset Formula $j$
-\end_inset
-
- for 
-\begin_inset Formula $1\le j<b_{1}$
-\end_inset
-
- are in 
-\begin_inset Formula $b_{1}$
-\end_inset
-
-'s left subtree.
- As 
-\begin_inset Formula $b_{i}$
-\end_inset
-
- is the right child of 
-\begin_inset Formula $b_{i-1}$
+ is the root and 
+\begin_inset Formula $b_{i+1}=\rightnode\left(b_{i}\right)$
 \end_inset
 
  for 
 \begin_inset Formula $1<i\le k$
 \end_inset
 
-, the symmetric order on 
+.
+ Furthermore as 
+\begin_inset Formula $b_{k}=\max\left(\tau\right)$
+\end_inset
+
+, 
+\begin_inset Formula $b_{k}$
+\end_inset
+
+ has no right child, and thus the nodes 
+\begin_inset Formula $b_{1}\dots b_{k}$
+\end_inset
+
+ form the right path of 
 \begin_inset Formula $T$
 \end_inset
 
- means all nodes 
-\begin_inset Formula $j$
+.
+\end_layout
+
+\begin_layout Enumerate
+(The left subtrees of 
+\begin_inset Formula $b_{1}\dots b_{k}$
 \end_inset
 
- for 
-\begin_inset Formula $b_{i-1}<j<b_{i}$
+ are chains.)
+\series bold
+ 
+\series default
+From above, the nodes 
+\begin_inset Formula $b_{1}\dots b_{k}$
 \end_inset
 
- are in 
+ form the right path of 
+\begin_inset Formula $T$
+\end_inset
+
+, hence the symmetric order implies that the left subtree of 
 \begin_inset Formula $b_{i}$
 \end_inset
 
-'s left subtree.
- Thus 
-\begin_inset Formula $b_{i}=\root\left(B_{i}\right)$
+ consists exactly of the nodes 
+\begin_inset Formula $j$
 \end_inset
 
- for 
-\begin_inset Formula $1\le i\le k$
+ such that 
+\begin_inset Formula $b_{i-1}<j<b_{i}$
+\end_inset
+
+.
+ We use induction on the length of the chains hanging from each 
+\begin_inset Formula $b_{i}$
 \end_inset
 
 .
@@ -2776,23 +2792,80 @@ By the heap-condition on first-access time and the symmetric order on the
 \end_inset
 
 If 
-\begin_inset Formula $B_{i}$
+\begin_inset Formula $b_{i-1}$
 \end_inset
 
- has one element then its left subtree in 
-\begin_inset Formula $T$
+ is the predecessor of 
+\begin_inset Formula $b_{i}$
 \end_inset
 
- is empty and the third condition of Definition 
+ in symmetric order then 
+\begin_inset Formula $b_{i}$
+\end_inset
+
+'s left subtree is empty, vacously matching condition 3 of Definition 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "Comb"
 
 \end_inset
 
- is satisfied.
- We induct on the size of 
-\begin_inset Formula $B_{i}$
+.
+ Suppose that all left subtrees of the right path with at least 
+\begin_inset Formula $j-1$
+\end_inset
+
+ nodes begin with a leftward chain containing the 
+\begin_inset Formula $j-1$
+\end_inset
+
+ largest nodes of the subtree, and that 
+\begin_inset Formula $b_{i}$
+\end_inset
+
+ has a left subtree with 
+\begin_inset Formula $l\ge j$
+\end_inset
+
+ nodes.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Let 
+\begin_inset Formula $a_{0}=b_{i}>a_{1}>a_{2}>\cdots>a_{l}$
+\end_inset
+
+ be the nodes of that subtree along with 
+\begin_inset Formula $b_{i}$
+\end_inset
+
+.
+ By the inductive hypothesis, nodes 
+\begin_inset Formula $a_{0}\dots a_{j-1}$
+\end_inset
+
+ are (sometimes not proper) ancestors of 
+\begin_inset Formula $a_{j-1}$
+\end_inset
+
+, thus the symmetric order implies that nodes 
+\begin_inset Formula $a_{j}\dots a_{l}$
+\end_inset
+
+ are in the left subtree of 
+\begin_inset Formula $a_{j-1}$
+\end_inset
+
+, hence one of 
+\begin_inset Formula $a_{j}\dots a_{l}$
+\end_inset
+
+ is the left child of 
+\begin_inset Formula $a_{j-1}$
 \end_inset
 
 .
@@ -2803,78 +2876,41 @@ reference "Comb"
 \begin_inset Newline newline
 \end_inset
 
-Suppose 
-\begin_inset Formula $B_{i}$
+The heap condition on first access time implies the left child of 
+\begin_inset Formula $a_{j-1}$
 \end_inset
 
- has 
-\begin_inset Formula $j$
+ is the first node among 
+\begin_inset Formula $a_{j}\dots a_{l}$
 \end_inset
 
- elements, 
-\begin_inset Formula $a_{1}\dots a_{j}$
-\end_inset
-
-, and that 
-\begin_inset Formula $a_{2}\dots a_{j}$
-\end_inset
-
- form a left path in 
-\begin_inset Formula $T$
-\end_inset
-
-.
- By the treap-order constraints, the left child of 
-\begin_inset Formula $a_{2}$
-\end_inset
-
- in 
-\begin_inset Formula $T$
-\end_inset
-
- (if any) will be the first node to appear after 
-\begin_inset Formula $a_{2}$
+ appearing subsequent to 
+\begin_inset Formula $a_{j-1}$
 \end_inset
 
  in 
 \begin_inset Formula $\tau$
 \end_inset
 
- which lies between 
-\begin_inset Formula $b_{i-1}$
-\end_inset
-
- and 
-\begin_inset Formula $a_{2}$
-\end_inset
-
 .
- The only node lying between 
-\begin_inset Formula $b_{i-1}$
+ Condition 2 of the theorem implies that 
+\begin_inset Formula $a_{j}\prec_{\tau}a_{h}$
 \end_inset
 
- and 
-\begin_inset Formula $a_{2}$
+ for 
+\begin_inset Formula $j<h<l$
 \end_inset
 
- is 
-\begin_inset Formula $a_{1}$
+, hence 
+\begin_inset Formula $a_{j}=\leftnode\left(a_{j-1}\right)$
 \end_inset
 
-, and condition 2 of the theorem ensures that 
-\begin_inset Formula $a_{2}\prec_{\tau}a_{1}$
-\end_inset
-
-, thus 
-\begin_inset Formula $a_{1}=\leftnode\left(a_{2}\right)$
-\end_inset
-
-.
+, affirming the theorem.
 \end_layout
 
 \end_deeper
 \begin_layout Proof
-asdf
+Proving the other direction is more straightforward.
 \end_layout
 
 \begin_layout Theorem
