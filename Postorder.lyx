@@ -1219,52 +1219,66 @@ left paths
 \end_inset
 
  hanging from it to fill in the gaps.
- I will call any such structure a (
+ I will call any such structure a 
 \begin_inset Quotes eld
 \end_inset
 
-left-toothed
+(left-toothed) comb.
 \begin_inset Quotes erd
 \end_inset
 
-) 
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset CommandInset label
+LatexCommand label
+name "Comb"
+
+\end_inset
+
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Comb
+\end_layout
+
+\end_inset
+
+A 
 \emph on
 comb
 \emph default
-.
-\end_layout
-
-\begin_layout Standard
-Let 
+ 
 \begin_inset Formula $C$
 \end_inset
 
- be a comb with nodes 
-\begin_inset Formula $\left[n\right]$
-\end_inset
-
-.
- Its structure is fully specified by the nodes 
+ corresponding to the interval partition 
 \begin_inset Formula $1\le b_{1}<b_{2}<\cdots<b_{k}=n$
 \end_inset
 
- on its right path.
- For convenience we define 
+ is a binary search tree with nodes 
+\begin_inset Formula $1\dots n$
+\end_inset
+
+ whose structure is as follows (for convenience define 
 \begin_inset Formula $b_{0}=0$
 \end_inset
 
-.
- The following hold trivially:
+):
 \end_layout
 
-\begin_layout Itemize
+\begin_deeper
+\begin_layout Enumerate
 \begin_inset Formula $b_{1}=\root\left(C\right)$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Enumerate
 \begin_inset Formula $b_{i+1}=\rightnode\left(b_{i}\right)$
 \end_inset
 
@@ -1283,7 +1297,7 @@ for
 
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Enumerate
 \begin_inset Formula $j=\leftnode\left(j+1\right)$
 \end_inset
 
@@ -1302,8 +1316,9 @@ for
 
 \end_layout
 
-\begin_layout Standard
-We will refer to the interval 
+\end_deeper
+\begin_layout Definition
+We refer to the interval 
 \begin_inset Formula $B_{i}=(b_{i-1},b_{i}]$
 \end_inset
 
@@ -1315,11 +1330,9 @@ We will refer to the interval
 \emph on
 bin
 \emph default
- on the comb; visually it corresponds to the 
-\begin_inset Formula $i\textsuperscript{th}$
-\end_inset
+ or 
+\emph on
 
- 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1327,12 +1340,14 @@ tooth
 \begin_inset Quotes erd
 \end_inset
 
-.
+ 
+\emph default
+on the comb.
 \end_layout
 
 \begin_layout Standard
-These combs have several other properties which are not proven here or used
- for this investigation, but which are interesting:
+Combs have several other properties which are not proven here or used for
+ this investigation, but which are interesting:
 \end_layout
 
 \begin_layout Itemize
@@ -2449,6 +2464,417 @@ reference "Termination"
 \end_inset
 
 , the algorithm then terminates.
+\end_layout
+
+\begin_layout Subsection
+Outputs are Valid Postorders
+\end_layout
+
+\begin_layout Lemma
+Let 
+\begin_inset Formula $C$
+\end_inset
+
+ be a comb corresponding to partition 
+\begin_inset Formula $1\le b_{1}<\dots<b_{k}=n$
+\end_inset
+
+, 
+\begin_inset Formula $\tau$
+\end_inset
+
+ a permutation of 
+\begin_inset Formula $\left[n\right]$
+\end_inset
+
+, and 
+\begin_inset Formula $T=\treap\left(\tau\right)$
+\end_inset
+
+.
+ Then 
+\begin_inset Formula $T=C$
+\end_inset
+
+ if and only if:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $b_{i}\prec_{\tau}b_{j}$
+\end_inset
+
+ for 
+\begin_inset Formula $1\le i<j\le k$
+\end_inset
+
+, and
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $j\prec_{\tau}i$
+\end_inset
+
+ for 
+\begin_inset Formula $b_{l-1}<i<j\le b_{l}$
+\end_inset
+
+ and 
+\begin_inset Formula $1\le l\le k$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Proof
+Suppose 
+\begin_inset Formula $\tau$
+\end_inset
+
+ satisfies conditions 1 and 2.
+ We must show 
+\begin_inset Formula $T$
+\end_inset
+
+ satisfies the three properties of Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Comb"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+(The root is 
+\begin_inset Formula $b_{1}$
+\end_inset
+
+.) By condition 1, 
+\begin_inset Formula $b_{1}\prec_{\tau}b_{i}$
+\end_inset
+
+ for 
+\begin_inset Formula $2\le i\le k$
+\end_inset
+
+.
+ Furthermore, 
+\begin_inset Formula $b_{1}\prec_{\tau}j$
+\end_inset
+
+ for 
+\begin_inset Formula $1\le j<b_{1}$
+\end_inset
+
+ by condition 2.
+ Finally by transitivity of the order relation, for all 
+\begin_inset Formula $j$
+\end_inset
+
+ such that 
+\begin_inset Formula $b_{i-1}<j<b_{i}$
+\end_inset
+
+ over 
+\begin_inset Formula $1<i\le k$
+\end_inset
+
+, we have 
+\begin_inset Formula $b_{1}\prec_{\tau}b_{i}\prec_{\tau}j$
+\end_inset
+
+.
+ Thus 
+\begin_inset Formula $b_{1}$
+\end_inset
+
+ is the first element of 
+\begin_inset Formula $\tau$
+\end_inset
+
+ and 
+\begin_inset Formula $b_{1}=\root\left(T\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+(The right path is 
+\begin_inset Formula $b_{1}\dots b_{k}$
+\end_inset
+
+.) If 
+\begin_inset Formula $k=1$
+\end_inset
+
+ then the root 
+\begin_inset Formula $b_{1}=n$
+\end_inset
+
+ is the greatest element in 
+\begin_inset Formula $T$
+\end_inset
+
+, and all other nodes appear in 
+\begin_inset Formula $b_{1}$
+\end_inset
+
+'s left subtree, making 
+\begin_inset Formula $b_{1}$
+\end_inset
+
+ the sole member of the right path.
+ We induct on 
+\begin_inset Formula $k$
+\end_inset
+
+.
+ Suppose 
+\begin_inset Formula $C$
+\end_inset
+
+ has 
+\begin_inset Formula $k$
+\end_inset
+
+-bins.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+By the heap-condition on first-access time and the symmetric order on the
+ keys, the right child of 
+\begin_inset Formula $b_{k-1}$
+\end_inset
+
+ in 
+\begin_inset Formula $T$
+\end_inset
+
+ is the first node greater than 
+\begin_inset Formula $b_{k-1}$
+\end_inset
+
+ appearing after 
+\begin_inset Formula $b_{k-1}$
+\end_inset
+
+ in 
+\begin_inset Formula $\tau$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $b_{k-1}<j<b_{k}$
+\end_inset
+
+ then condition 2 assures us that 
+\begin_inset Formula $b_{k}\prec_{\tau}j$
+\end_inset
+
+.
+ As 
+\begin_inset Formula $C$
+\end_inset
+
+ has 
+\begin_inset Formula $k$
+\end_inset
+
+ bins, 
+\begin_inset Formula $b_{k}=\max\left(\tau\right)$
+\end_inset
+
+, hence 
+\begin_inset Formula $b_{k}$
+\end_inset
+
+ has no right children, and no elements greater than 
+\begin_inset Formula $b_{k-1}$
+\end_inset
+
+ appear before 
+\begin_inset Formula $b_{k}$
+\end_inset
+
+ in 
+\begin_inset Formula $\tau$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+(The bins form left paths.) As 
+\begin_inset Formula $b_{1}$
+\end_inset
+
+ is the root, the nodes 
+\begin_inset Formula $j$
+\end_inset
+
+ for 
+\begin_inset Formula $1\le j<b_{1}$
+\end_inset
+
+ are in 
+\begin_inset Formula $b_{1}$
+\end_inset
+
+'s left subtree.
+ As 
+\begin_inset Formula $b_{i}$
+\end_inset
+
+ is the right child of 
+\begin_inset Formula $b_{i-1}$
+\end_inset
+
+ for 
+\begin_inset Formula $1<i\le k$
+\end_inset
+
+, the symmetric order on 
+\begin_inset Formula $T$
+\end_inset
+
+ means all nodes 
+\begin_inset Formula $j$
+\end_inset
+
+ for 
+\begin_inset Formula $b_{i-1}<j<b_{i}$
+\end_inset
+
+ are in 
+\begin_inset Formula $b_{i}$
+\end_inset
+
+'s left subtree.
+ Thus 
+\begin_inset Formula $b_{i}=\root\left(B_{i}\right)$
+\end_inset
+
+ for 
+\begin_inset Formula $1\le i\le k$
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+If 
+\begin_inset Formula $B_{i}$
+\end_inset
+
+ has one element then its left subtree in 
+\begin_inset Formula $T$
+\end_inset
+
+ is empty and the third condition of Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Comb"
+
+\end_inset
+
+ is satisfied.
+ We induct on the size of 
+\begin_inset Formula $B_{i}$
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Suppose 
+\begin_inset Formula $B_{i}$
+\end_inset
+
+ has 
+\begin_inset Formula $j$
+\end_inset
+
+ elements, 
+\begin_inset Formula $a_{1}\dots a_{j}$
+\end_inset
+
+, and that 
+\begin_inset Formula $a_{2}\dots a_{j}$
+\end_inset
+
+ form a left path in 
+\begin_inset Formula $T$
+\end_inset
+
+.
+ By the treap-order constraints, the left child of 
+\begin_inset Formula $a_{2}$
+\end_inset
+
+ in 
+\begin_inset Formula $T$
+\end_inset
+
+ (if any) will be the first node to appear after 
+\begin_inset Formula $a_{2}$
+\end_inset
+
+ in 
+\begin_inset Formula $\tau$
+\end_inset
+
+ which lies between 
+\begin_inset Formula $b_{i-1}$
+\end_inset
+
+ and 
+\begin_inset Formula $a_{2}$
+\end_inset
+
+.
+ The only node lying between 
+\begin_inset Formula $b_{i-1}$
+\end_inset
+
+ and 
+\begin_inset Formula $a_{2}$
+\end_inset
+
+ is 
+\begin_inset Formula $a_{1}$
+\end_inset
+
+, and condition 2 of the theorem ensures that 
+\begin_inset Formula $a_{2}\prec_{\tau}a_{1}$
+\end_inset
+
+, thus 
+\begin_inset Formula $a_{1}=\leftnode\left(a_{2}\right)$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Proof
+asdf
 \end_layout
 
 \begin_layout Theorem
