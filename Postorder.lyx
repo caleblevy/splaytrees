@@ -2508,7 +2508,7 @@ reference "MatchingPostorder"
 \begin_layout Theorem
 \begin_inset CommandInset label
 LatexCommand label
-name "AlgIsMatching"
+name "ShapesMatch"
 
 \end_inset
 
@@ -2929,6 +2929,13 @@ Observe that if
 \end_layout
 
 \begin_layout Theorem
+\begin_inset CommandInset label
+LatexCommand label
+name "AlgMakesPostorders"
+
+\end_inset
+
+
 \begin_inset Formula $\pi_{\le i}$
 \end_inset
 
@@ -3012,7 +3019,7 @@ Suppose for contradiction that
  By the arguments in Theorem 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "AlgIsMatching"
+reference "ShapesMatch"
 
 \end_inset
 
@@ -3267,6 +3274,43 @@ We thus have
 \end_inset
 
  violation, and the lemma holds.
+\end_layout
+
+\begin_layout Theorem
+Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
+\end_inset
+
+ outputs matching postorders for 
+\begin_inset Formula $C$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Apply Theorems 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "AlgMakesPostorders"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "ShapesMatch"
+
+\end_inset
+
+ with 
+\begin_inset Formula $i=n$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -4080,7 +4124,7 @@ reference "Left-Subtrees-Condition"
 
 \end_inset
 
- of Lemma 
+ of Theorem 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "NecSucc-Comb"
@@ -4088,6 +4132,286 @@ reference "NecSucc-Comb"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Theorem
+Let 
+\begin_inset Formula $C$
+\end_inset
+
+ be a comb with bins 
+\begin_inset Formula $B_{1}\dots B_{k}$
+\end_inset
+
+ with 
+\begin_inset Formula $n$
+\end_inset
+
+ elements.
+ Let 
+\begin_inset Formula $\alpha=\alpha_{1}\dots\alpha_{i}$
+\end_inset
+
+ with 
+\begin_inset Formula $i<n$
+\end_inset
+
+ be the outputs of the first 
+\begin_inset Formula $i$
+\end_inset
+
+ iterations of the 
+\series bold
+\emph on
+while 
+\series default
+\emph default
+loop in Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $\tau=\alpha_{1}\dots\alpha_{i}q$
+\end_inset
+
+ be the permutation obtained by appending 
+\begin_inset Formula $q$
+\end_inset
+
+ to 
+\begin_inset Formula $\alpha$
+\end_inset
+
+.
+ If Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
+\end_inset
+
+ cannot output 
+\begin_inset Formula $q$
+\end_inset
+
+ at iteration 
+\begin_inset Formula $i+1$
+\end_inset
+
+, then 
+\begin_inset Formula $\tau$
+\end_inset
+
+ is not a prefix of any matching postorder for 
+\begin_inset Formula $C$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Let 
+\begin_inset Formula $b_{1}\dots b_{l}$
+\end_inset
+
+ be the nodes on the right path of 
+\begin_inset Formula $T=\treap\left(\alpha\right)$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $B_{m_{1}}\dots B_{m_{h}}$
+\end_inset
+
+ with 
+\begin_inset Formula $1\le m_{1}<\cdots<m_{h}\le l$
+\end_inset
+
+ be the subsequence of bins 
+\begin_inset Formula $B_{1}\dots B_{l}$
+\end_inset
+
+ with nodes on 
+\begin_inset Formula $S$
+\end_inset
+
+ immediately after the execution of Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop2"
+
+\end_inset
+
+ during iteration 
+\begin_inset Formula $i-1$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ for 
+\begin_inset Formula $1\le j\le m$
+\end_inset
+
+ be the largest node in 
+\begin_inset Formula $B_{m_{j}}$
+\end_inset
+
+ which is not in 
+\begin_inset Formula $\alpha$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+In plain English, Theorem 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "NecSucc-Comb"
+
+\end_inset
+
+ restricts our choices of 
+\begin_inset Formula $q$
+\end_inset
+
+ to one of 
+\begin_inset Formula $a_{1}\dots a_{m}$
+\end_inset
+
+ or 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+, should either 
+\begin_inset Formula $m>0$
+\end_inset
+
+ or 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+ exist.
+ Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
+\end_inset
+
+ restricts our choices much further: we may output 
+\begin_inset Formula $a_{m}$
+\end_inset
+
+ or 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+, should either exist.
+ We show that choosing 
+\begin_inset Formula $q<a_{m}$
+\end_inset
+
+ creates a 
+\begin_inset Formula $312$
+\end_inset
+
+-violation.
+ Let 
+\begin_inset Formula $1\le j<m$
+\end_inset
+
+, suppose 
+\begin_inset Formula $q=a_{j}$
+\end_inset
+
+, and let 
+\begin_inset Formula $\beta$
+\end_inset
+
+ be a permutation with prefix 
+\begin_inset Formula $\tau$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+By construction, 
+\begin_inset Formula $x=a_{m}+1$
+\end_inset
+
+ appears before 
+\begin_inset Formula $y=a_{j}$
+\end_inset
+
+ in both in 
+\begin_inset Formula $\tau$
+\end_inset
+
+ and in 
+\begin_inset Formula $\beta$
+\end_inset
+
+.
+ Furthermore, 
+\begin_inset Formula $z=a_{m}$
+\end_inset
+
+ must appear somewhere after 
+\begin_inset Formula $y$
+\end_inset
+
+ in 
+\begin_inset Formula $\beta$
+\end_inset
+
+ since 
+\begin_inset Formula $\beta$
+\end_inset
+
+ is a permutation and 
+\begin_inset Formula $z$
+\end_inset
+
+ does not appear in 
+\begin_inset Formula $\beta$
+\end_inset
+
+'s prefix, 
+\begin_inset Formula $\tau$
+\end_inset
+
+.
+ Finally we observe that 
+\begin_inset Formula $a_{j}<a_{m}<a_{m}+1$
+\end_inset
+
+.
+ We have thus exhibited 
+\begin_inset Formula $x\prec_{\beta}y\prec_{\beta}z$
+\end_inset
+
+ so that 
+\begin_inset Formula $y<z<x$
+\end_inset
+
+, hence 
+\begin_inset Formula $\beta$
+\end_inset
+
+ has a 
+\begin_inset Formula $312$
+\end_inset
+
+-violation.
 \end_layout
 
 \begin_layout Standard
