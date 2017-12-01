@@ -3393,11 +3393,11 @@ reference "Pop2"
 \begin_inset Formula $B_{1}$
 \end_inset
 
- added to 
+ are added to 
 \begin_inset Formula $S$
 \end_inset
 
- reverse of symmetric order, 
+ in symmetric order, 
 \begin_inset Formula $b_{1}$
 \end_inset
 
@@ -3431,12 +3431,12 @@ reference "MatchingPostorder"
 \begin_inset Formula $T_{i-1}$
 \end_inset
 
- contains the first 
-\begin_inset Formula $l$
+ has 
+\begin_inset Formula $b_{1}\dots b_{l}$
 \end_inset
 
- members of the right path.
- We show that 
+ as the right path.
+ We wish show that 
 \begin_inset Formula $T_{i}$
 \end_inset
 
@@ -3445,16 +3445,12 @@ reference "MatchingPostorder"
 \end_inset
 
 .
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-If 
-\begin_inset Formula $S=\varnothing$
+ We begin by establishing that if 
+\begin_inset Formula $B$
 \end_inset
 
- and 
-\begin_inset Formula $B\ne\varnothing$
+ is nonempty immediately after outputting 
+\begin_inset Formula $\pi_{i-1}$
 \end_inset
 
  then 
@@ -3465,35 +3461,147 @@ If
 \begin_inset Formula $B$
 \end_inset
 
-, hence 
-\begin_inset Formula $b_{l+1}$
+.
+\end_layout
+
+\begin_layout Proof
+Whenever Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
+\end_inset
+
+ pops bin 
+\begin_inset Formula $j$
+\end_inset
+
+ from 
+\begin_inset Formula $B$
+\end_inset
+
+, it immediately adds 
+\begin_inset Formula $b_{j-1}+1\dots b_{j}$
+\end_inset
+
+ to the top of 
+\begin_inset Formula $S$
+\end_inset
+
+, in that order.
+ In particular, 
+\begin_inset Formula $b_{j}$
 \end_inset
 
  is at the top of 
 \begin_inset Formula $S$
 \end_inset
 
- after 
+, thus if 
+\begin_inset Formula $B_{j}$
+\end_inset
+
+ is popped from 
+\begin_inset Formula $B$
+\end_inset
+
+ then the next node output by Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
+\end_inset
+
+ is always 
+\begin_inset Formula $b_{j}$
+\end_inset
+
+.
+ Note further that when 
+\begin_inset Formula $b_{j}$
+\end_inset
+
+ is on top of 
+\begin_inset Formula $S$
+\end_inset
+
+ it is the largest node to have entered 
+\begin_inset Formula $S$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Suppose for contradiction that 
+\begin_inset Formula $B_{l+1}$
+\end_inset
+
+ was popped from 
+\begin_inset Formula $B$
+\end_inset
+
+ prior to iteration 
+\begin_inset Formula $i-1$
+\end_inset
+
+.
+ By the above argument, 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+ is output at the the next iteration of the 
+\series bold
+while
+\series default
+ loop, hence 
+\begin_inset Formula $b_{l+1}\in T_{i-1}$
+\end_inset
+
+.
+ Furthermore, 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+ is larger than any node preceeding it in the output, hence 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+ is on the right path of 
+\begin_inset Formula $T_{i-1}$
+\end_inset
+
+, contradicting our assumption.
+\end_layout
+
+\begin_layout Proof
+From this it follows that if 
+\begin_inset Formula $\textsc{Pop}\left(B\right)$
+\end_inset
+
+ is executed either in Line 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "Pop3"
 
 \end_inset
 
-.
- At the next iteration of the 
-\series bold
-while
-\series default
- loop, 
+ or Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop4"
+
+\end_inset
+
+ then 
+\begin_inset Formula $\pi_{i}=b_{l+1}$
+\end_inset
+
+, and 
 \begin_inset Formula $b_{l+1}$
 \end_inset
 
- will be popped from 
-\begin_inset Formula $S$
-\end_inset
-
-, and placed as the right child of 
+ is correctly located as the right child of 
 \begin_inset Formula $b_{l}$
 \end_inset
 
@@ -3505,26 +3613,78 @@ while
 \begin_inset Formula $T_{i}$
 \end_inset
 
- is a connected subtree of the root of 
+ is a subtree of 
 \begin_inset Formula $C$
 \end_inset
 
 .
 \end_layout
 
-\begin_layout Itemize
-The same will happen if 
-\begin_inset Formula $S\ne\varnothing$
+\begin_layout Proof
+Otherwise a node 
+\begin_inset Formula $j$
 \end_inset
 
- and 
-\begin_inset Formula $B\ne\varnothing$
+ is popped from the top of 
+\begin_inset Formula $S$
 \end_inset
 
-, 
+, and 
+\begin_inset Formula $j\in B_{h}$
+\end_inset
+
+ for some 
+\begin_inset Formula $1\le h\le l$
+\end_inset
+
+.
+ Recall that the nodes of 
+\begin_inset Formula $B_{h}$
+\end_inset
+
+ were added in order to 
+\begin_inset Formula $S$
+\end_inset
+
+, hence they must be popped in reverse order.
+ This means that nodes 
+\begin_inset Formula $q$
+\end_inset
+
+ for which 
+\begin_inset Formula $j<q\le b_{h}$
+\end_inset
+
+ have already been added to 
+\begin_inset Formula $T_{i-1}$
+\end_inset
+
+.
+ By the induction hypothesis they have been correctly shaped as a leftward
+ chain ending in node 
+\begin_inset Formula $j+1$
+\end_inset
+
+, thus 
+\begin_inset Formula $j$
+\end_inset
+
+ is placed in the proper position as the left child of 
+\begin_inset Formula $j+1$
+\end_inset
+
+.
+ Again 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ forms a connected subtree of the root of 
+\begin_inset Formula $C$
+\end_inset
+
+.
 \end_layout
 
-\end_deeper
 \begin_layout Theorem
 \begin_inset Formula $\pi_{\le i}$
 \end_inset
@@ -3534,6 +3694,28 @@ The same will happen if
 \end_inset
 
 -avoiding.
+\end_layout
+
+\begin_layout Proof
+Once again we induct on 
+\begin_inset Formula $i$
+\end_inset
+
+.
+ When 
+\begin_inset Formula $i=1$
+\end_inset
+
+,  
+\begin_inset Formula $b_{1}$
+\end_inset
+
+ is output and the sequence is vacously 
+\begin_inset Formula $312$
+\end_inset
+
+-avoiding.
+ 
 \end_layout
 
 \begin_layout Standard
