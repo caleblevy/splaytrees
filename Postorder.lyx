@@ -1273,13 +1273,6 @@ comb
 
 \begin_deeper
 \begin_layout Enumerate
-\begin_inset CommandInset label
-LatexCommand label
-name "Def-Root"
-
-\end_inset
-
-
 \begin_inset Formula $b_{1}=\root\left(C\right)$
 \end_inset
 
@@ -1287,13 +1280,6 @@ name "Def-Root"
 \end_layout
 
 \begin_layout Enumerate
-\begin_inset CommandInset label
-LatexCommand label
-name "Def-Right-Path"
-
-\end_inset
-
-
 \begin_inset Formula $b_{i+1}=\rightnode\left(b_{i}\right)$
 \end_inset
 
@@ -1786,13 +1772,6 @@ elseif
 \begin_layout Algorithm (num)
 * 
 \begin_inset Formula $\textsc{Continue}$
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "Skip"
-
 \end_inset
 
 
@@ -2412,11 +2391,8 @@ The bins of
 \begin_inset Formula $C$
 \end_inset
 
- form an interval partition of 
-\begin_inset Formula $\left[n\right]$
-\end_inset
-
-, hence each element appears in exactly one bin, and only once in that bin.
+ form a partition of the nodes, hence each element appears in exactly one
+ bin, and only once in that bin.
  As each bin is destroyed once its elements are added to 
 \begin_inset Formula $S$
 \end_inset
@@ -2435,7 +2411,7 @@ The bins of
 \end_inset
 
 .
- Taken together, these mean that no element of 
+ Taken together, these facts mean that no element of 
 \begin_inset Formula $C$
 \end_inset
 
@@ -2499,7 +2475,7 @@ reference "Termination"
 Outputs are Valid Postorders
 \end_layout
 
-\begin_layout Lemma
+\begin_layout Theorem
 \begin_inset CommandInset label
 LatexCommand label
 name "NecSucc-Comb"
@@ -3275,7 +3251,7 @@ Not all permutations whose insertion trees are combs are postorders.
 .
 \end_layout
 
-\begin_layout Theorem
+\begin_layout Corollary
 A permutation 
 \begin_inset Formula $\pi$
 \end_inset
@@ -3347,6 +3323,12 @@ reference "MatchingPostorder"
 \end_layout
 
 \begin_layout Theorem
+\begin_inset CommandInset label
+LatexCommand label
+name "AlgIsMatching"
+
+\end_inset
+
 Let 
 \begin_inset Formula $T_{i}=\treap\left(\pi_{\le i}\right)$
 \end_inset
@@ -3685,6 +3667,84 @@ Otherwise a node
 .
 \end_layout
 
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "Monotone"
+
+\end_inset
+
+The stack 
+\begin_inset Formula $S$
+\end_inset
+
+ is always monotonically decreasing from left-to-right (top-to-bottom).
+\end_layout
+
+\begin_layout Proof
+Observe that if 
+\begin_inset Formula $i<j$
+\end_inset
+
+ then then 
+\begin_inset Formula $p<q$
+\end_inset
+
+ for 
+\begin_inset Formula $p\in B_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $q\in B_{j}$
+\end_inset
+
+.
+ Further, if 
+\begin_inset Formula $i<j$
+\end_inset
+
+ then 
+\begin_inset Formula $\textsc{MultiPush}\left(S,B_{i}\right)$
+\end_inset
+
+ is always called before 
+\begin_inset Formula $\textsc{MultiPush}\left(S,B_{j}\right)$
+\end_inset
+
+.
+ Finally, 
+\begin_inset Formula $\textsc{MultiPush}$
+\end_inset
+
+ always adds elements from 
+\begin_inset Formula $B_{i}$
+\end_inset
+
+ in their symmetric order, hence when a node is pushed onto 
+\begin_inset Formula $S$
+\end_inset
+
+, it is larger than every other element which had been added to 
+\begin_inset Formula $S$
+\end_inset
+
+ before it.
+ The only way elements are removed is by popping 
+\begin_inset Formula $S$
+\end_inset
+
+ at the top, so no inversions are ever created among nodes sitting on 
+\begin_inset Formula $S$
+\end_inset
+
+.
+ We thus have 
+\begin_inset Formula $S$
+\end_inset
+
+ is always decreasing from top to bottom.
+\end_layout
+
 \begin_layout Theorem
 \begin_inset Formula $\pi_{\le i}$
 \end_inset
@@ -3706,7 +3766,7 @@ Once again we induct on
 \begin_inset Formula $i=1$
 \end_inset
 
-,  
+, 
 \begin_inset Formula $b_{1}$
 \end_inset
 
@@ -3715,7 +3775,315 @@ Once again we induct on
 \end_inset
 
 -avoiding.
+ Suppose 
+\begin_inset Formula $\pi_{1}\dots\pi_{i-1}$
+\end_inset
+
+ avoids 
+\begin_inset Formula $312$
+\end_inset
+
+.
+ We will show that 
+\begin_inset Formula $\pi_{1}\dots\pi_{i}$
+\end_inset
+
+ must also avoid 
+\begin_inset Formula $312$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Suppose for contradiction that 
+\begin_inset Formula $\pi_{\le i}$
+\end_inset
+
+ has a 
+\begin_inset Formula $312$
+\end_inset
+
+ violation 
+\begin_inset Formula $x\prec_{\pi}y\prec_{\pi}z$
+\end_inset
+
+ with 
+\begin_inset Formula $y<z<x$
+\end_inset
+
+.
+ Observe that since 
+\begin_inset Formula $\pi_{<i}$
+\end_inset
+
+ avoids 
+\begin_inset Formula $312$
+\end_inset
+
+, we must have 
+\begin_inset Formula $z=\pi_{i}$
+\end_inset
+
+.
+ By the arguments in Theorem 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "AlgIsMatching"
+
+\end_inset
+
+, the next node 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ will be of one of the following two types:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\emph on
+It is the head of some new bin.
  
+\emph default
+If 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ is the top of a new bin then 
+\begin_inset Formula $\pi_{i}>x$
+\end_inset
+
+ for 
+\begin_inset Formula $x\prec_{\pi}\pi_{i}$
+\end_inset
+
+.
+ As 
+\begin_inset Formula $z=\pi_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $x\prec_{\pi}z$
+\end_inset
+
+, we have 
+\begin_inset Formula $x<z$
+\end_inset
+
+, contradicting the assumption that 
+\begin_inset Formula $\left(xyz\right)$
+\end_inset
+
+ was a 
+\begin_inset Formula $312$
+\end_inset
+
+-violation.
+\end_layout
+
+\begin_layout Enumerate
+
+\emph on
+It is the smallest node popped so far from some bin whose head appears in
+ 
+\begin_inset Formula $\pi_{<i}$
+\end_inset
+
+.
+
+\emph default
+ In this case 
+\begin_inset Formula $\pi_{i}\in B_{j}$
+\end_inset
+
+ for some 
+\begin_inset Formula $j$
+\end_inset
+
+.
+ Recall that 
+\begin_inset Formula $j<l$
+\end_inset
+
+ implies 
+\begin_inset Formula $p<q$
+\end_inset
+
+ for 
+\begin_inset Formula $p\in B_{j}$
+\end_inset
+
+ and 
+\begin_inset Formula $q\in B_{l}$
+\end_inset
+
+.
+ As 
+\begin_inset Formula $b_{j}$
+\end_inset
+
+ was the first node output from a bin 
+\begin_inset Formula $B_{l}$
+\end_inset
+
+ where 
+\begin_inset Formula $l\ge j$
+\end_inset
+
+, every other node preceeding 
+\begin_inset Formula $b_{j}$
+\end_inset
+
+ in 
+\begin_inset Formula $\pi$
+\end_inset
+
+ is less than every node in 
+\begin_inset Formula $B_{j}$
+\end_inset
+
+, and in particular less than 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+.
+ We thus have 
+\begin_inset Formula $b_{j}\preccurlyeq_{\pi}x\prec_{\pi}y$
+\end_inset
+
+.
+ By these arguments, 
+\begin_inset Formula $y<\pi_{i}$
+\end_inset
+
+ must appear before 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ but after the element 
+\begin_inset Formula $b_{j}>\pi_{i}$
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
+\end_inset
+
+ always outputs by popping the node at the top of 
+\begin_inset Formula $S$
+\end_inset
+
+.
+ Thus every node in 
+\begin_inset Formula $C$
+\end_inset
+
+ appearing after the iteration of the 
+\series bold
+while
+\series default
+ loop which adds 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ to 
+\begin_inset Formula $S$
+\end_inset
+
+, but before the iteration which prints 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+, must be to the left of 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ in 
+\begin_inset Formula $S$
+\end_inset
+
+ at the time it is printed.
+ As 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ is sitting on 
+\begin_inset Formula $S$
+\end_inset
+
+ when 
+\begin_inset Formula $b_{j}$
+\end_inset
+
+ is output, every node in 
+\begin_inset Formula $C$
+\end_inset
+
+ appearing between 
+\begin_inset Formula $b_{j}$
+\end_inset
+
+ and 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ in 
+\begin_inset Formula $\pi$
+\end_inset
+
+ was sitting to the left of 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ at the time it was output.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+But by Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Monotone"
+
+\end_inset
+
+, this means 
+\begin_inset Formula $b_{j}\prec_{\pi}y\prec\pi_{i}$
+\end_inset
+
+ implies that 
+\begin_inset Formula $y>z=\pi_{i}$
+\end_inset
+
+, contradicting our assumption.
+\end_layout
+
+\end_deeper
+\begin_layout Proof
+We thus have 
+\begin_inset Formula $\pi_{\le i}$
+\end_inset
+
+ does not contain a 
+\begin_inset Formula $312$
+\end_inset
+
+ violation, and the lemma holds.
 \end_layout
 
 \begin_layout Standard
