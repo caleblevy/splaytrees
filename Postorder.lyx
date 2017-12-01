@@ -1189,8 +1189,8 @@ From the above, if
 \begin_inset Formula $\pi$
 \end_inset
 
- is a postorder, 
-\begin_inset Formula $T=\treap\left(T\right)$
+ is a postorder, then letting 
+\begin_inset Formula $T=\treap\left(\pi\right)$
 \end_inset
 
 , the path from 
@@ -2475,6 +2475,804 @@ reference "Termination"
 Outputs are Valid Postorders
 \end_layout
 
+\begin_layout Standard
+For the following theorems, suppose that 
+\begin_inset Formula $C=B_{1}\dots B_{k}$
+\end_inset
+
+ is a comb let 
+\begin_inset Formula $\pi_{\le i}=\left(\pi_{1}\dots\pi_{i}\right)$
+\end_inset
+
+ denote the items printed during the first 
+\begin_inset Formula $i$
+\end_inset
+
+ executions of Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop2"
+
+\end_inset
+
+ by Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Theorem
+\begin_inset CommandInset label
+LatexCommand label
+name "AlgIsMatching"
+
+\end_inset
+
+Let 
+\begin_inset Formula $T_{i}=\treap\left(\pi_{\le i}\right)$
+\end_inset
+
+.
+ Then 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ is a connected subtree of the root of 
+\begin_inset Formula $C$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+We use induction on 
+\begin_inset Formula $i$
+\end_inset
+
+.
+ When 
+\begin_inset Formula $i=1$
+\end_inset
+
+ then the execution of Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop2"
+
+\end_inset
+
+ occurs immediately after the initilization, during which 
+\begin_inset Formula $B_{1}$
+\end_inset
+
+ was added to 
+\begin_inset Formula $S$
+\end_inset
+
+.
+ As the elements of 
+\begin_inset Formula $B_{1}$
+\end_inset
+
+ are added to 
+\begin_inset Formula $S$
+\end_inset
+
+ in symmetric order, 
+\begin_inset Formula $b_{1}$
+\end_inset
+
+ is at the top of the stack after the execution of Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop1"
+
+\end_inset
+
+, and 
+\begin_inset Formula $b_{1}$
+\end_inset
+
+ is the first node output.
+\end_layout
+
+\begin_layout Proof
+Suppose that the theorem is true for the first 
+\begin_inset Formula $i-1$
+\end_inset
+
+ outputs by Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
+\end_inset
+
+, and suppose that 
+\begin_inset Formula $T_{i-1}$
+\end_inset
+
+ has 
+\begin_inset Formula $b_{1}\dots b_{l}$
+\end_inset
+
+ as the right path.
+ We wish show that 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ is a connected subtree of the root of 
+\begin_inset Formula $C$
+\end_inset
+
+.
+ We begin by establishing that if 
+\begin_inset Formula $B$
+\end_inset
+
+ is nonempty immediately after outputting 
+\begin_inset Formula $\pi_{i-1}$
+\end_inset
+
+ then 
+\begin_inset Formula $B_{l+1}$
+\end_inset
+
+ is at the top of 
+\begin_inset Formula $B$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Whenever Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
+\end_inset
+
+ pops bin 
+\begin_inset Formula $j$
+\end_inset
+
+ from 
+\begin_inset Formula $B$
+\end_inset
+
+, it immediately adds 
+\begin_inset Formula $b_{j-1}+1\dots b_{j}$
+\end_inset
+
+ to the top of 
+\begin_inset Formula $S$
+\end_inset
+
+, in that order.
+ In particular, 
+\begin_inset Formula $b_{j}$
+\end_inset
+
+ is at the top of 
+\begin_inset Formula $S$
+\end_inset
+
+, thus if 
+\begin_inset Formula $B_{j}$
+\end_inset
+
+ is popped from 
+\begin_inset Formula $B$
+\end_inset
+
+ then the next node output by Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
+\end_inset
+
+ is always 
+\begin_inset Formula $b_{j}$
+\end_inset
+
+.
+ Note further that when 
+\begin_inset Formula $b_{j}$
+\end_inset
+
+ is on top of 
+\begin_inset Formula $S$
+\end_inset
+
+ it is the largest node to have entered 
+\begin_inset Formula $S$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Suppose for contradiction that 
+\begin_inset Formula $B_{l+1}$
+\end_inset
+
+ was popped from 
+\begin_inset Formula $B$
+\end_inset
+
+ prior to iteration 
+\begin_inset Formula $i-1$
+\end_inset
+
+.
+ By the above argument, 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+ is output at the the next iteration of the 
+\series bold
+while
+\series default
+ loop, hence 
+\begin_inset Formula $b_{l+1}\in T_{i-1}$
+\end_inset
+
+.
+ Furthermore, 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+ is larger than any node preceeding it in the output, hence 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+ is on the right path of 
+\begin_inset Formula $T_{i-1}$
+\end_inset
+
+, contradicting our assumption.
+\end_layout
+
+\begin_layout Proof
+From this it follows that if 
+\begin_inset Formula $\textsc{Pop}\left(B\right)$
+\end_inset
+
+ is executed either in Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop3"
+
+\end_inset
+
+ or Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop4"
+
+\end_inset
+
+ then 
+\begin_inset Formula $\pi_{i}=b_{l+1}$
+\end_inset
+
+, and 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+ is correctly located as the right child of 
+\begin_inset Formula $b_{l}$
+\end_inset
+
+ in 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+, and 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ is a subtree of 
+\begin_inset Formula $C$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Otherwise a node 
+\begin_inset Formula $j$
+\end_inset
+
+ is popped from the top of 
+\begin_inset Formula $S$
+\end_inset
+
+, and 
+\begin_inset Formula $j\in B_{h}$
+\end_inset
+
+ for some 
+\begin_inset Formula $1\le h\le l$
+\end_inset
+
+.
+ Recall that the nodes of 
+\begin_inset Formula $B_{h}$
+\end_inset
+
+ were added in order to 
+\begin_inset Formula $S$
+\end_inset
+
+, hence they must be popped in reverse order.
+ This means that nodes 
+\begin_inset Formula $q$
+\end_inset
+
+ for which 
+\begin_inset Formula $j<q\le b_{h}$
+\end_inset
+
+ have already been added to 
+\begin_inset Formula $T_{i-1}$
+\end_inset
+
+.
+ By the induction hypothesis they have been correctly shaped as a leftward
+ chain ending in node 
+\begin_inset Formula $j+1$
+\end_inset
+
+, thus 
+\begin_inset Formula $j$
+\end_inset
+
+ is placed in the proper position as the left child of 
+\begin_inset Formula $j+1$
+\end_inset
+
+.
+ Again 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ forms a connected subtree of the root of 
+\begin_inset Formula $C$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "Monotone"
+
+\end_inset
+
+The stack 
+\begin_inset Formula $S$
+\end_inset
+
+ is always monotonically decreasing from left-to-right (top-to-bottom).
+\end_layout
+
+\begin_layout Proof
+Observe that if 
+\begin_inset Formula $i<j$
+\end_inset
+
+ then then 
+\begin_inset Formula $p<q$
+\end_inset
+
+ for 
+\begin_inset Formula $p\in B_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $q\in B_{j}$
+\end_inset
+
+.
+ Further, if 
+\begin_inset Formula $i<j$
+\end_inset
+
+ then 
+\begin_inset Formula $\textsc{MultiPush}\left(S,B_{i}\right)$
+\end_inset
+
+ is always called before 
+\begin_inset Formula $\textsc{MultiPush}\left(S,B_{j}\right)$
+\end_inset
+
+.
+ Finally, 
+\begin_inset Formula $\textsc{MultiPush}$
+\end_inset
+
+ always adds elements from 
+\begin_inset Formula $B_{i}$
+\end_inset
+
+ in their symmetric order, hence when a node is pushed onto 
+\begin_inset Formula $S$
+\end_inset
+
+, it is larger than every other element which had been added to 
+\begin_inset Formula $S$
+\end_inset
+
+ before it.
+ The only way elements are removed is by popping 
+\begin_inset Formula $S$
+\end_inset
+
+ at the top, so no inversions are ever created among nodes sitting on 
+\begin_inset Formula $S$
+\end_inset
+
+.
+ We thus have 
+\begin_inset Formula $S$
+\end_inset
+
+ is always decreasing from top to bottom.
+\end_layout
+
+\begin_layout Theorem
+\begin_inset Formula $\pi_{\le i}$
+\end_inset
+
+ is 
+\begin_inset Formula $312$
+\end_inset
+
+-avoiding.
+\end_layout
+
+\begin_layout Proof
+Once again we induct on 
+\begin_inset Formula $i$
+\end_inset
+
+.
+ When 
+\begin_inset Formula $i=1$
+\end_inset
+
+, 
+\begin_inset Formula $b_{1}$
+\end_inset
+
+ is output and the sequence is vacously 
+\begin_inset Formula $312$
+\end_inset
+
+-avoiding.
+ Suppose 
+\begin_inset Formula $\pi_{1}\dots\pi_{i-1}$
+\end_inset
+
+ avoids 
+\begin_inset Formula $312$
+\end_inset
+
+.
+ We will show that 
+\begin_inset Formula $\pi_{1}\dots\pi_{i}$
+\end_inset
+
+ must also avoid 
+\begin_inset Formula $312$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Suppose for contradiction that 
+\begin_inset Formula $\pi_{\le i}$
+\end_inset
+
+ has a 
+\begin_inset Formula $312$
+\end_inset
+
+ violation 
+\begin_inset Formula $x\prec_{\pi}y\prec_{\pi}z$
+\end_inset
+
+ with 
+\begin_inset Formula $y<z<x$
+\end_inset
+
+.
+ Observe that since 
+\begin_inset Formula $\pi_{<i}$
+\end_inset
+
+ avoids 
+\begin_inset Formula $312$
+\end_inset
+
+, we must have 
+\begin_inset Formula $z=\pi_{i}$
+\end_inset
+
+.
+ By the arguments in Theorem 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "AlgIsMatching"
+
+\end_inset
+
+, the next node 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ will be of one of the following two types:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\emph on
+It is the head of some new bin.
+ 
+\emph default
+If 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ is the top of a new bin then 
+\begin_inset Formula $\pi_{i}>x$
+\end_inset
+
+ for 
+\begin_inset Formula $x\prec_{\pi}\pi_{i}$
+\end_inset
+
+.
+ As 
+\begin_inset Formula $z=\pi_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $x\prec_{\pi}z$
+\end_inset
+
+, we have 
+\begin_inset Formula $x<z$
+\end_inset
+
+, contradicting the assumption that 
+\begin_inset Formula $\left(xyz\right)$
+\end_inset
+
+ was a 
+\begin_inset Formula $312$
+\end_inset
+
+-violation.
+\end_layout
+
+\begin_layout Enumerate
+
+\emph on
+It is the smallest node popped so far from some bin whose head appears in
+ 
+\begin_inset Formula $\pi_{<i}$
+\end_inset
+
+.
+
+\emph default
+ In this case 
+\begin_inset Formula $\pi_{i}\in B_{j}$
+\end_inset
+
+ for some 
+\begin_inset Formula $j$
+\end_inset
+
+.
+ Recall that 
+\begin_inset Formula $j<l$
+\end_inset
+
+ implies 
+\begin_inset Formula $p<q$
+\end_inset
+
+ for 
+\begin_inset Formula $p\in B_{j}$
+\end_inset
+
+ and 
+\begin_inset Formula $q\in B_{l}$
+\end_inset
+
+.
+ As 
+\begin_inset Formula $b_{j}$
+\end_inset
+
+ was the first node output from a bin 
+\begin_inset Formula $B_{l}$
+\end_inset
+
+ where 
+\begin_inset Formula $l\ge j$
+\end_inset
+
+, every other node preceeding 
+\begin_inset Formula $b_{j}$
+\end_inset
+
+ in 
+\begin_inset Formula $\pi$
+\end_inset
+
+ is less than every node in 
+\begin_inset Formula $B_{j}$
+\end_inset
+
+, and in particular less than 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+.
+ We thus have 
+\begin_inset Formula $b_{j}\preccurlyeq_{\pi}x\prec_{\pi}y$
+\end_inset
+
+.
+ By these arguments, 
+\begin_inset Formula $y<\pi_{i}$
+\end_inset
+
+ must appear before 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ but after the element 
+\begin_inset Formula $b_{j}>\pi_{i}$
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
+\end_inset
+
+ always outputs by popping the node at the top of 
+\begin_inset Formula $S$
+\end_inset
+
+.
+ Thus every node in 
+\begin_inset Formula $C$
+\end_inset
+
+ appearing after the iteration of the 
+\series bold
+while
+\series default
+ loop which adds 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ to 
+\begin_inset Formula $S$
+\end_inset
+
+, but before the iteration which prints 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+, must be to the left of 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ in 
+\begin_inset Formula $S$
+\end_inset
+
+ at the time it is printed.
+ As 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ is sitting on 
+\begin_inset Formula $S$
+\end_inset
+
+ when 
+\begin_inset Formula $b_{j}$
+\end_inset
+
+ is output, every node in 
+\begin_inset Formula $C$
+\end_inset
+
+ appearing between 
+\begin_inset Formula $b_{j}$
+\end_inset
+
+ and 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ in 
+\begin_inset Formula $\pi$
+\end_inset
+
+ was sitting to the left of 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ at the time it was output.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+But by Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Monotone"
+
+\end_inset
+
+, this means 
+\begin_inset Formula $b_{j}\prec_{\pi}y\prec\pi_{i}$
+\end_inset
+
+ implies that 
+\begin_inset Formula $y>z=\pi_{i}$
+\end_inset
+
+, contradicting our assumption.
+\end_layout
+
+\end_deeper
+\begin_layout Proof
+We thus have 
+\begin_inset Formula $\pi_{\le i}$
+\end_inset
+
+ does not contain a 
+\begin_inset Formula $312$
+\end_inset
+
+ violation, and the lemma holds.
+\end_layout
+
+\begin_layout Subsection
+Only Outputs are Matching Postorders
+\end_layout
+
 \begin_layout Theorem
 \begin_inset CommandInset label
 LatexCommand label
@@ -2494,8 +3292,8 @@ Let
 \begin_inset Formula $\tau$
 \end_inset
 
- a permutation of 
-\begin_inset Formula $\left[n\right]$
+ a permutation the nodes of 
+\begin_inset Formula $C$
 \end_inset
 
 , and 
@@ -3290,800 +4088,6 @@ reference "NecSucc-Comb"
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Standard
-For the following theorems, suppose that 
-\begin_inset Formula $C=B_{1}\dots B_{k}$
-\end_inset
-
- is a comb let 
-\begin_inset Formula $\pi_{\le i}=\left(\pi_{1}\dots\pi_{i}\right)$
-\end_inset
-
- denote the items printed during the first 
-\begin_inset Formula $i$
-\end_inset
-
- executions of Line 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "Pop2"
-
-\end_inset
-
- by Algorithm 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "MatchingPostorder"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Theorem
-\begin_inset CommandInset label
-LatexCommand label
-name "AlgIsMatching"
-
-\end_inset
-
-Let 
-\begin_inset Formula $T_{i}=\treap\left(\pi_{\le i}\right)$
-\end_inset
-
-.
- Then 
-\begin_inset Formula $T_{i}$
-\end_inset
-
- is a connected subtree of the root of 
-\begin_inset Formula $C$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Proof
-We use induction on 
-\begin_inset Formula $i$
-\end_inset
-
-.
- When 
-\begin_inset Formula $i=1$
-\end_inset
-
- then the execution of Line 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "Pop2"
-
-\end_inset
-
- occurs immediately after the initilization, during which 
-\begin_inset Formula $B_{1}$
-\end_inset
-
- was added to 
-\begin_inset Formula $S$
-\end_inset
-
-.
- As the elements of 
-\begin_inset Formula $B_{1}$
-\end_inset
-
- are added to 
-\begin_inset Formula $S$
-\end_inset
-
- in symmetric order, 
-\begin_inset Formula $b_{1}$
-\end_inset
-
- is at the top of the stack after the execution of Line 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "Pop1"
-
-\end_inset
-
-, and 
-\begin_inset Formula $b_{1}$
-\end_inset
-
- is the first node output.
-\end_layout
-
-\begin_layout Proof
-Suppose that the theorem is true for the first 
-\begin_inset Formula $i-1$
-\end_inset
-
- outputs by Algorithm 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "MatchingPostorder"
-
-\end_inset
-
-, and suppose that 
-\begin_inset Formula $T_{i-1}$
-\end_inset
-
- has 
-\begin_inset Formula $b_{1}\dots b_{l}$
-\end_inset
-
- as the right path.
- We wish show that 
-\begin_inset Formula $T_{i}$
-\end_inset
-
- is a connected subtree of the root of 
-\begin_inset Formula $C$
-\end_inset
-
-.
- We begin by establishing that if 
-\begin_inset Formula $B$
-\end_inset
-
- is nonempty immediately after outputting 
-\begin_inset Formula $\pi_{i-1}$
-\end_inset
-
- then 
-\begin_inset Formula $B_{l+1}$
-\end_inset
-
- is at the top of 
-\begin_inset Formula $B$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Proof
-Whenever Algorithm 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "MatchingPostorder"
-
-\end_inset
-
- pops bin 
-\begin_inset Formula $j$
-\end_inset
-
- from 
-\begin_inset Formula $B$
-\end_inset
-
-, it immediately adds 
-\begin_inset Formula $b_{j-1}+1\dots b_{j}$
-\end_inset
-
- to the top of 
-\begin_inset Formula $S$
-\end_inset
-
-, in that order.
- In particular, 
-\begin_inset Formula $b_{j}$
-\end_inset
-
- is at the top of 
-\begin_inset Formula $S$
-\end_inset
-
-, thus if 
-\begin_inset Formula $B_{j}$
-\end_inset
-
- is popped from 
-\begin_inset Formula $B$
-\end_inset
-
- then the next node output by Algorithm 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "MatchingPostorder"
-
-\end_inset
-
- is always 
-\begin_inset Formula $b_{j}$
-\end_inset
-
-.
- Note further that when 
-\begin_inset Formula $b_{j}$
-\end_inset
-
- is on top of 
-\begin_inset Formula $S$
-\end_inset
-
- it is the largest node to have entered 
-\begin_inset Formula $S$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Proof
-Suppose for contradiction that 
-\begin_inset Formula $B_{l+1}$
-\end_inset
-
- was popped from 
-\begin_inset Formula $B$
-\end_inset
-
- prior to iteration 
-\begin_inset Formula $i-1$
-\end_inset
-
-.
- By the above argument, 
-\begin_inset Formula $b_{l+1}$
-\end_inset
-
- is output at the the next iteration of the 
-\series bold
-while
-\series default
- loop, hence 
-\begin_inset Formula $b_{l+1}\in T_{i-1}$
-\end_inset
-
-.
- Furthermore, 
-\begin_inset Formula $b_{l+1}$
-\end_inset
-
- is larger than any node preceeding it in the output, hence 
-\begin_inset Formula $b_{l+1}$
-\end_inset
-
- is on the right path of 
-\begin_inset Formula $T_{i-1}$
-\end_inset
-
-, contradicting our assumption.
-\end_layout
-
-\begin_layout Proof
-From this it follows that if 
-\begin_inset Formula $\textsc{Pop}\left(B\right)$
-\end_inset
-
- is executed either in Line 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "Pop3"
-
-\end_inset
-
- or Line 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "Pop4"
-
-\end_inset
-
- then 
-\begin_inset Formula $\pi_{i}=b_{l+1}$
-\end_inset
-
-, and 
-\begin_inset Formula $b_{l+1}$
-\end_inset
-
- is correctly located as the right child of 
-\begin_inset Formula $b_{l}$
-\end_inset
-
- in 
-\begin_inset Formula $T_{i}$
-\end_inset
-
-, and 
-\begin_inset Formula $T_{i}$
-\end_inset
-
- is a subtree of 
-\begin_inset Formula $C$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Proof
-Otherwise a node 
-\begin_inset Formula $j$
-\end_inset
-
- is popped from the top of 
-\begin_inset Formula $S$
-\end_inset
-
-, and 
-\begin_inset Formula $j\in B_{h}$
-\end_inset
-
- for some 
-\begin_inset Formula $1\le h\le l$
-\end_inset
-
-.
- Recall that the nodes of 
-\begin_inset Formula $B_{h}$
-\end_inset
-
- were added in order to 
-\begin_inset Formula $S$
-\end_inset
-
-, hence they must be popped in reverse order.
- This means that nodes 
-\begin_inset Formula $q$
-\end_inset
-
- for which 
-\begin_inset Formula $j<q\le b_{h}$
-\end_inset
-
- have already been added to 
-\begin_inset Formula $T_{i-1}$
-\end_inset
-
-.
- By the induction hypothesis they have been correctly shaped as a leftward
- chain ending in node 
-\begin_inset Formula $j+1$
-\end_inset
-
-, thus 
-\begin_inset Formula $j$
-\end_inset
-
- is placed in the proper position as the left child of 
-\begin_inset Formula $j+1$
-\end_inset
-
-.
- Again 
-\begin_inset Formula $T_{i}$
-\end_inset
-
- forms a connected subtree of the root of 
-\begin_inset Formula $C$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Lemma
-\begin_inset CommandInset label
-LatexCommand label
-name "Monotone"
-
-\end_inset
-
-The stack 
-\begin_inset Formula $S$
-\end_inset
-
- is always monotonically decreasing from left-to-right (top-to-bottom).
-\end_layout
-
-\begin_layout Proof
-Observe that if 
-\begin_inset Formula $i<j$
-\end_inset
-
- then then 
-\begin_inset Formula $p<q$
-\end_inset
-
- for 
-\begin_inset Formula $p\in B_{i}$
-\end_inset
-
- and 
-\begin_inset Formula $q\in B_{j}$
-\end_inset
-
-.
- Further, if 
-\begin_inset Formula $i<j$
-\end_inset
-
- then 
-\begin_inset Formula $\textsc{MultiPush}\left(S,B_{i}\right)$
-\end_inset
-
- is always called before 
-\begin_inset Formula $\textsc{MultiPush}\left(S,B_{j}\right)$
-\end_inset
-
-.
- Finally, 
-\begin_inset Formula $\textsc{MultiPush}$
-\end_inset
-
- always adds elements from 
-\begin_inset Formula $B_{i}$
-\end_inset
-
- in their symmetric order, hence when a node is pushed onto 
-\begin_inset Formula $S$
-\end_inset
-
-, it is larger than every other element which had been added to 
-\begin_inset Formula $S$
-\end_inset
-
- before it.
- The only way elements are removed is by popping 
-\begin_inset Formula $S$
-\end_inset
-
- at the top, so no inversions are ever created among nodes sitting on 
-\begin_inset Formula $S$
-\end_inset
-
-.
- We thus have 
-\begin_inset Formula $S$
-\end_inset
-
- is always decreasing from top to bottom.
-\end_layout
-
-\begin_layout Theorem
-\begin_inset Formula $\pi_{\le i}$
-\end_inset
-
- is 
-\begin_inset Formula $312$
-\end_inset
-
--avoiding.
-\end_layout
-
-\begin_layout Proof
-Once again we induct on 
-\begin_inset Formula $i$
-\end_inset
-
-.
- When 
-\begin_inset Formula $i=1$
-\end_inset
-
-, 
-\begin_inset Formula $b_{1}$
-\end_inset
-
- is output and the sequence is vacously 
-\begin_inset Formula $312$
-\end_inset
-
--avoiding.
- Suppose 
-\begin_inset Formula $\pi_{1}\dots\pi_{i-1}$
-\end_inset
-
- avoids 
-\begin_inset Formula $312$
-\end_inset
-
-.
- We will show that 
-\begin_inset Formula $\pi_{1}\dots\pi_{i}$
-\end_inset
-
- must also avoid 
-\begin_inset Formula $312$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Proof
-Suppose for contradiction that 
-\begin_inset Formula $\pi_{\le i}$
-\end_inset
-
- has a 
-\begin_inset Formula $312$
-\end_inset
-
- violation 
-\begin_inset Formula $x\prec_{\pi}y\prec_{\pi}z$
-\end_inset
-
- with 
-\begin_inset Formula $y<z<x$
-\end_inset
-
-.
- Observe that since 
-\begin_inset Formula $\pi_{<i}$
-\end_inset
-
- avoids 
-\begin_inset Formula $312$
-\end_inset
-
-, we must have 
-\begin_inset Formula $z=\pi_{i}$
-\end_inset
-
-.
- By the arguments in Theorem 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "AlgIsMatching"
-
-\end_inset
-
-, the next node 
-\begin_inset Formula $\pi_{i}$
-\end_inset
-
- will be of one of the following two types:
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-
-\emph on
-It is the head of some new bin.
- 
-\emph default
-If 
-\begin_inset Formula $\pi_{i}$
-\end_inset
-
- is the top of a new bin then 
-\begin_inset Formula $\pi_{i}>x$
-\end_inset
-
- for 
-\begin_inset Formula $x\prec_{\pi}\pi_{i}$
-\end_inset
-
-.
- As 
-\begin_inset Formula $z=\pi_{i}$
-\end_inset
-
- and 
-\begin_inset Formula $x\prec_{\pi}z$
-\end_inset
-
-, we have 
-\begin_inset Formula $x<z$
-\end_inset
-
-, contradicting the assumption that 
-\begin_inset Formula $\left(xyz\right)$
-\end_inset
-
- was a 
-\begin_inset Formula $312$
-\end_inset
-
--violation.
-\end_layout
-
-\begin_layout Enumerate
-
-\emph on
-It is the smallest node popped so far from some bin whose head appears in
- 
-\begin_inset Formula $\pi_{<i}$
-\end_inset
-
-.
-
-\emph default
- In this case 
-\begin_inset Formula $\pi_{i}\in B_{j}$
-\end_inset
-
- for some 
-\begin_inset Formula $j$
-\end_inset
-
-.
- Recall that 
-\begin_inset Formula $j<l$
-\end_inset
-
- implies 
-\begin_inset Formula $p<q$
-\end_inset
-
- for 
-\begin_inset Formula $p\in B_{j}$
-\end_inset
-
- and 
-\begin_inset Formula $q\in B_{l}$
-\end_inset
-
-.
- As 
-\begin_inset Formula $b_{j}$
-\end_inset
-
- was the first node output from a bin 
-\begin_inset Formula $B_{l}$
-\end_inset
-
- where 
-\begin_inset Formula $l\ge j$
-\end_inset
-
-, every other node preceeding 
-\begin_inset Formula $b_{j}$
-\end_inset
-
- in 
-\begin_inset Formula $\pi$
-\end_inset
-
- is less than every node in 
-\begin_inset Formula $B_{j}$
-\end_inset
-
-, and in particular less than 
-\begin_inset Formula $\pi_{i}$
-\end_inset
-
-.
- We thus have 
-\begin_inset Formula $b_{j}\preccurlyeq_{\pi}x\prec_{\pi}y$
-\end_inset
-
-.
- By these arguments, 
-\begin_inset Formula $y<\pi_{i}$
-\end_inset
-
- must appear before 
-\begin_inset Formula $\pi_{i}$
-\end_inset
-
- but after the element 
-\begin_inset Formula $b_{j}>\pi_{i}$
-\end_inset
-
-.
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-Algorithm 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "MatchingPostorder"
-
-\end_inset
-
- always outputs by popping the node at the top of 
-\begin_inset Formula $S$
-\end_inset
-
-.
- Thus every node in 
-\begin_inset Formula $C$
-\end_inset
-
- appearing after the iteration of the 
-\series bold
-while
-\series default
- loop which adds 
-\begin_inset Formula $\pi_{i}$
-\end_inset
-
- to 
-\begin_inset Formula $S$
-\end_inset
-
-, but before the iteration which prints 
-\begin_inset Formula $\pi_{i}$
-\end_inset
-
-, must be to the left of 
-\begin_inset Formula $\pi_{i}$
-\end_inset
-
- in 
-\begin_inset Formula $S$
-\end_inset
-
- at the time it is printed.
- As 
-\begin_inset Formula $\pi_{i}$
-\end_inset
-
- is sitting on 
-\begin_inset Formula $S$
-\end_inset
-
- when 
-\begin_inset Formula $b_{j}$
-\end_inset
-
- is output, every node in 
-\begin_inset Formula $C$
-\end_inset
-
- appearing between 
-\begin_inset Formula $b_{j}$
-\end_inset
-
- and 
-\begin_inset Formula $\pi_{i}$
-\end_inset
-
- in 
-\begin_inset Formula $\pi$
-\end_inset
-
- was sitting to the left of 
-\begin_inset Formula $\pi_{i}$
-\end_inset
-
- at the time it was output.
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-But by Lemma 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "Monotone"
-
-\end_inset
-
-, this means 
-\begin_inset Formula $b_{j}\prec_{\pi}y\prec\pi_{i}$
-\end_inset
-
- implies that 
-\begin_inset Formula $y>z=\pi_{i}$
-\end_inset
-
-, contradicting our assumption.
-\end_layout
-
-\end_deeper
-\begin_layout Proof
-We thus have 
-\begin_inset Formula $\pi_{\le i}$
-\end_inset
-
- does not contain a 
-\begin_inset Formula $312$
-\end_inset
-
- violation, and the lemma holds.
 \end_layout
 
 \begin_layout Standard
