@@ -14,6 +14,7 @@
 \begin_modules
 algolyx
 theorems-ams
+enumitem
 \end_modules
 \maintain_unincluded_children false
 \language english
@@ -1272,6 +1273,13 @@ comb
 
 \begin_deeper
 \begin_layout Enumerate
+\begin_inset CommandInset label
+LatexCommand label
+name "Def-Root"
+
+\end_inset
+
+
 \begin_inset Formula $b_{1}=\root\left(C\right)$
 \end_inset
 
@@ -1279,6 +1287,13 @@ comb
 \end_layout
 
 \begin_layout Enumerate
+\begin_inset CommandInset label
+LatexCommand label
+name "Def-Right-Path"
+
+\end_inset
+
+
 \begin_inset Formula $b_{i+1}=\rightnode\left(b_{i}\right)$
 \end_inset
 
@@ -1298,6 +1313,13 @@ for
 \end_layout
 
 \begin_layout Enumerate
+\begin_inset CommandInset label
+LatexCommand label
+name "Def-Left-Path"
+
+\end_inset
+
+
 \begin_inset Formula $j=\leftnode\left(j+1\right)$
 \end_inset
 
@@ -1764,6 +1786,13 @@ elseif
 \begin_layout Algorithm (num)
 * 
 \begin_inset Formula $\textsc{Continue}$
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "Skip"
+
 \end_inset
 
 
@@ -2471,6 +2500,12 @@ Outputs are Valid Postorders
 \end_layout
 
 \begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "NecSucc-Comb"
+
+\end_inset
+
 Let 
 \begin_inset Formula $C$
 \end_inset
@@ -2501,6 +2536,35 @@ Let
 
 \begin_deeper
 \begin_layout Enumerate
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+label=(
+\backslash
+Alph*)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "Right-Path-Condition"
+
+\end_inset
+
+
 \begin_inset Formula $b_{i}\prec_{\tau}b_{j}$
 \end_inset
 
@@ -2512,6 +2576,13 @@ Let
 \end_layout
 
 \begin_layout Enumerate
+\begin_inset CommandInset label
+LatexCommand label
+name "Left-Subtrees-Condition"
+
+\end_inset
+
+
 \begin_inset Formula $j\prec_{\tau}i$
 \end_inset
 
@@ -2532,7 +2603,21 @@ Suppose
 \begin_inset Formula $\tau$
 \end_inset
 
- satisfies conditions 1 and 2.
+ satisfies conditions 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Right-Path-Condition"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Left-Subtrees-Condition"
+
+\end_inset
+
+.
  We must show 
 \begin_inset Formula $T$
 \end_inset
@@ -2553,12 +2638,19 @@ reference "Comb"
 \begin_inset Formula $b_{1}$
 \end_inset
 
-.) By condition 1, 
+.) By Condition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Right-Path-Condition"
+
+\end_inset
+
+, 
 \begin_inset Formula $b_{1}\prec_{\tau}b_{i}$
 \end_inset
 
  for 
-\begin_inset Formula $2\le i\le k$
+\begin_inset Formula $1<i\le k$
 \end_inset
 
 .
@@ -2570,7 +2662,14 @@ reference "Comb"
 \begin_inset Formula $1\le j<b_{1}$
 \end_inset
 
- by condition 2.
+ by Condition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Left-Subtrees-Condition"
+
+\end_inset
+
+.
  Finally by transitivity of the order relation, for all 
 \begin_inset Formula $j$
 \end_inset
@@ -2608,12 +2707,17 @@ reference "Comb"
 \begin_inset Formula $b_{1}\dots b_{k}$
 \end_inset
 
-.) If 
+.) We induct on 
+\begin_inset Formula $k$
+\end_inset
+
+, the number of bins.
+ If 
 \begin_inset Formula $k=1$
 \end_inset
 
  then the root 
-\begin_inset Formula $b_{1}=n$
+\begin_inset Formula $b_{1}$
 \end_inset
 
  is the greatest element in 
@@ -2624,17 +2728,19 @@ reference "Comb"
 \begin_inset Formula $b_{1}$
 \end_inset
 
-'s left subtree, making 
+'s left subtree, hence 
 \begin_inset Formula $b_{1}$
 \end_inset
 
- the sole member of the right path.
- We induct on 
-\begin_inset Formula $k$
+ is the sole member of the right path.
+\begin_inset Newline newline
 \end_inset
 
-.
- Suppose 
+
+\begin_inset Newline newline
+\end_inset
+
+Suppose 
 \begin_inset Formula $C$
 \end_inset
 
@@ -2643,14 +2749,7 @@ reference "Comb"
 \end_inset
 
 -bins.
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-By the heap-condition on first-access time and the symmetric order on the
+ By the heap-condition on first-access time and the symmetric order on the
  keys, the right child of 
 \begin_inset Formula $b_{k-1}$
 \end_inset
@@ -2676,7 +2775,14 @@ By the heap-condition on first-access time and the symmetric order on the
 \begin_inset Formula $b_{k-1}<j<b_{k}$
 \end_inset
 
- then condition 2 assures us that 
+ then Condition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Left-Subtrees-Condition"
+
+\end_inset
+
+ assures us that 
 \begin_inset Formula $b_{k}\prec_{\tau}j$
 \end_inset
 
@@ -2721,7 +2827,7 @@ Summarizing,
 \begin_inset Formula $b_{1}$
 \end_inset
 
- is the root and 
+ is the root, 
 \begin_inset Formula $b_{i+1}=\rightnode\left(b_{i}\right)$
 \end_inset
 
@@ -2729,20 +2835,16 @@ Summarizing,
 \begin_inset Formula $1<i\le k$
 \end_inset
 
-.
- Furthermore as 
-\begin_inset Formula $b_{k}=\max\left(\tau\right)$
-\end_inset
-
-, 
+, and 
 \begin_inset Formula $b_{k}$
 \end_inset
 
- has no right child, and thus the nodes 
+ has no right child.
+ The nodes 
 \begin_inset Formula $b_{1}\dots b_{k}$
 \end_inset
 
- form the right path of 
+ thus form the right path of 
 \begin_inset Formula $T$
 \end_inset
 
@@ -2803,7 +2905,14 @@ If
 \begin_inset Formula $b_{i}$
 \end_inset
 
-'s left subtree is empty, vacously matching condition 3 of Definition 
+'s left subtree is empty, vacously matching Part 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Def-Left-Path"
+
+\end_inset
+
+ of Definition 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "Comb"
@@ -2819,15 +2928,8 @@ reference "Comb"
 \begin_inset Formula $j-1$
 \end_inset
 
- largest nodes of the subtree, and that 
-\begin_inset Formula $b_{i}$
-\end_inset
-
- has a left subtree with 
-\begin_inset Formula $l\ge j$
-\end_inset
-
- nodes.
+ largest nodes of the subtree.
+ 
 \begin_inset Newline newline
 \end_inset
 
@@ -2836,6 +2938,14 @@ reference "Comb"
 \end_inset
 
 Let 
+\begin_inset Formula $b_{i}$
+\end_inset
+
+ have a left subtree with at least 
+\begin_inset Formula $j$
+\end_inset
+
+ nodes, and let 
 \begin_inset Formula $a_{0}=b_{i}>a_{1}>a_{2}>\cdots>a_{l}$
 \end_inset
 
@@ -2848,7 +2958,7 @@ Let
 \begin_inset Formula $a_{0}\dots a_{j-1}$
 \end_inset
 
- are (sometimes not proper) ancestors of 
+ are ancestors of 
 \begin_inset Formula $a_{j-1}$
 \end_inset
 
@@ -2893,7 +3003,14 @@ The heap condition on first access time implies the left child of
 \end_inset
 
 .
- Condition 2 of the theorem implies that 
+ Condition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Left-Subtrees-Condition"
+
+\end_inset
+
+of the theorem implies that 
 \begin_inset Formula $a_{j}\prec_{\tau}a_{h}$
 \end_inset
 
@@ -2905,206 +3022,306 @@ The heap condition on first access time implies the left child of
 \begin_inset Formula $a_{j}=\leftnode\left(a_{j-1}\right)$
 \end_inset
 
-, affirming the theorem.
-\end_layout
+, and Part 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Def-Left-Path"
 
-\end_deeper
-\begin_layout Proof
-Proving the other direction is more straightforward:
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-Let 
-\begin_inset Formula $i$
 \end_inset
 
- be the minimum index of a bin head 
-\begin_inset Formula $b_{i}$
-\end_inset
-
- with corresponding 
-\begin_inset Formula $j>i$
-\end_inset
-
- such that 
-\begin_inset Formula $b_{j}\prec_{\tau}b_{i}$
-\end_inset
-
-.
- If 
-\begin_inset Formula $i=1$
-\end_inset
-
- then 
-\begin_inset Formula $b_{j}\prec_{\tau}b_{1}$
-\end_inset
-
-.
- As the first element in 
-\begin_inset Formula $\tau$
-\end_inset
-
- is always the root of 
-\begin_inset Formula $\treap\left(\tau\right)$
-\end_inset
-
-, we have 
-\begin_inset Formula $b_{1}=\root\left(C\right)\ne\root\left(T\right)$
-\end_inset
-
- and 
-\begin_inset Formula $T\ne C$
-\end_inset
-
-.
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-Otherwise, as 
-\begin_inset Formula $i$
-\end_inset
-
- is minimal, 
-\begin_inset Formula $b_{i-1}\prec_{\tau}b_{l}$
-\end_inset
-
- for 
-\begin_inset Formula $i\le l\le k$
-\end_inset
-
-, hence 
-\begin_inset Formula $b_{i-1}\prec_{\tau}b_{j}\prec_{\tau}b_{i}$
-\end_inset
-
-, and 
-\begin_inset Formula $b_{i}$
-\end_inset
-
- is not the first item greater than 
-\begin_inset Formula $b_{i-1}$
-\end_inset
-
- appearing after 
-\begin_inset Formula $b_{i-1}$
-\end_inset
-
- in 
-\begin_inset Formula $\tau$
-\end_inset
-
-.
- The treap order on 
-\begin_inset Formula $T$
-\end_inset
-
- thus implies 
-\begin_inset Formula $b_{i}\ne\rightnode\left(b_{i-1}\right)$
-\end_inset
-
-, violating condition 2 of Definition 
+ of Definition 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "Comb"
 
 \end_inset
 
-.
-\end_layout
-
-\begin_layout Enumerate
-Let 
-\begin_inset Formula $i$
-\end_inset
-
- be the minimum index of a bin head 
-\begin_inset Formula $b_{i}$
-\end_inset
-
- with a corresponding pair of nodes 
-\begin_inset Formula $b_{i-1}<l<j\le b_{i}$
-\end_inset
-
- where 
-\begin_inset Formula $l\prec_{\tau}j$
-\end_inset
-
- and choose the largest such 
-\begin_inset Formula $j$
-\end_inset
-
- in symmetric order.
- If 
-\begin_inset Formula $i=j=1$
-\end_inset
-
- then 
-\begin_inset Formula $l\prec_{\tau}b_{1}$
-\end_inset
-
- and 
-\begin_inset Formula $b_{1}\ne\root\left(T\right)$
-\end_inset
-
-.
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-If 
-\begin_inset Formula $1<i=j$
-\end_inset
-
- then 
-\begin_inset Formula $l>b_{i-1}$
-\end_inset
-
- and as 
-\begin_inset Formula $i$
-\end_inset
-
- is minimal, 
-\begin_inset Formula $b_{i-1}\prec_{\tau}b_{i}$
-\end_inset
-
-
+ is satisfied.
 \end_layout
 
 \end_deeper
 \begin_layout Proof
-sd
-\end_layout
-
-\begin_layout Theorem
-\begin_inset Argument 1
-status open
-
-\begin_layout Plain Layout
-Outputs are Matching Postorders
-\end_layout
-
+The other direction may be done more elegantly.
+ Suppose 
+\begin_inset Formula $\treap\left(\tau\right)\ne C$
 \end_inset
 
-Suppose that 
+, and let 
+\begin_inset Formula $i$
+\end_inset
+
+ be the largest index so that 
+\begin_inset Formula $R=\treap\left(\tau_{1}\dots\tau_{i}\right)$
+\end_inset
+
+ is a connected subtree of the root of 
 \begin_inset Formula $C$
 \end_inset
 
- has 
-\begin_inset Formula $n$
+.
+ We show the insertion of 
+\begin_inset Formula $q=\tau_{i+1}$
 \end_inset
 
- elements, and for 
-\begin_inset Formula $1\le i\le n$
+ will viloate condition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Right-Path-Condition"
+
 \end_inset
 
-, let 
+ or 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Left-Subtrees-Condition"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Proof
+Let 
+\begin_inset Formula $b_{1}\dots b_{l}$
+\end_inset
+
+ be the nodes on the right path of 
+\begin_inset Formula $R$
+\end_inset
+
+.
+ The fact that 
+\begin_inset Formula $R$
+\end_inset
+
+ is a sub-structure of 
+\begin_inset Formula $C$
+\end_inset
+
+ constrains the violations which might be introducted by inserting 
+\begin_inset Formula $q$
+\end_inset
+
+.
+ In particular if 
+\begin_inset Formula $q\in B_{i}$
+\end_inset
+
+ for 
+\begin_inset Formula $1\le i\le l$
+\end_inset
+
+ then the symmetric order condition ensures that 
+\begin_inset Formula $q$
+\end_inset
+
+ is inserted as the leftmost node in its corresponding bin.
+ Hence all violations are of the following two types:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\emph on
+\begin_inset Formula $q$
+\end_inset
+
+ is placed on the right path of 
+\begin_inset Formula $R$
+\end_inset
+
+ at the location where we should find 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+ in 
+\begin_inset Formula $C$
+\end_inset
+
+.
+
+\emph default
+ If 
+\begin_inset Formula $q<b_{l+1}$
+\end_inset
+
+ then 
+\begin_inset Formula $b_{l+1}\prec_{\tau}q$
+\end_inset
+
+ for some 
+\begin_inset Formula $b_{l}<q<b_{l+1}$
+\end_inset
+
+, violating 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Left-Subtrees-Condition"
+
+\end_inset
+
+.
+ Otherwise 
+\begin_inset Formula $q>b_{l}$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $q=b_{j}$
+\end_inset
+
+ for some 
+\begin_inset Formula $j>l$
+\end_inset
+
+ then 
+\begin_inset Formula $b_{j}\prec_{\tau}b_{l}$
+\end_inset
+
+ violating 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Right-Path-Condition"
+
+\end_inset
+
+.
+ Otherwise, if 
+\begin_inset Formula $q$
+\end_inset
+
+ is not the head of a bin then there is some 
+\begin_inset Formula $i$
+\end_inset
+
+ for which 
+\begin_inset Formula $b_{i-1}<q<b_{i}$
+\end_inset
+
+.
+ In this case, 
+\begin_inset Formula $q$
+\end_inset
+
+ appears prior to all other elements, and in particular 
+\begin_inset Formula $q\prec_{\tau}b_{i}$
+\end_inset
+
+, violating Condition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Left-Subtrees-Condition"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+
+\emph on
+\begin_inset Formula $q$
+\end_inset
+
+ is placed as the left child of some node greater than 
+\begin_inset Formula $q+1$
+\end_inset
+
+
+\emph default
+.
+ We must have 
+\begin_inset Formula $b_{i-1}<q<q+1\le b_{i}$
+\end_inset
+
+ for some 
+\begin_inset Formula $1\le i\le l$
+\end_inset
+
+, yet 
+\begin_inset Formula $q\prec_{\tau}q+1$
+\end_inset
+
+, violating 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Left-Subtrees-Condition"
+
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Proof
+Hence every permutation 
+\begin_inset Formula $\tau$
+\end_inset
+
+ for which 
+\begin_inset Formula $T\ne C$
+\end_inset
+
+ violates the conditions of the theorem.
+\end_layout
+
+\begin_layout Remark
+Not all permutations whose insertion trees are combs are postorders.
+ A minimal counterexample is 
+\begin_inset Formula $\left(2413\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Theorem
+A permutation 
+\begin_inset Formula $\pi$
+\end_inset
+
+ is a matching postorder for a comb 
+\begin_inset Formula $C$
+\end_inset
+
+ with bins 
+\begin_inset Formula $B_{1}\dots B_{k}$
+\end_inset
+
+ if and only if it is 
+\begin_inset Formula $312$
+\end_inset
+
+-avoiding and matches conditions 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Right-Path-Condition"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Left-Subtrees-Condition"
+
+\end_inset
+
+ of Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "NecSucc-Comb"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+For the following theorems, suppose that 
+\begin_inset Formula $C=B_{1}\dots B_{k}$
+\end_inset
+
+ is a comb let 
 \begin_inset Formula $\pi_{\le i}=\left(\pi_{1}\dots\pi_{i}\right)$
 \end_inset
 
@@ -3127,27 +3344,16 @@ reference "MatchingPostorder"
 \end_inset
 
 .
- Then for 
-\begin_inset Formula $1\le i\le n$
-\end_inset
-
-:
 \end_layout
 
-\begin_deeper
-\begin_layout Enumerate
-\begin_inset Formula $\pi_{\le i}$
+\begin_layout Theorem
+Let 
+\begin_inset Formula $T_{i}=\treap\left(\pi_{\le i}\right)$
 \end_inset
 
- is 
-\begin_inset Formula $312$
-\end_inset
-
--avoiding, and
-\end_layout
-
-\begin_layout Enumerate
-\begin_inset Formula $\treap\left(\pi_{\le i}\right)$
+.
+ Then 
+\begin_inset Formula $T_{i}$
 \end_inset
 
  is a connected subtree of the root of 
@@ -3157,7 +3363,179 @@ reference "MatchingPostorder"
 .
 \end_layout
 
+\begin_layout Proof
+We use induction on 
+\begin_inset Formula $i$
+\end_inset
+
+.
+ When 
+\begin_inset Formula $i=1$
+\end_inset
+
+ then the execution of Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop2"
+
+\end_inset
+
+ occurs immediately after the initilization, during which 
+\begin_inset Formula $B_{1}$
+\end_inset
+
+ was added to 
+\begin_inset Formula $S$
+\end_inset
+
+.
+ As the elements of 
+\begin_inset Formula $B_{1}$
+\end_inset
+
+ added to 
+\begin_inset Formula $S$
+\end_inset
+
+ reverse of symmetric order, 
+\begin_inset Formula $b_{1}$
+\end_inset
+
+ is at the top of the stack after the execution of Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop1"
+
+\end_inset
+
+, and 
+\begin_inset Formula $b_{1}$
+\end_inset
+
+ is the first node output.
+\end_layout
+
+\begin_layout Proof
+Suppose that the theorem is true for the first 
+\begin_inset Formula $i-1$
+\end_inset
+
+ outputs by Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
+\end_inset
+
+, and suppose that 
+\begin_inset Formula $T_{i-1}$
+\end_inset
+
+ contains the first 
+\begin_inset Formula $l$
+\end_inset
+
+ members of the right path.
+ We show that 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ is a connected subtree of the root of 
+\begin_inset Formula $C$
+\end_inset
+
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+If 
+\begin_inset Formula $S=\varnothing$
+\end_inset
+
+ and 
+\begin_inset Formula $B\ne\varnothing$
+\end_inset
+
+ then 
+\begin_inset Formula $B_{l+1}$
+\end_inset
+
+ is at the top of 
+\begin_inset Formula $B$
+\end_inset
+
+, hence 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+ is at the top of 
+\begin_inset Formula $S$
+\end_inset
+
+ after 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop3"
+
+\end_inset
+
+.
+ At the next iteration of the 
+\series bold
+while
+\series default
+ loop, 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+ will be popped from 
+\begin_inset Formula $S$
+\end_inset
+
+, and placed as the right child of 
+\begin_inset Formula $b_{l}$
+\end_inset
+
+ in 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+, and 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ is a connected subtree of the root of 
+\begin_inset Formula $C$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+The same will happen if 
+\begin_inset Formula $S\ne\varnothing$
+\end_inset
+
+ and 
+\begin_inset Formula $B\ne\varnothing$
+\end_inset
+
+, 
+\end_layout
+
 \end_deeper
+\begin_layout Theorem
+\begin_inset Formula $\pi_{\le i}$
+\end_inset
+
+ is 
+\begin_inset Formula $312$
+\end_inset
+
+-avoiding.
+\end_layout
+
 \begin_layout Standard
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
