@@ -2910,7 +2910,176 @@ The heap condition on first access time implies the left child of
 
 \end_deeper
 \begin_layout Proof
-Proving the other direction is more straightforward.
+Proving the other direction is more straightforward:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Let 
+\begin_inset Formula $i$
+\end_inset
+
+ be the minimum index of a bin head 
+\begin_inset Formula $b_{i}$
+\end_inset
+
+ with corresponding 
+\begin_inset Formula $j>i$
+\end_inset
+
+ such that 
+\begin_inset Formula $b_{j}\prec_{\tau}b_{i}$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $i=1$
+\end_inset
+
+ then 
+\begin_inset Formula $b_{j}\prec_{\tau}b_{1}$
+\end_inset
+
+.
+ As the first element in 
+\begin_inset Formula $\tau$
+\end_inset
+
+ is always the root of 
+\begin_inset Formula $\treap\left(\tau\right)$
+\end_inset
+
+, we have 
+\begin_inset Formula $b_{1}=\root\left(C\right)\ne\root\left(T\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $T\ne C$
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Otherwise, as 
+\begin_inset Formula $i$
+\end_inset
+
+ is minimal, 
+\begin_inset Formula $b_{i-1}\prec_{\tau}b_{l}$
+\end_inset
+
+ for 
+\begin_inset Formula $i\le l\le k$
+\end_inset
+
+, hence 
+\begin_inset Formula $b_{i-1}\prec_{\tau}b_{j}\prec_{\tau}b_{i}$
+\end_inset
+
+, and 
+\begin_inset Formula $b_{i}$
+\end_inset
+
+ is not the first item greater than 
+\begin_inset Formula $b_{i-1}$
+\end_inset
+
+ appearing after 
+\begin_inset Formula $b_{i-1}$
+\end_inset
+
+ in 
+\begin_inset Formula $\tau$
+\end_inset
+
+.
+ The treap order on 
+\begin_inset Formula $T$
+\end_inset
+
+ thus implies 
+\begin_inset Formula $b_{i}\ne\rightnode\left(b_{i-1}\right)$
+\end_inset
+
+, violating condition 2 of Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Comb"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Let 
+\begin_inset Formula $i$
+\end_inset
+
+ be the minimum index of a bin head 
+\begin_inset Formula $b_{i}$
+\end_inset
+
+ with a corresponding pair of nodes 
+\begin_inset Formula $b_{i-1}<l<j\le b_{i}$
+\end_inset
+
+ where 
+\begin_inset Formula $l\prec_{\tau}j$
+\end_inset
+
+ and choose the largest such 
+\begin_inset Formula $j$
+\end_inset
+
+ in symmetric order.
+ If 
+\begin_inset Formula $i=j=1$
+\end_inset
+
+ then 
+\begin_inset Formula $l\prec_{\tau}b_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $b_{1}\ne\root\left(T\right)$
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+If 
+\begin_inset Formula $1<i=j$
+\end_inset
+
+ then 
+\begin_inset Formula $l>b_{i-1}$
+\end_inset
+
+ and as 
+\begin_inset Formula $i$
+\end_inset
+
+ is minimal, 
+\begin_inset Formula $b_{i-1}\prec_{\tau}b_{i}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Proof
+sd
 \end_layout
 
 \begin_layout Theorem
