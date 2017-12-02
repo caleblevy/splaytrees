@@ -184,7 +184,7 @@ We define the postorder sequence of a tree
 \end_layout
 
 \begin_layout Standard
-The following definitions and theorems are modelled directly after 
+The following definitions and theorems are modeled directly after 
 \begin_inset CommandInset citation
 LatexCommand cite
 after "Lemma 1.4"
@@ -383,7 +383,7 @@ The reverse mapping is as follows: given a BST
 \begin_inset Formula $\pi_{n}=\root\left(T\right)$
 \end_inset
 
-, preceeded by the sequences 
+, preceded by the sequences 
 \begin_inset Formula $\pi_{L}$
 \end_inset
 
@@ -540,7 +540,7 @@ An insertion tree for a permutation
 \end_inset
 
  is the binary search tree obtained by starting from an empty tree and inserting
- nodes in order of their first appearence in 
+ nodes in order of their first appearance in 
 \begin_inset Formula $\pi$
 \end_inset
 
@@ -1023,11 +1023,11 @@ preorder
 \begin_inset Formula $\treap\left(\operatorname{preorder}\left(T\right)\right)=T$
 \end_inset
 
- may obscure the fact that this is identical 
+ may obscure the fact that their problem is identical 
 \emph on
 splay-inserting
 \emph default
- in preorder, but their problem is fundamentally identical.
+ in preorder.
  The insertion trees produced by postorders have a very simple, and somewhat
  surprising structure.
  In what follows, 
@@ -1059,7 +1059,7 @@ Let
 \end_inset
 
  be a postorder.
- Then all descendents of left children in 
+ Then all descendants of left children in 
 \begin_inset Formula $\treap\left(\pi\right)$
 \end_inset
 
@@ -1111,7 +1111,7 @@ We show that we would otherwise obtain a contradiction.
 \begin_inset Formula $z$
 \end_inset
 
- are descendents of 
+ are descendants of 
 \begin_inset Formula $w=\leftnode\left(x\right)$
 \end_inset
 
@@ -1968,7 +1968,7 @@ reference "Pop3"
 
 \end_inset
 
- is only performed after verifying in the preceeding line that 
+ is only performed after verifying in the preceding line that 
 \begin_inset Formula $B$
 \end_inset
 
@@ -2046,7 +2046,7 @@ while
 \begin_inset Formula $k$
 \end_inset
 
- bins totalling 
+ bins totaling 
 \begin_inset Formula $n$
 \end_inset
 
@@ -2545,7 +2545,7 @@ reference "Pop2"
 
 \end_inset
 
- occurs immediately after the initilization, during which 
+ occurs immediately after the initialization, during which 
 \begin_inset Formula $B_{1}$
 \end_inset
 
@@ -2728,7 +2728,7 @@ while
 \begin_inset Formula $b_{l+1}$
 \end_inset
 
- is larger than any node preceeding it in the output, hence 
+ is larger than any node preceding it in the output, hence 
 \begin_inset Formula $b_{l+1}$
 \end_inset
 
@@ -2960,7 +2960,7 @@ Once again we induct on
 \begin_inset Formula $b_{1}$
 \end_inset
 
- is output and the sequence is vacously 
+ is output and the sequence is vacuously 
 \begin_inset Formula $312$
 \end_inset
 
@@ -3122,7 +3122,7 @@ It is the smallest node popped so far from some bin whose head appears in
 \begin_inset Formula $l\ge j$
 \end_inset
 
-, every other node preceeding 
+, every other node preceding 
 \begin_inset Formula $b_{j}$
 \end_inset
 
@@ -3277,6 +3277,12 @@ We thus have
 \end_layout
 
 \begin_layout Theorem
+\begin_inset CommandInset label
+LatexCommand label
+name "thm:AlgMakesMatchingPostorders"
+
+\end_inset
+
 Algorithm 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -3723,7 +3729,7 @@ If
 \begin_inset Formula $b_{i}$
 \end_inset
 
-'s left subtree is empty, vacously matching Part 
+'s left subtree is empty, vacuously matching Part 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "Def-Left-Path"
@@ -3881,7 +3887,7 @@ The other direction may be done more elegantly.
 \begin_inset Formula $q=\tau_{i+1}$
 \end_inset
 
- will viloate condition 
+ will violate condition 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "Right-Path-Condition"
@@ -3917,7 +3923,7 @@ Let
 \begin_inset Formula $C$
 \end_inset
 
- constrains the violations which might be introducted by inserting 
+ constrains the violations which might be introduced by inserting 
 \begin_inset Formula $q$
 \end_inset
 
@@ -4135,6 +4141,12 @@ reference "NecSucc-Comb"
 \end_layout
 
 \begin_layout Theorem
+\begin_inset CommandInset label
+LatexCommand label
+name "thm:ONLYAlgMakesMatchingPostorders"
+
+\end_inset
+
 Let 
 \begin_inset Formula $C$
 \end_inset
@@ -4224,11 +4236,11 @@ Let
 
 .
  Let 
-\begin_inset Formula $B_{m_{1}}\dots B_{m_{h}}$
+\begin_inset Formula $B_{h_{1}}\dots B_{h_{m}}$
 \end_inset
 
  with 
-\begin_inset Formula $1\le m_{1}<\cdots<m_{h}\le l$
+\begin_inset Formula $1\le h_{1}<\cdots<h_{m}\le l$
 \end_inset
 
  be the subsequence of bins 
@@ -4260,7 +4272,7 @@ reference "Pop2"
 \end_inset
 
  be the largest node in 
-\begin_inset Formula $B_{m_{j}}$
+\begin_inset Formula $B_{h_{j}}$
 \end_inset
 
  which is not in 
@@ -4412,6 +4424,176 @@ By construction,
 \end_inset
 
 -violation.
+\end_layout
+
+\begin_layout Theorem
+Let 
+\begin_inset Formula $C$
+\end_inset
+
+ be a comb.
+ Then 
+\begin_inset Formula $\pi$
+\end_inset
+
+ is a matching postorder for 
+\begin_inset Formula $C$
+\end_inset
+
+ if and only if it is a valid output of 
+\begin_inset Formula $\textsc{MatchingPostorder}\left(C\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+A straightforward application of Theorem 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "thm:AlgMakesMatchingPostorders"
+
+\end_inset
+
+ and Theorem 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "thm:ONLYAlgMakesMatchingPostorders"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Splaying a Comb's Matching Postorder
+\end_layout
+
+\begin_layout Standard
+There are a few things with noting about the preceding material.
+ Our method of showing equivalence between executions of Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "MatchingPostorder"
+
+\end_inset
+
+ and the matching postorders of a comb does not even establish a bijection
+ (although I believe there is).
+ We merely show that its outputs are always postorders, and non-outputs
+ cannot be postorders.
+ We have't even counted the number postorders matching a comb!
+\end_layout
+
+\begin_layout Standard
+Perhaps more remarkable: we have barely even mentioned 
+\begin_inset Quotes eld
+\end_inset
+
+splaying,
+\begin_inset Quotes erd
+\end_inset
+
+ have made one use of the word 
+\begin_inset Quotes eld
+\end_inset
+
+cost,
+\begin_inset Quotes erd
+\end_inset
+
+ and the strings 
+\begin_inset Quotes eld
+\end_inset
+
+depth
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+rotation
+\begin_inset Quotes erd
+\end_inset
+
+ do not appear prior to this sentence.
+ That's quite an achievement for the first 11 pages of a writeup on binary
+ search tree algorithms!
+\end_layout
+
+\begin_layout Standard
+The bulk of the work in this paper is indeed behind us.
+ Its fair to say that most of it is about combinatorial constraints on ordering
+ relations, which are useful here since 
+\begin_inset Formula $312$
+\end_inset
+
+-avoidance is a very strong condition on a permutation.
+ Strategically, the strategy has been to suss out all of the combinatorial
+ constraints that it buys us and write them in an algorithmically useful
+ fashion.
+ More whimsically, this paper could be 
+\begin_inset Quotes eld
+\end_inset
+
+postorders are actually pretty easy sequences to insert into empty trees.
+\begin_inset Quotes erd
+\end_inset
+
+ Getting back to actual work\SpecialChar ldots
+
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $C$
+\end_inset
+
+ be a comb with bins 
+\begin_inset Formula $B_{1}\dots B_{k}$
+\end_inset
+
+ and let 
+\begin_inset Formula $\pi=\pi_{1}\dots\pi_{n}$
+\end_inset
+
+ be a sequence output by 
+\begin_inset Formula $\textsc{MatchingPostorder}\left(C\right)$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $T_{0}=C$
+\end_inset
+
+ and let 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ be the tree obtained by splaying 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ in 
+\begin_inset Formula $T_{i-1}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $d_{i}\left(x\right)$
+\end_inset
+
+ be the depth of 
+\begin_inset Formula $x$
+\end_inset
+
+ in 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+, where the depth of the root is 1.
 \end_layout
 
 \begin_layout Standard
