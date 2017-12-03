@@ -4608,68 +4608,7 @@ Let
 \end_inset
 
 , where the depth of the root is 1.
-\end_layout
-
-\begin_layout Lemma
-All nodes in 
-\begin_inset Formula $S$
-\end_inset
-
- after the 
-\begin_inset Formula $i\textsuperscript{th}$
-\end_inset
-
- execution of Line 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "Pop2"
-
-\end_inset
-
- must be in the left subtree of 
-\begin_inset Formula $T_{i}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Proof
-The root of 
-\begin_inset Formula $T_{i}$
-\end_inset
-
- is the is the node output by the 
-\begin_inset Formula $i\textsuperscript{th}$
-\end_inset
-
- execution of Line 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "Pop2"
-
-\end_inset
-
-.
- By Lemma 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "Monotone"
-
-\end_inset
-
-, all remaining nodes in 
-\begin_inset Formula $S$
-\end_inset
-
- are less than the root, hence in the left subtree of 
-\begin_inset Formula $T_{i}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Lemma
-Let 
+ Finally, let 
 \begin_inset Formula $h_{1}\dots h_{m}$
 \end_inset
 
@@ -4689,7 +4628,16 @@ reference "thm:ONLYAlgMakesMatchingPostorders"
 \end_inset
 
 .
- Then the subtree of 
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:SplayLeftChain"
+
+\end_inset
+
+The subtree of 
 \begin_inset Formula $T_{i}$
 \end_inset
 
@@ -4767,30 +4715,129 @@ reference "lem:InitialTrees"
 \end_layout
 
 \begin_layout Lemma
-Let 
-\begin_inset Formula $h_{1}\dots h_{m}$
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:SplayLeftPath"
+
 \end_inset
 
- and 
-\begin_inset Formula $a_{1}\dots a_{m}$
+Nodes 
+\begin_inset Formula $a_{1}+1\,\dots\,a_{m}+1$
 \end_inset
 
- be as in Theorem 
+ are on the left path of 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+After node 
+\begin_inset Formula $a_{j}+1$
+\end_inset
+
+ is splayed, it is moved to the root of the tree, and hence to the left
+ path.
+ Furthermore, at the time 
+\begin_inset Formula $a_{j}+1$
+\end_inset
+
+ is splayed, 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ is on 
+\begin_inset Formula $S$
+\end_inset
+
+.
+ By Lemma 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "thm:ONLYAlgMakesMatchingPostorders"
+reference "Monotone"
 
 \end_inset
 
- at iteration 
-\begin_inset Formula $i$
+, no nodes smaller than 
+\begin_inset Formula $a_{j}+1$
 \end_inset
 
-, and let 
+ are accessed until 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ is popped from the stack.
+ As of the 
+\begin_inset Formula $i\textsuperscript{th}$
+\end_inset
+
+ execution of Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop2"
+
+\end_inset
+
+, 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ is on 
+\begin_inset Formula $S$
+\end_inset
+
+ for 
+\begin_inset Formula $1\le j\le m$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+The only mechanism by which splaying may knock a node 
+\begin_inset Formula $x$
+\end_inset
+
+ from the left path is by accessing some node smaller than 
+\begin_inset Formula $x$
+\end_inset
+
+.
+ As of the 
+\begin_inset Formula $i\textsuperscript{th}$
+\end_inset
+
+ output, all of the nodes 
+\begin_inset Formula $a_{j}+1$
+\end_inset
+
+ for 
+\begin_inset Formula $1\le j\le m$
+\end_inset
+
+ have entered the left path, and no nodes smaller than 
+\begin_inset Formula $a_{j}+1$
+\end_inset
+
+ have been accessed for any of 
+\begin_inset Formula $1\le j\le m$
+\end_inset
+
+.
+ We must have 
+\begin_inset Formula $a_{1}+1\,\dots\,a_{m}+1$
+\end_inset
+
+ are on the left path.
+\end_layout
+
+\begin_layout Lemma
+Let 
 \begin_inset Formula $e_{j}$
 \end_inset
 
- be the first ancestor of 
+ be the closest ancestor of 
 \begin_inset Formula $a_{j}$
 \end_inset
 
@@ -4799,65 +4846,141 @@ reference "thm:ONLYAlgMakesMatchingPostorders"
 \end_inset
 
 .
- Then for 
-\begin_inset Formula $j\ne l$
+ Then 
+\begin_inset Formula $e_{j}$
 \end_inset
 
- we have 
-\begin_inset Formula $e_{j}\ne e_{l}$
+ is a proper ancestor of 
+\begin_inset Formula $e_{j+1}$
 \end_inset
 
-.
-\end_layout
-
-\begin_layout Proof
-We use induction on 
-\begin_inset Formula $i$
-\end_inset
-
-.
- When 
-\begin_inset Formula $i=1$
-\end_inset
-
- then the only bin whose head has been splayed is 
-\begin_inset Formula $B_{1}$
-\end_inset
-
-, hence 
-\begin_inset Formula $m\le1$
-\end_inset
-
-.
- As the first iteration merely splays the root, 
-\begin_inset Formula $T_{1}=T_{0}$
-\end_inset
-
- and if 
-\begin_inset Formula $a_{1}$
-\end_inset
-
- exists then 
-\begin_inset Formula $e_{1}=b_{1}$
+ for 
+\begin_inset Formula $1<j<m$
 \end_inset
 
 .
 \end_layout
 
 \begin_layout Proof
-Suppose the theorem is true for 
-\begin_inset Formula $\pi_{\le i}$
-\end_inset
-
-.
- By Theorem 
+By 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "thm:ONLYAlgMakesMatchingPostorders"
+LatexCommand formatted
+reference "lem:SplayLeftPath"
 
 \end_inset
 
-, the only candidate nodes 
+, 
+\begin_inset Formula $a_{j}+1$
+\end_inset
+
+ is on the left path of 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+, thus 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ is in the left subtree of 
+\begin_inset Formula $a_{j}+1$
+\end_inset
+
+.
+ Furthermore, by 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "lem:SplayLeftChain"
+
+\end_inset
+
+, 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ cannot have any descendents other than nodes 
+\begin_inset Formula $q$
+\end_inset
+
+ where 
+\begin_inset Formula $b_{h_{j}-1}<q<a_{j}$
+\end_inset
+
+.
+ Since 
+\begin_inset Formula $a_{j-1}$
+\end_inset
+
+ is in the left subtree of 
+\begin_inset Formula $a_{j}+1$
+\end_inset
+
+ and 
+\begin_inset Formula $a_{j-1}<b_{h_{j}-1}<a_{j}$
+\end_inset
+
+, if 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ were the left child of 
+\begin_inset Formula $a_{j}+1$
+\end_inset
+
+ then 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ would also need to have a disallowed descendent, 
+\begin_inset Formula $a_{j-1}$
+\end_inset
+
+.
+ Thus 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ is not a child of 
+\begin_inset Formula $a_{j}+1$
+\end_inset
+
+ and 
+\begin_inset Formula $e_{j}\ne a_{j}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Meanwhile, 
+\begin_inset Formula $a_{j+1}>a_{j}+1$
+\end_inset
+
+, hence either 
+\begin_inset Formula $a_{j+1}$
+\end_inset
+
+ is in the right subtree of 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ or in the right subtree of some proper ancestor of 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ along the left path.
+ In either case, 
+\begin_inset Formula $e_{j+1}$
+\end_inset
+
+ is a proper ancestor of 
+\begin_inset Formula $e_{j}$
+\end_inset
+
+ for 
+\begin_inset Formula $1<j<m$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
