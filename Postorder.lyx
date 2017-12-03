@@ -326,7 +326,7 @@ We define a bijection that maps arbitrary
 
 .
 \begin_inset Foot
-status open
+status collapsed
 
 \begin_layout Plain Layout
 In particular, 
@@ -575,6 +575,12 @@ The following lemma has been observed in a more general form many times.
 \end_layout
 
 \begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:InitialTrees"
+
+\end_inset
+
 Let 
 \begin_inset Formula $\pi$
 \end_inset
@@ -4480,7 +4486,7 @@ reference "MatchingPostorder"
 
  and the matching postorders of a comb does not even establish a bijection
  (although I believe there is).
- We merely show that its outputs are always postorders, and non-outputs
+ We merely showed that its outputs are always postorders, and non-outputs
  cannot be postorders.
  We have't even counted the number postorders matching a comb!
 \end_layout
@@ -4563,6 +4569,14 @@ Let
 \begin_inset Formula $\textsc{MatchingPostorder}\left(C\right)$
 \end_inset
 
+ and denote 
+\begin_inset Formula $\pi_{1}\dots\pi_{i}$
+\end_inset
+
+ by 
+\begin_inset Formula $\pi_{\le i}$
+\end_inset
+
 .
  Let 
 \begin_inset Formula $T_{0}=C$
@@ -4594,6 +4608,256 @@ Let
 \end_inset
 
 , where the depth of the root is 1.
+\end_layout
+
+\begin_layout Lemma
+All nodes in 
+\begin_inset Formula $S$
+\end_inset
+
+ after the 
+\begin_inset Formula $i\textsuperscript{th}$
+\end_inset
+
+ execution of Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop2"
+
+\end_inset
+
+ must be in the left subtree of 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+The root of 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ is the is the node output by the 
+\begin_inset Formula $i\textsuperscript{th}$
+\end_inset
+
+ execution of Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Pop2"
+
+\end_inset
+
+.
+ By Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Monotone"
+
+\end_inset
+
+, all remaining nodes in 
+\begin_inset Formula $S$
+\end_inset
+
+ are less than the root, hence in the left subtree of 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Lemma
+Let 
+\begin_inset Formula $h_{1}\dots h_{m}$
+\end_inset
+
+ and 
+\begin_inset Formula $a_{1}\dots a_{m}$
+\end_inset
+
+ be as in Theorem 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "thm:ONLYAlgMakesMatchingPostorders"
+
+\end_inset
+
+ at iteration 
+\begin_inset Formula $i$
+\end_inset
+
+.
+ Then the subtree of 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ rooted at 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ is a leftward chain consisting of nodes 
+\begin_inset Formula $b_{h_{j}-1}+1\dots a_{j}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Each bin begins in 
+\begin_inset Formula $T_{0}$
+\end_inset
+
+ as a leftward chain.
+ By the arguments of Theorems 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "NecSucc-Comb"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "thm:ONLYAlgMakesMatchingPostorders"
+
+\end_inset
+
+ we must splay nodes on these chains in decreasing order, hence we have
+ not splayed any of 
+\begin_inset Formula $b_{h_{j}-1}+1\dots a_{j}$
+\end_inset
+
+ up to the splaying of 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ for 
+\begin_inset Formula $1\le j\le m$
+\end_inset
+
+.
+ As nodes 
+\begin_inset Formula $b_{h_{j}-1}+1\dots a_{j}$
+\end_inset
+
+ have no descendents other than themselves, no descendents of these nodes
+ have been splayed up through the access of 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ either.
+ By arguments of 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "lem:InitialTrees"
+
+\end_inset
+
+, none of 
+\begin_inset Formula $b_{h_{j}-1}+1\dots a_{j}$
+\end_inset
+
+ are on the splay paths of 
+\begin_inset Formula $\pi_{1}\dots\pi_{i}$
+\end_inset
+
+, and hence the structure of the chain is unaltered.
+\end_layout
+
+\begin_layout Lemma
+Let 
+\begin_inset Formula $h_{1}\dots h_{m}$
+\end_inset
+
+ and 
+\begin_inset Formula $a_{1}\dots a_{m}$
+\end_inset
+
+ be as in Theorem 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "thm:ONLYAlgMakesMatchingPostorders"
+
+\end_inset
+
+ at iteration 
+\begin_inset Formula $i$
+\end_inset
+
+, and let 
+\begin_inset Formula $e_{j}$
+\end_inset
+
+ be the first ancestor of 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ on the left path of 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+.
+ Then for 
+\begin_inset Formula $j\ne l$
+\end_inset
+
+ we have 
+\begin_inset Formula $e_{j}\ne e_{l}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+We use induction on 
+\begin_inset Formula $i$
+\end_inset
+
+.
+ When 
+\begin_inset Formula $i=1$
+\end_inset
+
+ then the only bin whose head has been splayed is 
+\begin_inset Formula $B_{1}$
+\end_inset
+
+, hence 
+\begin_inset Formula $m\le1$
+\end_inset
+
+.
+ As the first iteration merely splays the root, 
+\begin_inset Formula $T_{1}=T_{0}$
+\end_inset
+
+ and if 
+\begin_inset Formula $a_{1}$
+\end_inset
+
+ exists then 
+\begin_inset Formula $e_{1}=b_{1}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Suppose the theorem is true for 
+\begin_inset Formula $\pi_{\le i}$
+\end_inset
+
+.
+ By Theorem 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "thm:ONLYAlgMakesMatchingPostorders"
+
+\end_inset
+
+, the only candidate nodes 
 \end_layout
 
 \begin_layout Standard
