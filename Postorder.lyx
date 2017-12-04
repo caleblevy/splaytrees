@@ -4476,6 +4476,15 @@ Splaying a Comb's Matching Postorder
 \end_layout
 
 \begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\nullnode}{\operatorname{null}}
+{\textnormal{null}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 There are a few things with noting about the preceding material.
  Our method of showing equivalence between executions of Algorithm 
 \begin_inset CommandInset ref
@@ -4612,9 +4621,17 @@ Let
 \end_inset
 
 , with the depth of the root defined as 
-\series bold
-one
-\series default
+\begin_inset Formula $1$
+\end_inset
+
+, and depth of 
+\begin_inset Formula $\nullnode$
+\end_inset
+
+ as 
+\begin_inset Formula $0$
+\end_inset
+
 .
  Finally, let 
 \begin_inset Formula $h_{1}\dots h_{m}$
@@ -4992,164 +5009,169 @@ The following analysis is crude.
 \end_layout
 
 \begin_layout Standard
-For the remainder, we will play a little bit loose with notation in order
- to make the relationships to the previous sections clear.
- In particular, at the end of iteration 
+At the end
+\emph on
+ 
+\emph default
+of iteration 
 \begin_inset Formula $i$
 \end_inset
 
- of the while loop:
+ of the 
+\series bold
+while 
+\series default
+loop, define the following:
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $d_{i}\left(a_{1}\right)$
+\begin_inset Formula $r_{i}$
 \end_inset
 
- is the depth of the largest element in the smallest bin with items still
- on 
+ is the largest element in the smallest bin whose head has been splayed
+ with items still on 
 \begin_inset Formula $S$
 \end_inset
 
-, and is 
-\begin_inset Formula $0$
-\end_inset
 
- should 
-\begin_inset Formula $S=\varnothing$
-\end_inset
-
-.
- Note 
-\begin_inset Formula $d_{i}\left(a_{1}\right)=0$
-\end_inset
-
- if and only if 
-\begin_inset Formula $i=n$
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $d_{i}\left(a_{m}\right)$
+\begin_inset Formula $t_{i}$
 \end_inset
 
- is the depth of the largest element in the bin most recently added to 
+ is the largest element in the largest bin whose head has been splayed with
+ items still on 
 \begin_inset Formula $S$
 \end_inset
 
-, 
-\emph on
-if 
-\begin_inset Formula $a_{m}\ne a_{1}$
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $s_{i}$
 \end_inset
 
-, otherwise 
-\begin_inset Formula $d_{i}\left(a_{m}\right)=0$
+ is the largest node in the second largest bin whose head has been splayed
+ with items still on 
+\begin_inset Formula $S$
 \end_inset
 
-.
- 
-\emph default
-Similarly, 
-\begin_inset Formula $d_{i}\left(a_{m-1}\right)$
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $w_{i}$
 \end_inset
 
- is the depth of the largest node in the second most recently added bin,
- 
-\emph on
-if 
-\begin_inset Formula $a_{1}\ne a_{m-1}\ne a_{m}$
+ is the smallest bin head which has not been splayed if 
+\begin_inset Formula $B\ne\varnothing$
 \end_inset
 
 , and otherwise 
-\begin_inset Formula $d\left(a_{m-1}\right)=0$
+\begin_inset Formula $w_{i}=\nullnode$
 \end_inset
 
 .
 \end_layout
 
-\begin_layout Itemize
-\begin_inset Formula $d_{i}\left(b_{l+1}\right)$
-\end_inset
-
- refers to the depth of the next bin head to be splayed, and 
-\begin_inset Formula $0$
-\end_inset
-
- if no bin heads remain.
-\end_layout
-
 \begin_layout Standard
-It would be more mathematically proper to simply assign letters such as
- 
-\begin_inset Quotes eld
+Less formally 
+\begin_inset Formula $r_{i}$
 \end_inset
 
-
-\begin_inset Formula $r$
+, 
+\begin_inset Formula $s_{i}$
 \end_inset
 
-,
-\begin_inset Quotes erd
-\end_inset
-
- 
-\begin_inset Quotes eld
-\end_inset
-
-
-\begin_inset Formula $s$
-\end_inset
-
-,
-\begin_inset Quotes erd
-\end_inset
-
- 
-\begin_inset Quotes eld
-\end_inset
-
-
-\begin_inset Formula $t$
-\end_inset
-
-
-\begin_inset Quotes erd
+, 
+\begin_inset Formula $t_{i}$
 \end_inset
 
  and 
-\begin_inset Quotes eld
+\begin_inset Formula $w_{i}$
 \end_inset
 
-
-\begin_inset Formula $w$
+ correspond to 
+\begin_inset Formula $a_{1}$
 \end_inset
 
-
-\begin_inset Quotes erd
+, 
+\begin_inset Formula $a_{m-1}$
 \end_inset
 
- to each of these quantities, however the above notation makes the relationships
- with previous theorems clear.
- Our potential 
+, 
+\begin_inset Formula $a_{m}$
+\end_inset
+
+ and 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+ in the proofs above.
+ If 
+\begin_inset Formula $m=1$
+\end_inset
+
+ then 
+\begin_inset Formula $r_{i}=s_{i}=t_{i}$
+\end_inset
+
+, and if 
+\begin_inset Formula $m=2$
+\end_inset
+
+ then 
+\begin_inset Formula $r_{i}=s_{i}$
+\end_inset
+
+.
+ We refer to 
+\begin_inset Formula $r_{i}$
+\end_inset
+
+, 
+\begin_inset Formula $s_{i}$
+\end_inset
+
+, 
+\begin_inset Formula $t_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $w_{i}$
+\end_inset
+
+ as the 
 \emph on
-after
+active nodes
 \emph default
- splaying 
+ at the beginning of iteration 
+\begin_inset Formula $i+1$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Our potential after splaying 
 \begin_inset Formula $\pi_{i}$
 \end_inset
 
  is 
-\begin_inset Formula $\Psi_{i}=d_{i}\left(a_{1}\right)+d_{i}\left(a_{j-1}\right)+2\cdot d_{i}\left(a_{m}\right)+d_{i}\left(b_{l+1}\right)$
+\begin_inset Formula $\Psi_{i}=d_{i}\left(r_{i}\right)+d_{i}\left(s_{i}\right)+2\cdot d_{i}\left(t_{i}\right)+d_{i}\left(w_{i}\right)$
+\end_inset
+
+, that is 
+\begin_inset Formula $\Psi_{i}$
+\end_inset
+
+ is (basically) the sum of depths of the active nodes at time 
+\begin_inset Formula $i$
 \end_inset
 
 .
- 
-\end_layout
-
-\begin_layout Standard
-We define the amortized cost 
+ We define the amortized cost 
 \begin_inset Formula $c_{i}$
 \end_inset
 
@@ -5250,15 +5272,15 @@ The two options at iteration
 \end_inset
 
  are to splay 
-\begin_inset Formula $b_{l+1}$
+\begin_inset Formula $t_{i}$
 \end_inset
 
  or 
-\begin_inset Formula $a_{m}$
+\begin_inset Formula $w_{i}$
 \end_inset
 
 .
- Suppose that the depth of the node splayed is 
+ Let the depth of the node splayed be 
 \begin_inset Formula $k$
 \end_inset
 
@@ -5272,18 +5294,111 @@ The two options at iteration
 
 \begin_layout Itemize
 Suppose we splay 
-\begin_inset Formula $b_{l+1}.$
+\begin_inset Formula $w_{i}$
 \end_inset
 
- After splaying 
-\begin_inset Formula $\pi_{i+1}$
+.
+ Then 
+\begin_inset Formula $d\left(r_{i+1}\right)\le d\left(r_{i}\right)+2$
 \end_inset
 
 , 
-\begin_inset Formula $b_{l+1}$
+\begin_inset Formula $d\left(s_{i+1}\right)\le d\left(s_{i}\right)+2$
 \end_inset
 
- will become what was previous 
+ and 
+\begin_inset Formula $d\left(t_{i+1}\right)\le d\left(t_{i}\right)+2$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $w_{i}$
+\end_inset
+
+ has a right child then 
+\begin_inset Formula $d\left(w_{i+1}\right)=2$
+\end_inset
+
+, and otherwise 
+\begin_inset Formula $d\left(w_{i+1}\right)=0$
+\end_inset
+
+.
+ As 
+\begin_inset Formula $d\left(w_{i}\right)=k$
+\end_inset
+
+, we have 
+\begin_inset Formula $\Delta\Psi_{i+1}\le10-k$
+\end_inset
+
+, and the amortized cost is at most 
+\begin_inset Formula $10$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Suppose we splay 
+\begin_inset Formula $t_{i}$
+\end_inset
+
+.
+ Then 
+\begin_inset Formula $d\left(r_{i+1}\right)\le d\left(r_{i}\right)+2$
+\end_inset
+
+ and 
+\begin_inset Formula $d\left(w_{i+1}\right)\le d\left(w_{i}\right)+2$
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+If 
+\begin_inset Formula $t_{i+1}$
+\end_inset
+
+ is the left child of 
+\begin_inset Formula $t_{i}$
+\end_inset
+
+ then 
+\begin_inset Formula $d\left(t_{i+1}\right)\le k/2+2$
+\end_inset
+
+ and 
+\begin_inset Formula $d\left(s_{i+1}\right)\le d\left(s_{i}\right)+2$
+\end_inset
+
+.
+ In this case 
+\begin_inset Formula $\Delta\Psi_{i}\le10-k$
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Otherwise, whenever 
+\begin_inset Formula $t_{i+1}=s_{i}$
+\end_inset
+
+, 
+\begin_inset Formula $d\left(\right)$
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
