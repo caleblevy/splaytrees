@@ -4552,6 +4552,10 @@ postorders are actually pretty easy sequences to insert into empty trees.
 
 \end_layout
 
+\begin_layout Subsection
+Setup and Structural Lemmas
+\end_layout
+
 \begin_layout Standard
 Let 
 \begin_inset Formula $C$
@@ -4795,41 +4799,36 @@ reference "Pop2"
 \end_layout
 
 \begin_layout Proof
-The only mechanism by which splaying may knock a node 
+The only mechanism by which splaying knocks a node 
 \begin_inset Formula $x$
 \end_inset
 
- from the left path is by accessing some node smaller than 
+ from the left path is accessing a node smaller than 
 \begin_inset Formula $x$
 \end_inset
 
 .
- As of the 
-\begin_inset Formula $i\textsuperscript{th}$
+ After 
+\begin_inset Formula $a_{j}+1$
 \end_inset
 
- output, all of the nodes 
+ is splayed, no smaller nodes are splayed prior to output 
+\begin_inset Formula $i+1$
+\end_inset
+
+, hence 
 \begin_inset Formula $a_{j}+1$
+\end_inset
+
+ must be on the left path of 
+\begin_inset Formula $T_{i}$
 \end_inset
 
  for 
 \begin_inset Formula $1\le j\le m$
 \end_inset
 
- have entered the left path, and no nodes smaller than 
-\begin_inset Formula $a_{j}+1$
-\end_inset
-
- have been accessed for any of 
-\begin_inset Formula $1\le j\le m$
-\end_inset
-
 .
- We must have 
-\begin_inset Formula $a_{1}+1\,\dots\,a_{m}+1$
-\end_inset
-
- are on the left path.
 \end_layout
 
 \begin_layout Lemma
@@ -4918,24 +4917,20 @@ reference "lem:SplayLeftChain"
 \begin_inset Formula $a_{j-1}<b_{h_{j}-1}<a_{j}$
 \end_inset
 
-, if 
+, 
+\begin_inset Formula $a_{j}=\leftnode\left(a_{j}+1\right)$
+\end_inset
+
+ implies 
 \begin_inset Formula $a_{j}$
 \end_inset
 
- were the left child of 
-\begin_inset Formula $a_{j}+1$
-\end_inset
-
- then 
-\begin_inset Formula $a_{j}$
-\end_inset
-
- would also need to have a disallowed descendent, 
+ has a disallowed descendent, 
 \begin_inset Formula $a_{j-1}$
 \end_inset
 
 .
- Thus 
+ We conclude 
 \begin_inset Formula $a_{j}$
 \end_inset
 
@@ -4981,6 +4976,70 @@ Meanwhile,
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Subsection
+Cost Analysis
+\end_layout
+
+\begin_layout Remark
+The following analysis is crude.
+ The constant factors are likely less than half of those derived here.
+\end_layout
+
+\begin_layout Standard
+We bound the amortized time required to splay the comb 
+\begin_inset Formula $C$
+\end_inset
+
+.
+ To do so, we use a rudimentary potential function.
+ At any time, define the 
+\emph on
+active nodes
+\emph default
+, should they exist, as 
+\begin_inset Formula $a_{m}$
+\end_inset
+
+ and 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+.
+ In plain English, the active nodes are those which Algorithm 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "MatchingPostorder"
+
+\end_inset
+
+ may choose to output at iteration 
+\begin_inset Formula $i+1$
+\end_inset
+
+.
+ Our 
+\emph on
+potential
+\emph default
+ 
+\begin_inset Formula $\Psi_{i}=d_{i}\left(a_{m}\right)+d_{i}\left(b_{l+1}\right)$
+\end_inset
+
+, with 
+\begin_inset Formula $d_{i}\left(a_{m}\right)=0$
+\end_inset
+
+ if 
+\begin_inset Formula $m=0$
+\end_inset
+
+ and 
+\begin_inset Formula $d_{i}\left(b_{l+1}\right)=0$
+\end_inset
+
+ once every bin head has been splayed.
 \end_layout
 
 \begin_layout Standard
