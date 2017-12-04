@@ -4611,7 +4611,11 @@ Let
 \begin_inset Formula $T_{i}$
 \end_inset
 
-, where the depth of the root is 1.
+, with the depth of the root defined as 
+\series bold
+one
+\series default
+.
  Finally, let 
 \begin_inset Formula $h_{1}\dots h_{m}$
 \end_inset
@@ -4836,7 +4840,7 @@ Let
 \begin_inset Formula $e_{j}$
 \end_inset
 
- be the closest ancestor of 
+ be the first ancestor of 
 \begin_inset Formula $a_{j}$
 \end_inset
 
@@ -4984,62 +4988,302 @@ Cost Analysis
 
 \begin_layout Remark
 The following analysis is crude.
- The constant factors are likely less than half of those derived here.
+ The constant factors are likely less than those derived here.
 \end_layout
 
 \begin_layout Standard
-We bound the amortized time required to splay the comb 
-\begin_inset Formula $C$
+For the remainder, we will play a little bit loose with notation in order
+ to make the relationships to the previous sections clear.
+ In particular, at the end of iteration 
+\begin_inset Formula $i$
+\end_inset
+
+ of the while loop:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $d_{i}\left(a_{1}\right)$
+\end_inset
+
+ is the depth of the largest element in the smallest bin with items still
+ on 
+\begin_inset Formula $S$
+\end_inset
+
+, and is 
+\begin_inset Formula $0$
+\end_inset
+
+ should 
+\begin_inset Formula $S=\varnothing$
 \end_inset
 
 .
- To do so, we use a rudimentary potential function.
- At any time, define the 
+ Note 
+\begin_inset Formula $d_{i}\left(a_{1}\right)=0$
+\end_inset
+
+ if and only if 
+\begin_inset Formula $i=n$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $d_{i}\left(a_{m}\right)$
+\end_inset
+
+ is the depth of the largest element in the bin most recently added to 
+\begin_inset Formula $S$
+\end_inset
+
+, 
 \emph on
-active nodes
+if 
+\begin_inset Formula $a_{m}\ne a_{1}$
+\end_inset
+
+, otherwise 
+\begin_inset Formula $d_{i}\left(a_{m}\right)=0$
+\end_inset
+
+.
+ 
 \emph default
-, should they exist, as 
-\begin_inset Formula $a_{m}$
+Similarly, 
+\begin_inset Formula $d_{i}\left(a_{m-1}\right)$
+\end_inset
+
+ is the depth of the largest node in the second most recently added bin,
+ 
+\emph on
+if 
+\begin_inset Formula $a_{1}\ne a_{m-1}\ne a_{m}$
+\end_inset
+
+, and otherwise 
+\begin_inset Formula $d\left(a_{m-1}\right)=0$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $d_{i}\left(b_{l+1}\right)$
+\end_inset
+
+ refers to the depth of the next bin head to be splayed, and 
+\begin_inset Formula $0$
+\end_inset
+
+ if no bin heads remain.
+\end_layout
+
+\begin_layout Standard
+It would be more mathematically proper to simply assign letters such as
+ 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $r$
+\end_inset
+
+,
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $s$
+\end_inset
+
+,
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $t$
+\end_inset
+
+
+\begin_inset Quotes erd
 \end_inset
 
  and 
-\begin_inset Formula $b_{l+1}$
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $w$
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+ to each of these quantities, however the above notation makes the relationships
+ with previous theorems clear.
+ Our potential 
+\emph on
+after
+\emph default
+ splaying 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ is 
+\begin_inset Formula $\Psi_{i}=d_{i}\left(a_{1}\right)+d_{i}\left(a_{j-1}\right)+2\cdot d_{i}\left(a_{m}\right)+d_{i}\left(b_{l+1}\right)$
 \end_inset
 
 .
- In plain English, the active nodes are those which Algorithm 
+ 
+\end_layout
+
+\begin_layout Standard
+We define the amortized cost 
+\begin_inset Formula $c_{i}$
+\end_inset
+
+ of splaying 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ as 
+\begin_inset Formula $d_{i-1}\left(\pi_{i}\right)+\Psi_{i}-\Psi_{i-1}$
+\end_inset
+
+.
+ It is easy to see that 
+\begin_inset Formula $\Psi_{0}=0$
+\end_inset
+
+ and 
+\begin_inset Formula $\Psi$
+\end_inset
+
+ remains positive throughout the execution, hence the amortized cost upper
+ bounds the true cost.
+ Also observe 
+\begin_inset Formula $\Psi\le5n$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Theorem
+The amortized cost to splay a comb 
+\begin_inset Formula $C$
+\end_inset
+
+ by the output 
+\begin_inset Formula $\pi=\pi_{1}\dots\pi_{n}$
+\end_inset
+
+ of Algorithm 
 \begin_inset CommandInset ref
 LatexCommand formatted
 reference "MatchingPostorder"
 
 \end_inset
 
- may choose to output at iteration 
-\begin_inset Formula $i+1$
+ is at most 
+\begin_inset Formula $7n$
 \end_inset
 
 .
- Our 
-\emph on
-potential
-\emph default
- 
-\begin_inset Formula $\Psi_{i}=d_{i}\left(a_{m}\right)+d_{i}\left(b_{l+1}\right)$
+\end_layout
+
+\begin_layout Proof
+Recall a critical property of splaying: if 
+\begin_inset Formula $T'$
 \end_inset
 
-, with 
-\begin_inset Formula $d_{i}\left(a_{m}\right)=0$
+ is the tree obtained by splaying 
+\begin_inset Formula $z$
 \end_inset
 
- if 
-\begin_inset Formula $m=0$
+ in 
+\begin_inset Formula $T$
 \end_inset
 
- and 
-\begin_inset Formula $d_{i}\left(b_{l+1}\right)=0$
+, and if 
+\begin_inset Formula $x\in T$
 \end_inset
 
- once every bin head has been splayed.
+ shares exactly 
+\begin_inset Formula $k$
+\end_inset
+
+ ancestors with node 
+\begin_inset Formula $z$
+\end_inset
+
+, then 
+\begin_inset Formula $d_{T'}\left(x\right)\le d_{T}\left(x\right)-k/2+2$
+\end_inset
+
+.
+ In particular, the depth of any node in 
+\begin_inset Formula $T$
+\end_inset
+
+ after a splay increases by at most 
+\begin_inset Formula $2$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+The two options at iteration 
+\begin_inset Formula $i+1$
+\end_inset
+
+ are to splay 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+ or 
+\begin_inset Formula $a_{m}$
+\end_inset
+
+.
+ Suppose that the depth of the node splayed is 
+\begin_inset Formula $k$
+\end_inset
+
+, so that the actual cost is 
+\begin_inset Formula $k$
+\end_inset
+
+.
+ We analyze casewise what happens to our potential.
+\end_layout
+
+\begin_layout Itemize
+Suppose we splay 
+\begin_inset Formula $b_{l+1}.$
+\end_inset
+
+ After splaying 
+\begin_inset Formula $\pi_{i+1}$
+\end_inset
+
+, 
+\begin_inset Formula $b_{l+1}$
+\end_inset
+
+ will become what was previous 
 \end_layout
 
 \begin_layout Standard
