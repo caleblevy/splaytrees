@@ -4561,45 +4561,33 @@ postorders are actually pretty easy sequences to insert into empty trees.
 
 \end_layout
 
-\begin_layout Subsection
-Setup and Structural Lemmas
-\end_layout
-
 \begin_layout Standard
-Let 
+In the following section, 
 \begin_inset Formula $C$
 \end_inset
 
- be a comb with bins 
+ is a comb with bins 
 \begin_inset Formula $B_{1}\dots B_{k}$
 \end_inset
 
- and let 
-\begin_inset Formula $\pi=\pi_{1}\dots\pi_{n}$
+ and 
+\begin_inset Formula $\pi_{1}\dots\pi_{n}$
 \end_inset
 
- be a sequence output by 
+ is a sequence of items output by 
 \begin_inset Formula $\textsc{MatchingPostorder}\left(C\right)$
 \end_inset
 
- and denote 
-\begin_inset Formula $\pi_{1}\dots\pi_{i}$
-\end_inset
-
- by 
-\begin_inset Formula $\pi_{\le i}$
-\end_inset
-
 .
- Let 
+ We define 
 \begin_inset Formula $T_{0}=C$
 \end_inset
 
- and let 
+ and 
 \begin_inset Formula $T_{i}$
 \end_inset
 
- be the tree obtained by splaying 
+ as the tree obtained by splaying 
 \begin_inset Formula $\pi_{i}$
 \end_inset
 
@@ -4608,32 +4596,40 @@ Let
 \end_inset
 
 .
- Let 
+ 
 \begin_inset Formula $d_{i}\left(x\right)$
 \end_inset
 
- be the depth of 
+ denotes the length of the path connecting 
+\begin_inset Formula $\root\left(T_{i}\right)$
+\end_inset
+
+ and 
 \begin_inset Formula $x$
 \end_inset
 
- in 
+.
+ Finally, 
+\begin_inset Formula $Q_{i}$
+\end_inset
+
+ is the smallest connected subtree of the root of 
 \begin_inset Formula $T_{i}$
 \end_inset
 
-, with the depth of the root defined as 
-\begin_inset Formula $1$
-\end_inset
-
-, and depth of 
-\begin_inset Formula $\nullnode$
-\end_inset
-
- as 
-\begin_inset Formula $0$
+ containing nodes 
+\begin_inset Formula $\pi_{i+1}\dots\pi_{n}$
 \end_inset
 
 .
- Finally, let 
+\end_layout
+
+\begin_layout Subsection
+Setup and Structural Lemmas
+\end_layout
+
+\begin_layout Standard
+Let 
 \begin_inset Formula $h_{1}\dots h_{m}$
 \end_inset
 
@@ -4648,8 +4644,24 @@ reference "thm:ONLYAlgMakesMatchingPostorders"
 
 \end_inset
 
- at iteration 
-\begin_inset Formula $i$
+ in 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+, and let 
+\begin_inset Formula $e_{j}$
+\end_inset
+
+ be the first ancestor of 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ on the left path of 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ for 
+\begin_inset Formula $1\le j\le m$
 \end_inset
 
 .
@@ -4859,20 +4871,11 @@ name "lem:ancestor-relations"
 
 \end_inset
 
-Let 
-\begin_inset Formula $e_{j}$
+ For for 
+\begin_inset Formula $1<j<m$
 \end_inset
 
- be the first ancestor of 
-\begin_inset Formula $a_{j}$
-\end_inset
-
- on the left path of 
-\begin_inset Formula $T_{i}$
-\end_inset
-
-.
- Then 
+, 
 \begin_inset Formula $e_{j}$
 \end_inset
 
@@ -4880,11 +4883,7 @@ Let
 \begin_inset Formula $e_{j+1}$
 \end_inset
 
- for 
-\begin_inset Formula $1<j<m$
-\end_inset
-
-.
+ 
 \end_layout
 
 \begin_layout Proof
@@ -5003,6 +5002,10 @@ Meanwhile,
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Lemma
+The nodes on the path 
 \end_layout
 
 \begin_layout Subsection
