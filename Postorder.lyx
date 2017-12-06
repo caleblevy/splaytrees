@@ -4562,7 +4562,7 @@ postorders are actually pretty easy sequences to insert into empty trees.
 \end_layout
 
 \begin_layout Standard
-In the following section, 
+In the remainder of the paper, 
 \begin_inset Formula $C$
 \end_inset
 
@@ -4570,7 +4570,7 @@ In the following section,
 \begin_inset Formula $B_{1}\dots B_{k}$
 \end_inset
 
- and 
+, and 
 \begin_inset Formula $\pi_{1}\dots\pi_{n}$
 \end_inset
 
@@ -4596,24 +4596,23 @@ In the following section,
 \end_inset
 
 .
- 
-\begin_inset Formula $d_{i}\left(x\right)$
-\end_inset
-
- denotes the length of the path connecting 
+ The number of nodes on the path connecting 
 \begin_inset Formula $\root\left(T_{i}\right)$
 \end_inset
 
- and 
+ to 
 \begin_inset Formula $x$
 \end_inset
 
-.
- Finally, 
+ is 
+\begin_inset Formula $d_{i}\left(x\right)$
+\end_inset
+
+, and 
 \begin_inset Formula $Q_{i}$
 \end_inset
 
- is the smallest connected subtree of the root of 
+ denotes the smallest connected subtree of the root of 
 \begin_inset Formula $T_{i}$
 \end_inset
 
@@ -4624,31 +4623,172 @@ In the following section,
 .
 \end_layout
 
-\begin_layout Subsection
-Setup and Structural Lemmas
+\begin_layout Standard
+The potential 
+\begin_inset Formula $\Phi_{i}=2\left|Q_{i}\right|$
+\end_inset
+
+.
+ The actual cost 
+\begin_inset Formula $t_{i}$
+\end_inset
+
+ of splaying 
+\begin_inset Formula $\pi_{i}$
+\end_inset
+
+ is 
+\begin_inset Formula $d_{i}\left(\pi_{i}\right)$
+\end_inset
+
+, and the amortized cost 
+\begin_inset Formula $\hat{c}_{i}=t_{i}+\Phi_{i}-\Phi_{i-1}$
+\end_inset
+
+.
+ 
 \end_layout
 
-\begin_layout Standard
-Let 
-\begin_inset Formula $h_{1}\dots h_{m}$
+\begin_layout Subsection
+Relevant Subtrees
+\end_layout
+
+\begin_layout Lemma
+For 
+\begin_inset Formula $0\le i<n$
+\end_inset
+
+, 
+\begin_inset Formula $Q_{i}\subseteq Q_{i+1}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+We induct on 
+\begin_inset Formula $i$
+\end_inset
+
+.
+ After splaying 
+\begin_inset Formula $\pi_{i+1}\in Q_{i}$
+\end_inset
+
+, the nodes of 
+\begin_inset Formula $Q_{i}$
+\end_inset
+
+ will still form a connected subtree of the root of 
+\begin_inset Formula $T_{i+1}$
+\end_inset
+
+ by similar arguments to those in 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "lem:InitialTrees"
+
+\end_inset
+
+.
+ For 
+\begin_inset Formula $A\subseteq B$
+\end_inset
+
+, the smallest connected subtree of 
+\begin_inset Formula $T$
+\end_inset
+
+ containing 
+\begin_inset Formula $A\cup\root\left(T\right)$
+\end_inset
+
+ will be a subtree of the one containing 
+\begin_inset Formula $B\cup\root\left(T\right)$
+\end_inset
+
+.
+ Letting 
+\begin_inset Formula $B=\pi_{i}\dots\pi_{n}$
 \end_inset
 
  and 
-\begin_inset Formula $a_{1}\dots a_{m}$
+\begin_inset Formula $A=\pi_{i+1}\dots\pi_{n}$
 \end_inset
 
- be as in Theorem 
+, it follows that 
+\begin_inset Formula $Q_{i+1}$
+\end_inset
+
+ is a subtree of 
+\begin_inset Formula $Q_{i}$
+\end_inset
+
+, and hence the nodes of 
+\begin_inset Formula $Q_{i+1}$
+\end_inset
+
+ are a subset of the nodes of 
+\begin_inset Formula $Q_{i}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Corollary
+Once a node leaves 
+\begin_inset Formula $Q_{i}$
+\end_inset
+
+ it never reenters 
+\begin_inset Formula $Q_{j}$
+\end_inset
+
+ for 
+\begin_inset Formula $j>i$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Similarly to 
 \begin_inset CommandInset ref
-LatexCommand ref
+LatexCommand formatted
 reference "thm:ONLYAlgMakesMatchingPostorders"
 
 \end_inset
 
- in 
-\begin_inset Formula $T_{i}$
+, define 
+\begin_inset Formula $m$
+\end_inset
+
+ to be the number of bins with items among both 
+\begin_inset Formula $\pi_{\le i}$
+\end_inset
+
+ and 
+\begin_inset Formula $\pi_{>i}$
 \end_inset
 
 , and let 
+\begin_inset Formula $1\le h_{1}<h_{2}<\cdots<h_{m}=m$
+\end_inset
+
+ be the indices of those bins.
+ Let 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ be the largest node in 
+\begin_inset Formula $B_{h_{j}}\cap\pi_{>i}$
+\end_inset
+
+ for 
+\begin_inset Formula $1\le j\le m$
+\end_inset
+
+ and let 
 \begin_inset Formula $e_{j}$
 \end_inset
 
@@ -4660,11 +4800,17 @@ reference "thm:ONLYAlgMakesMatchingPostorders"
 \begin_inset Formula $T_{i}$
 \end_inset
 
- for 
-\begin_inset Formula $1\le j\le m$
+.
+ Finally, let 
+\begin_inset Formula $p$
+\end_inset
+
+ be the index of the smallest bin whose elements reside entirely in 
+\begin_inset Formula $\pi_{>i}$
 \end_inset
 
 .
+ 
 \end_layout
 
 \begin_layout Lemma
@@ -4674,7 +4820,11 @@ name "lem:SplayLeftChain"
 
 \end_inset
 
-The subtree of 
+For 
+\begin_inset Formula $1\le j\le m$
+\end_inset
+
+, the subtree of 
 \begin_inset Formula $T_{i}$
 \end_inset
 
@@ -4714,12 +4864,8 @@ reference "thm:ONLYAlgMakesMatchingPostorders"
 \begin_inset Formula $b_{h_{j}-1}+1\dots a_{j}$
 \end_inset
 
- up to the splaying of 
+ as of splaying of 
 \begin_inset Formula $\pi_{i}$
-\end_inset
-
- for 
-\begin_inset Formula $1\le j\le m$
 \end_inset
 
 .
@@ -4748,7 +4894,212 @@ reference "lem:InitialTrees"
 \begin_inset Formula $\pi_{1}\dots\pi_{i}$
 \end_inset
 
-, and hence the structure of the chain is unaltered.
+, hence the structure of that part of the chain is unaltered.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:RightSubtreeNodes"
+
+\end_inset
+
+Nodes 
+\begin_inset Formula $q$
+\end_inset
+
+ for 
+\begin_inset Formula $b_{p-1}<q\le n$
+\end_inset
+
+ form a connected subtree rooted at 
+\begin_inset Formula $b_{p}$
+\end_inset
+
+ in 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Algorithm 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "MatchingPostorder"
+
+\end_inset
+
+ will not output nodes from any of 
+\begin_inset Formula $B_{p+1}\dots B_{k}$
+\end_inset
+
+ until 
+\begin_inset Formula $B_{p}$
+\end_inset
+
+ has been popped from the stack and 
+\begin_inset Formula $b_{p}$
+\end_inset
+
+ is output by Line 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "Pop2"
+
+\end_inset
+
+ of the 
+\series bold
+while
+\series default
+ loop.
+ Furthermore, nodes 
+\begin_inset Formula $b_{p-1}+1\dots b_{p}-1$
+\end_inset
+
+ will only be printed after the output 
+\begin_inset Formula $b_{p}$
+\end_inset
+
+, thus 
+\begin_inset Formula $b_{p}$
+\end_inset
+
+ is the first node 
+\begin_inset Formula $q$
+\end_inset
+
+ among 
+\begin_inset Formula $b_{p-1}<q\le n$
+\end_inset
+
+ to be splayed.
+\end_layout
+
+\begin_layout Proof
+Nodes 
+\begin_inset Formula $b_{p-1}+1\dots n$
+\end_inset
+
+ form a connected subtree rooted at 
+\begin_inset Formula $b_{p}$
+\end_inset
+
+ in 
+\begin_inset Formula $T_{0}$
+\end_inset
+
+, and none of them have been splayed as of output 
+\begin_inset Formula $i$
+\end_inset
+
+.
+ By 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "lem:InitialTrees"
+
+\end_inset
+
+ this subtree remains unaltered in 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Lemma
+The only nodes of 
+\begin_inset Formula $Q_{i}$
+\end_inset
+
+ among 
+\begin_inset Formula $\pi_{1}\dots\pi_{i}$
+\end_inset
+
+ are ancestors of 
+\begin_inset Formula $a_{1}\dots a_{m}$
+\end_inset
+
+ and 
+\begin_inset Formula $b_{p}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+By construction, the nodes 
+\begin_inset Formula $\pi_{i+1}\dots\pi_{n}$
+\end_inset
+
+ fall into 
+\begin_inset Formula $B_{h_{1}}\dots B_{h_{m}}$
+\end_inset
+
+ and 
+\begin_inset Formula $B_{p}\dots B_{k}$
+\end_inset
+
+.
+ By 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "lem:SplayLeftChain"
+
+\end_inset
+
+, all of nodes 
+\begin_inset Formula $B_{h_{j}}\cap\pi_{>i}$
+\end_inset
+
+ are descendents of 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ for 
+\begin_inset Formula $1\le j\le m$
+\end_inset
+
+, and by 
+\begin_inset CommandInset ref
+LatexCommand formatted
+reference "lem:RightSubtreeNodes"
+
+\end_inset
+
+, all nodes in 
+\begin_inset Formula $B_{p}\dots B_{k}$
+\end_inset
+
+ are descendents of 
+\begin_inset Formula $b_{p}$
+\end_inset
+
+.
+ The only additional nodes needed to make 
+\begin_inset Formula $Q_{i}$
+\end_inset
+
+ a connected subtree of the root of 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ are those connecting 
+\begin_inset Formula $a_{1}\dots a_{m}$
+\end_inset
+
+ and 
+\begin_inset Formula $b_{p}$
+\end_inset
+
+ to 
+\begin_inset Formula $\root\left(T_{i}\right)$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Lemma
@@ -4883,7 +5234,7 @@ name "lem:ancestor-relations"
 \begin_inset Formula $e_{j+1}$
 \end_inset
 
- 
+.
 \end_layout
 
 \begin_layout Proof
@@ -5005,11 +5356,50 @@ Meanwhile,
 \end_layout
 
 \begin_layout Lemma
-The nodes on the path 
+For 
+\begin_inset Formula $1\le j<l\le m$
+\end_inset
+
+, the nodes connecting 
+\begin_inset Formula $a_{j}$
+\end_inset
+
+ to 
+\begin_inset Formula $e_{j}$
+\end_inset
+
+ and 
+\begin_inset Formula $a_{l}$
+\end_inset
+
+ to 
+\begin_inset Formula $e_{l}$
+\end_inset
+
+ are disjoint.
+\end_layout
+
+\begin_layout Proof
+Bhal blah
 \end_layout
 
 \begin_layout Subsection
 Cost Analysis
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $d_{i}\left(x\right)$
+\end_inset
+
+ denotes the length of the path connecting 
+\begin_inset Formula $\root\left(T_{i}\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $x$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Remark
