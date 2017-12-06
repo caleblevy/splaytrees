@@ -4853,6 +4853,12 @@ The only mechanism by which splaying knocks a node
 \end_layout
 
 \begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:ancestor-relations"
+
+\end_inset
+
 Let 
 \begin_inset Formula $e_{j}$
 \end_inset
@@ -5009,11 +5015,16 @@ The following analysis is crude.
 \end_layout
 
 \begin_layout Standard
-At the end
-\emph on
- 
-\emph default
-of iteration 
+Let 
+\begin_inset Formula $u_{i}$
+\end_inset
+
+ be the largest node in the smallest bin whose head has been splayed with
+ nodes still on 
+\begin_inset Formula $S$
+\end_inset
+
+ at the end of iteration 
 \begin_inset Formula $i$
 \end_inset
 
@@ -5021,153 +5032,22 @@ of iteration
 \series bold
 while 
 \series default
-loop, define the following:
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $r_{i}$
+loop.
+ Let 
+\begin_inset Formula $v_{i}$
 \end_inset
 
- is the largest element in the smallest bin whose head has been splayed
- with items still on 
-\begin_inset Formula $S$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $t_{i}$
-\end_inset
-
- is the largest element in the largest bin whose head has been splayed with
- items still on 
-\begin_inset Formula $S$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $s_{i}$
-\end_inset
-
- is the largest node in the second largest bin whose head has been splayed
- with items still on 
-\begin_inset Formula $S$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $w_{i}$
-\end_inset
-
- is the smallest bin head which has not been splayed if 
+ be the smallest unsplayed bin head at that time if 
 \begin_inset Formula $B\ne\varnothing$
 \end_inset
 
 , and otherwise 
-\begin_inset Formula $w_{i}=\nullnode$
+\begin_inset Formula $v_{i}=\nullnode$
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Standard
-Less formally 
-\begin_inset Formula $r_{i}$
-\end_inset
-
-, 
-\begin_inset Formula $s_{i}$
-\end_inset
-
-, 
-\begin_inset Formula $t_{i}$
-\end_inset
-
- and 
-\begin_inset Formula $w_{i}$
-\end_inset
-
- correspond to 
-\begin_inset Formula $a_{1}$
-\end_inset
-
-, 
-\begin_inset Formula $a_{m-1}$
-\end_inset
-
-, 
-\begin_inset Formula $a_{m}$
-\end_inset
-
- and 
-\begin_inset Formula $b_{l+1}$
-\end_inset
-
- in the proofs above.
- If 
-\begin_inset Formula $m=1$
-\end_inset
-
- then 
-\begin_inset Formula $r_{i}=s_{i}=t_{i}$
-\end_inset
-
-, and if 
-\begin_inset Formula $m=2$
-\end_inset
-
- then 
-\begin_inset Formula $r_{i}=s_{i}$
-\end_inset
-
-.
- We refer to 
-\begin_inset Formula $r_{i}$
-\end_inset
-
-, 
-\begin_inset Formula $s_{i}$
-\end_inset
-
-, 
-\begin_inset Formula $t_{i}$
-\end_inset
-
- and 
-\begin_inset Formula $w_{i}$
-\end_inset
-
- as the 
-\emph on
-active nodes
-\emph default
- at the beginning of iteration 
-\begin_inset Formula $i+1$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-Our potential after splaying 
-\begin_inset Formula $\pi_{i}$
-\end_inset
-
- is 
-\begin_inset Formula $\Psi_{i}=d_{i}\left(r_{i}\right)+d_{i}\left(s_{i}\right)+2\cdot d_{i}\left(t_{i}\right)+d_{i}\left(w_{i}\right)$
-\end_inset
-
-, that is 
-\begin_inset Formula $\Psi_{i}$
-\end_inset
-
- is (basically) the sum of depths of the active nodes at time 
-\begin_inset Formula $i$
+ We define 
+\begin_inset Formula $\Psi_{i}=2d_{i}\left(u_{i}\right)+d_{i}\left(v_{i}\right)$
 \end_inset
 
 .
@@ -5194,11 +5074,6 @@ Our potential after splaying
 
  remains positive throughout the execution, hence the amortized cost upper
  bounds the true cost.
- Also observe 
-\begin_inset Formula $\Psi\le5n$
-\end_inset
-
-.
  
 \end_layout
 
@@ -5272,11 +5147,11 @@ The two options at iteration
 \end_inset
 
  are to splay 
-\begin_inset Formula $t_{i}$
+\begin_inset Formula $u_{i}$
 \end_inset
 
- or 
-\begin_inset Formula $w_{i}$
+ and 
+\begin_inset Formula $v_{i}$
 \end_inset
 
 .
@@ -5293,109 +5168,121 @@ The two options at iteration
 \end_layout
 
 \begin_layout Itemize
-Suppose we splay 
-\begin_inset Formula $w_{i}$
+Consider the case where we splay
+\begin_inset Formula $v_{i}$
 \end_inset
 
 .
  Then 
-\begin_inset Formula $d\left(r_{i+1}\right)\le d\left(r_{i}\right)+2$
+\begin_inset Formula $v_{i+1}=\rightnode\left(v_{i}\right)$
 \end_inset
 
-, 
-\begin_inset Formula $d\left(s_{i+1}\right)\le d\left(s_{i}\right)+2$
+, and 
+\begin_inset Formula $d_{i+1}\left(v_{i+1}\right)=2$
+\end_inset
+
+, otherwise 
+\begin_inset Formula $d_{i+1}\left(v_{i+1}\right)=0$
+\end_inset
+
+.
+ Furthermore, 
+\begin_inset Formula $u_{i+1}=u_{i}$
 \end_inset
 
  and 
-\begin_inset Formula $d\left(t_{i+1}\right)\le d\left(t_{i}\right)+2$
+\begin_inset Formula $d_{i+1}\left(u_{i+1}\right)\le d_{i}\left(u_{i}\right)+2$
 \end_inset
 
 .
- If 
-\begin_inset Formula $w_{i}$
+ Hence 
+\begin_inset Formula $\Delta\Psi_{i+1}\le6-k$
 \end_inset
 
- has a right child then 
-\begin_inset Formula $d\left(w_{i+1}\right)=2$
-\end_inset
-
-, and otherwise 
-\begin_inset Formula $d\left(w_{i+1}\right)=0$
-\end_inset
-
-.
- As 
-\begin_inset Formula $d\left(w_{i}\right)=k$
-\end_inset
-
-, we have 
-\begin_inset Formula $\Delta\Psi_{i+1}\le10-k$
-\end_inset
-
-, and the amortized cost is at most 
-\begin_inset Formula $10$
+, and 
+\begin_inset Formula $c_{i}=4$
 \end_inset
 
 .
 \end_layout
 
 \begin_layout Itemize
-Suppose we splay 
-\begin_inset Formula $t_{i}$
-\end_inset
-
-.
- Then 
-\begin_inset Formula $d\left(r_{i+1}\right)\le d\left(r_{i}\right)+2$
-\end_inset
-
- and 
-\begin_inset Formula $d\left(w_{i+1}\right)\le d\left(w_{i}\right)+2$
-\end_inset
-
-.
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-If 
-\begin_inset Formula $t_{i+1}$
-\end_inset
-
- is the left child of 
-\begin_inset Formula $t_{i}$
-\end_inset
-
- then 
-\begin_inset Formula $d\left(t_{i+1}\right)\le k/2+2$
-\end_inset
-
- and 
-\begin_inset Formula $d\left(s_{i+1}\right)\le d\left(s_{i}\right)+2$
+Otherwise we splay 
+\begin_inset Formula $u_{i}$
 \end_inset
 
 .
  In this case 
-\begin_inset Formula $\Delta\Psi_{i}\le10-k$
+\begin_inset Formula $v_{i+1}=v_{i}$
+\end_inset
+
+, hence 
+\begin_inset Formula $d_{i+1}\left(v_{i+1}\right)\le d_{i}\left(v_{i}\right)$
 \end_inset
 
 .
-\begin_inset Newline newline
+ If 
+\begin_inset Formula $u_{i+1}=\rightnode\left(u_{i}\right)$
 \end_inset
 
-
-\begin_inset Newline newline
+ in 
+\begin_inset Formula $T_{i}$
 \end_inset
 
-Otherwise, whenever 
-\begin_inset Formula $t_{i+1}=s_{i}$
+ then 
+\begin_inset Formula $d_{i+1}\left(u_{i+1}\right)\le d_{i}\left(u_{i}\right)/2+2=k/2+2$
 \end_inset
 
-, 
-\begin_inset Formula $d\left(\right)$
+ , and 
+\begin_inset Formula $\Delta\Psi_{i}\le6-k$
+\end_inset
+
+, giving an amortized cost of 
+\begin_inset Formula $6$
+\end_inset
+
+.
+ Otherwise 
+\begin_inset Formula $u_{i+1}$
+\end_inset
+
+ moves to the largest node on 
+\begin_inset Formula $S$
+\end_inset
+
+ of the next-most recently accessed bin with nodes on 
+\begin_inset Formula $S$
+\end_inset
+
+.
+ The depth 
+\begin_inset Formula $d_{i+1}\left(u_{i+1}\right)$
+\end_inset
+
+ is in three parts.
+ Let 
+\begin_inset Formula $p$
+\end_inset
+
+ and 
+\begin_inset Formula $q$
+\end_inset
+
+ be the first ancestors of 
+\begin_inset Formula $u_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $u_{i+1}$
+\end_inset
+
+ on the left path of 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+.
+ Then 
+\begin_inset Formula $d_{i}\left(u_{i+1}\right)$
 \end_inset
 
 
