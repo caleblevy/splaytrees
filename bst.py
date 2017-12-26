@@ -290,7 +290,7 @@ class Node(object):
                         (y is z.right and x is y.left)):
                     yield y
             x = y
-            y = x.parent
+            y = z
 
     @maker(tuple)
     def inside_nodes(x):
