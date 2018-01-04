@@ -86,24 +86,38 @@ Inserting in Postorder by Splaying Takes Linear Time
 \end_layout
 
 \begin_layout Author
-Caleb Levy
+Caleb Levy and Robert Tarjan
 \end_layout
 
 \begin_layout Abstract
-A 
+We develop a new potential function for insertion in self-adjusting binary
+ search trees which counts the number of 
 \emph on
-splay insertion 
+active nodes
 \emph default
-adds a node as a leaf into the tree, and then splays it to the top.
- We show that splay-inserting a postorder sequence of length 
-\begin_inset Formula $n$
-\end_inset
+:
+\emph on
+ 
+\emph default
+those which have already been inserted, but remain on paths from uninserted
+ nodes to the root.
+ We use this to simplify the proof given by Chaudhury and Hoft that splaying
+ a search tree in preorder takes linear time 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Chaudhuri1991a"
 
- has cost at most 
-\begin_inset Formula $14n$
 \end_inset
 
 .
+ Additionally, we prove a new result: that insertion of nodes into an empty
+ tree by splaying takes linear time.
+ We believe these techniques can be applied to showing linear time bounds
+ for building trees from more general pattern-avoiding sequences.
+\end_layout
+
+\begin_layout Section
+Pattern Avoidance, Dynamic Optimality
 \end_layout
 
 \begin_layout Section
