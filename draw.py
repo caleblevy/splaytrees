@@ -2,7 +2,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.collections import CircleCollection, LineCollection
+from matplotlib.collections import PatchCollection, LineCollection
 
 from bst import *
 
@@ -35,10 +35,25 @@ def _plot_points(x):
 
 def plot_subtree(x):
     keys, locs, edges = _plot_points(x)
+    n = len(keys)
     fig = plt.figure()
     ax = fig.gca()
-    edgeCol = LineCollection(edges)
+    # Add Edges
+    edgeCol = LineCollection(
+        edges,
+        color=(0,0,0),
+        linewidth=.5,
+        zorder=1)
     ax.add_collection(edgeCol)
+    # Add Points
+    vertsCol = PatchCollection(
+        [plt.Circle(p, 0.25) for p in locs],
+        facecolors="white",
+        edgecolors="black",
+        linewidths=0.5,
+        zorder=2)
+    ax.add_collection(vertsCol)
+    # Setup
     ax.autoscale_view()
     plt.show()
 
