@@ -7,6 +7,17 @@ from matplotlib.collections import PatchCollection, LineCollection
 from bst import *
 
 
+def cbst(k):
+    """Complete binary search tree of size 2^k-1."""
+    n = 2**k - 1
+    t = Tree(range(n, 0, -1))
+    i = 1
+    while i < n:
+        t.splay(i)
+        i *= 2
+    return t
+
+
 def _plot_info(x):
     """Return rudiments necessary to make acceptable plot."""
     # k[i] = key of ith largest node
@@ -68,3 +79,6 @@ if __name__ == '__main__':
 
     keys, locs, edges = _plot_points(t.root)
     plot_subtree(t.root)
+
+    t2 = cbst(5)
+    plot_subtree(t2.root)
