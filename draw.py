@@ -44,9 +44,13 @@ def _plot_points(x):
     return keys, locations, edges
 
 
-def plot_subtree(x):
+def plot_subtree(x, labels=True):
     keys, locs, edges = _plot_points(x)
     n = len(keys)
+    # y_min = np.min(locs[:, 1]) - 2
+    # y_max = np.max(locs[:, 1]) + 2
+    # x_min = np.min(locs[:, 0]) - 2
+    # x_max = np.max(locs[:, 0]) + 2
     fig = plt.figure()
     ax = fig.gca()
     # Add Edges
@@ -64,8 +68,22 @@ def plot_subtree(x):
         linewidths=0.5,
         zorder=2)
     ax.add_collection(vertsCol)
+    # Add text
+    if labels:
+        for p, k in zip(locs, keys):
+            x, y = p
+            plt.text(
+                x, y,
+                str(k),
+                horizontalalignment='center',
+                verticalalignment='center')
     # Setup
+    plt.axis('off')
+    fig.patch.set_visible("false")
+    ax.patch.set_visible("false")
+    plt.axis("equal")
     ax.autoscale_view()
+    plt.savefig("myplot.png")
     plt.show()
 
 
