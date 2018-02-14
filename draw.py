@@ -44,14 +44,22 @@ def _plot_points(x):
     return keys, locations, edges
 
 
+def cm2inch(*tupl):
+    inch = 2.54
+    if isinstance(tupl[0], tuple):
+        return tuple(i/inch for i in tupl[0])
+    else:
+        return tuple(i/inch for i in tupl)
+
+
 def plot_subtree(x, labels=True):
     keys, locs, edges = _plot_points(x)
     n = len(keys)
-    # y_min = np.min(locs[:, 1]) - 2
-    # y_max = np.max(locs[:, 1]) + 2
-    # x_min = np.min(locs[:, 0]) - 2
-    # x_max = np.max(locs[:, 0]) + 2
-    fig = plt.figure()
+    y_min = np.min(locs[:, 1]) - 2
+    y_max = np.max(locs[:, 1]) + 2
+    x_min = np.min(locs[:, 0]) - 2
+    x_max = np.max(locs[:, 0]) + 2
+    fig = plt.figure(figsize=(x_max-x_min, y_max-y_min))
     ax = fig.gca()
     # Add Edges
     edgeCol = LineCollection(
@@ -79,11 +87,9 @@ def plot_subtree(x, labels=True):
                 verticalalignment='center')
     # Setup
     plt.axis('off')
-    fig.patch.set_visible("false")
-    ax.patch.set_visible("false")
-    plt.axis("equal")
     ax.autoscale_view()
-    plt.savefig("myplot.png")
+    ax.set_aspect(1)
+    plt.savefig("myplot.pdf", dpi=100)
     plt.show()
 
 
@@ -98,5 +104,5 @@ if __name__ == '__main__':
     keys, locs, edges = _plot_points(t.root)
     plot_subtree(t.root)
 
-    t2 = cbst(5)
+    t2 = cbst(7)
     plot_subtree(t2.root)
