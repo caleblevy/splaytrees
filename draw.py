@@ -36,6 +36,7 @@ def _plot_points(x):
     n = len(keys)
     d = 1 - np.array(d)
     locations = np.array(zip(range(n), d))
+    locations = locations/np.sqrt(2)
     bottom_inds = [i for i in range(n) if i != p[i]]
     top_inds = map(p.__getitem__, bottom_inds)
     u = np.array(map(locations.__getitem__, bottom_inds)).reshape(-1, 1, 2)
@@ -44,22 +45,13 @@ def _plot_points(x):
     return keys, locations, edges
 
 
-def cm2inch(*tupl):
-    inch = 2.54
-    if isinstance(tupl[0], tuple):
-        return tuple(i/inch for i in tupl[0])
-    else:
-        return tuple(i/inch for i in tupl)
-
-
-def plot_subtree(x, labels=True):
+def plot_subtree(x, fname="myplot.pdf", labels=True, show=False):
     keys, locs, edges = _plot_points(x)
-    n = len(keys)
-    y_min = np.min(locs[:, 1]) - 2
-    y_max = np.max(locs[:, 1]) + 2
-    x_min = np.min(locs[:, 0]) - 2
-    x_max = np.max(locs[:, 0]) + 2
-    fig = plt.figure(figsize=(x_max-x_min, y_max-y_min))
+    y_min = np.min(locs[:, 1])
+    y_max = np.max(locs[:, 1])
+    x_min = np.min(locs[:, 0])
+    x_max = np.max(locs[:, 0])
+    fig = plt.figure(figsize=(1.1*(x_max-x_min), 1.1*(y_max-y_min)))  # Figsize needed to ensure text isn't scrunched up
     ax = fig.gca()
     # Add Edges
     edgeCol = LineCollection(
@@ -88,9 +80,10 @@ def plot_subtree(x, labels=True):
     # Setup
     plt.axis('off')
     ax.autoscale_view()
-    ax.set_aspect(1)
-    plt.savefig("myplot.pdf", dpi=100)
-    plt.show()
+    ax.set_aspect(1)  # Needed to ensure circles are circular
+    plt.savefig(fname, dpi=100, bbox_inches="tight")
+    if show:
+        plt.show()
 
 
 if __name__ == '__main__':
@@ -102,7 +95,8 @@ if __name__ == '__main__':
     assert p == (1, 5, 1, 4, 2, 7, 5, 7, 10, 8, 7, 12, 10), p
 
     keys, locs, edges = _plot_points(t.root)
-    plot_subtree(t.root)
+    plot_subtree(t.root, "tree_sample.pdf")
 
     t2 = cbst(7)
-    plot_subtree(t2.root)
+    plot_subtree(t2.root, "complete_7.pdf")
+    plot_subtree(cbst(5).root, "complete_5.pdf")
