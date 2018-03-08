@@ -3,6 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.collections import PatchCollection, LineCollection
+from matplotlib.backends.backend_pdf import PdfPages
 
 from bst import *
 
@@ -35,12 +36,12 @@ def _plot_points(x):
     keys, d, p = _plot_info(x)
     n = len(keys)
     d = 1 - np.array(d)
-    locations = np.array(zip(range(n), d))
+    locations = np.array(list(zip(range(n), d)))
     locations = locations/np.sqrt(2)
     bottom_inds = [i for i in range(n) if i != p[i]]
     top_inds = map(p.__getitem__, bottom_inds)
-    u = np.array(map(locations.__getitem__, bottom_inds)).reshape(-1, 1, 2)
-    v = np.array(map(locations.__getitem__, top_inds)).reshape(-1, 1, 2)
+    u = np.array(list(map(locations.__getitem__, bottom_inds))).reshape(-1, 1, 2)
+    v = np.array(list(map(locations.__getitem__, top_inds))).reshape(-1, 1, 2)
     edges = np.hstack([u, v])
     return keys, locations, edges
 
@@ -100,3 +101,9 @@ if __name__ == '__main__':
     t2 = cbst(7)
     plot_subtree(t2.root, "complete_7.pdf")
     plot_subtree(cbst(5).root, "complete_5.pdf")
+    t_samp = Tree()
+    for i in "aihjgfclkendbpmo":
+        t_samp.move_to_root(i)
+    plot_subtree(t_samp.root, "wilber_sample.pdf")
+    t_post = Tree(t_samp.postorder())
+    plot_subtree(t_post.root, "postorder.pdf")
