@@ -18,12 +18,12 @@ def compare_costs(s):
     """Print all costs for s in a pretty fashion."""
     print("Move-to-Root:")
     print("  Crossing:", mr_crossing_cost(s))
-    print("  Inside:", mr_inside_cost(s))
-    print("  Critical:", mr_critical_cost(s))
+    # print("  Inside:", mr_inside_cost(s))
+    # print("  Critical:", mr_critical_cost(s))
     print("Splay:")
     print("  Crossing:", splay_crossing_cost(s))
-    print("  Inside:", splay_inside_cost(s))
-    print("  Critical:", splay_critical_cost(s))
+    # print("  Inside:", splay_inside_cost(s))
+    # print("  Critical:", splay_critical_cost(s))
     print("  Total:", splay_cost(s))
 
 
@@ -38,13 +38,13 @@ def compare_executions(s):
 def compare_paths(x, y, prefix=""):
     indent = " "*len(prefix)
     print(prefix, "k =", x.key)
-    print(indent, "c =", keys(x.crossing_sorted()))
-    print(indent, "  =", keys(y.crossing_sorted()))
-    print(indent, "b =", keys(x.inside_sorted()))
-    print(indent, "  =", keys(y.inside_sorted()))
-    print(indent, "a =", keys(x.critical_sorted()))
-    print(indent, "  =", keys(y.critical_sorted()), '\n')
-    print(indent, "p =", list(sorted(keys(y.path()))))
+    # print(indent, "c =", keys(x.crossing_sorted()))
+    # print(indent, "  =", keys(y.crossing_sorted()))
+    # print(indent, "b =", keys(x.inside_sorted()))
+    # print(indent, "  =", keys(y.inside_sorted()))
+    # print(indent, "a =", keys(x.critical_sorted()))
+    # print(indent, "  =", keys(y.critical_sorted()), '\n')
+    # print(indent, "p =", list(sorted(keys(y.path()))))
     print()
 
 
@@ -71,8 +71,19 @@ def break_wilber(k, e):
     compare_costs(s)
 
 
+from random import shuffle
+
+
+
+def randperm_compare(n):
+    t = list(range(n))
+    shuffle(t)
+    s = t[:]
+    shuffle(s)
+    
+
 if __name__ == '__main__':
-    break_wilber(15, 1000)
+    break_wilber(8, 1000)
     from random import randint, shuffle
     # def randseq(k, n):
     #     return [random.randint(1, k) for _ in range(n)]

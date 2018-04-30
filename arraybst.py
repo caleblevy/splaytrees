@@ -225,6 +225,13 @@ class TestArrayTree(unittest.TestCase):
         self.assertEqual("c", T[rrr])
         T._rotate(T._find("b"))
         self.assertEqual(ArrayTree("bca")._arr, T._arr)
+        T.insert("d")
+        T.insert("ba")
+        q = T.preorder()
+        T._rotate(T._find("c"))
+        self.assertEqual(("c", "b", "a", "ba", "d"), T.preorder())
+        T._rotate(T._find("b"))
+        self.assertEqual(q, T.preorder())
 
     def test_walks(self):
         """Test pre, post, in-order, encoding and walk"""
@@ -235,6 +242,12 @@ class TestArrayTree(unittest.TestCase):
         self.assertEqual(tuple("abc"), T.inorder())
         self.assertEqual(tuple("bac"), T.preorder())
         self.assertEqual(tuple("acb"), T.postorder())
+        self.assertEqual(T.encoding(), R.encoding())
+        self.assertEqual(T.walk(), R.walk())
+        self.assertEqual(T.inorder(), R.inorder())
+        self.assertEqual(T.preorder(), R.preorder())
+        self.assertEqual(T.postorder(), R.postorder())
+        self.assertNotEqual(T._arr, R._arr)
 
 
 if __name__ == '__main__':
