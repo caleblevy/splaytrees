@@ -47,11 +47,14 @@ class ArrayTree(object):
     def __setitem__(T, ind, v):
         T._arr[ind] = v
 
+    def __len__(T):
+        return len(T._arr)
+
     def _find(T, key):
         """Return index of key, if found."""
         x = T[root]
         if x == null:
-            return null
+            return root
         while x != null:
             y = x
             if key < T[x]:
@@ -60,54 +63,64 @@ class ArrayTree(object):
                 x = T[x + right]
             else:
                 break
-        if key > T[y]:
-            return y + right
-        elif key < T[y]:
-            return y + left
-        else:
-            return y
+        return y
 
     def find(T, key):
         """See if key is in T."""
-        return _iskey(T._find(key))
+        return key == T[T._find(key)]
 
     def insert(T, key):
         """Insert key into T."""
-        ind = T._find(key)
-        if _iskey(ind):
+        x = T._find(key)
+        if x != root and key == T[x]:
             return
-        node = [key, 0, 0, 0]
-        T[ind] = len(T._arr)
-        if ind != 0:
-            direction = (ind - 1) % 4
-            p = ind - direction
-            node[1] = p
-        T._arr.extend(node)
+        if x == root:
+            T[x] = len(T)
+        elif key < T[x]:
+            T[x + left] = len(T)
+        else:
+            T[x + right] = len(T)
+        T._arr.extend([key, x, 0, 0])
 
-    def _rotate(T, ind):
-        x = ind
-        y = T[ind + parent]
-        assert y != 0  # Do not rotate root
+    def _rotate(T, x):
+        y = T[x + parent]
+        assert y != root  # Do not rotate root
         if x is T[y + right]:
             x, y = y, x
         if x is T[y + left]:
             # Shift around subtree
             w = T[x + right]
             T[y + left] = w
-            if w != 0:
+            if w != null:
                 T[w + parent] = y
             # Switch up parent pointers
             z = T[y + parent]
             T[x + parent] = z
-            # y is the root
-            if z != 0:
-                if y is T[z + right]:
-                    T[z + right] = x
-                else:
-                    T[z + left] = x
+            if y == T[z + right]:
+                T[z + right] = x
+            elif y == T[z + left]:
+                T[z + left] = x
             else:
-                T[0] = x
-            
+                T[root] = x  # y was root
+            T[x + right] = y
+            T[y + parent] = x
+        else:  # y is x.right
+            # Shift around subtree
+            w = T[y + left]
+            T[x + right] = w
+            if w != null:
+                T[w + parent] = x
+            #switch up paret
+            z = T[x + parent]
+            T[y + parent] = z
+            if x == T[z + right]:
+                T[z + right] = y
+            elif x == T[z + left]:
+                T[z + left] = y
+            else:
+                T[root] = y
+            T[y + left] = x
+            T[x + parent] = y
 
 
 class TestArrayTree(unittest.TestCase):
@@ -115,12 +128,12 @@ class TestArrayTree(unittest.TestCase):
     def test_private_find(self):
         """Test index math"""
         T = ArrayTree("bca")
-        self.assertEqual(11, T._find(" "))
-        self.assertEqual(12, T._find("a "))
+        self.assertEqual(9, T._find(" "))
+        self.assertEqual(9, T._find("a "))
         self.assertEqual(9, T._find("a"))
         self.assertEqual(1, T._find("b"))
-        self.assertEqual(7, T._find("ba"))
-        self.assertEqual(8, T._find("ca"))
+        self.assertEqual(5, T._find("ba"))
+        self.assertEqual(5, T._find("ca"))
         self.assertEqual(5, T._find("c"))
         self.assertTrue(T.find("a"))
         self.assertTrue(T.find("b"))
@@ -136,11 +149,24 @@ class TestArrayTree(unittest.TestCase):
         self.assertEqual(13, T._find("a "))
         T.insert(" ")
         self.assertEqual(17, T._find(" "))
-        self.assertEqual(20, T._find(" a"))
+        self.assertEqual(17, T._find(" a"))
         T2 = ArrayTree()
         T2.insert(4)
         self.assertFalse(ArrayTree().find(7))
         self.assertEqual([1, 4, 0, 0, 0], T2._arr)
+
+    def test_rotate(self):
+        """Test rotation."""
+        T = ArrayTree("bca")
+        T._rotate(T._find("a"))
+        r = T[0]
+        rr = T[r + right]
+        rrr = T[rr + right]
+        self.assertEqual("a", T[r])
+        self.assertEqual("b", T[rr])
+        self.assertEqual("c", T[rrr])
+        T._rotate(T._find("b"))
+        self.assertEqual(ArrayTree("bca")._arr, T._arr)
 
 
 if __name__ == '__main__':
