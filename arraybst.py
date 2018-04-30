@@ -28,7 +28,7 @@ right = 3
 class ArrayTree(object):
     """Tree stored with each "node" is contiguous "key, parent, left, right"
     eg.
-        [None, "b", 0, 9, 5, "c", 1, 0, 0, "a", 1, 0, 0]
+        [1, "b", 0, 9, 5, "c", 1, 0, 0, "a", 1, 0, 0]
     is equivalent to
         b
        / \
@@ -122,6 +122,64 @@ class ArrayTree(object):
             T[y + left] = x
             T[x + parent] = y
 
+    def _walk(T, order=None):
+        """Do all three edge traversals at once."""
+        x = T[root]
+        if x == null:
+            return
+        l = r = False  # l is true if all node's in x.left are visited
+        while True:
+            if order is None:
+                yield T[x]
+            if not l:
+                if order == -1:
+                    yield T[x]
+                y = T[x + left]
+                if y == null:
+                    l = True
+                else:
+                    if order == "":
+                        yield "l"
+                    x = y
+            elif not r:
+                if order == 0:
+                    yield T[x]
+                y = T[x + right]
+                if y == null:
+                    r = True
+                else:
+                    if order == "":
+                        yield "r"
+                    x = y
+                    l = False
+            else:
+                if order == 1:
+                    yield T[x]
+                y = T[x + parent]
+                if y == root:
+                    return
+                elif x == T[y + left]:
+                    r = False
+                if order == "":
+                    yield "p"
+                x = y
+
+    def walk(T):
+        return tuple(T._walk())
+
+    def encoding(T):
+        """Encode cursor movements traversing the subtree rooted at x."""
+        return "".join(T._walk(""))
+
+    def preorder(T):
+        return tuple(T._walk(-1))
+
+    def inorder(T):
+        return tuple(T._walk(0))
+
+    def postorder(T):
+        return tuple(T._walk(1))
+
 
 class TestArrayTree(unittest.TestCase):
 
@@ -167,6 +225,16 @@ class TestArrayTree(unittest.TestCase):
         self.assertEqual("c", T[rrr])
         T._rotate(T._find("b"))
         self.assertEqual(ArrayTree("bca")._arr, T._arr)
+
+    def test_walks(self):
+        """Test pre, post, in-order, encoding and walk"""
+        T = ArrayTree("bca")
+        R = ArrayTree("bac")
+        self.assertEqual("lprp", T.encoding())
+        self.assertEqual(tuple("baaabcccb"), T.walk())
+        self.assertEqual(tuple("abc"), T.inorder())
+        self.assertEqual(tuple("bac"), T.preorder())
+        self.assertEqual(tuple("acb"), T.postorder())
 
 
 if __name__ == '__main__':
