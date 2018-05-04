@@ -82,7 +82,19 @@ class ArrayTree(object):
             T[x + right] = len(T)
         T._arr.extend([key, x, 0, 0])
 
+    def _swap(T, x, z):
+        """Swap position of two nodes in array, with no 'visible' effect."""
+        assert _iskey(x) and _iskey(z)
+        if T[x + parent] == z:
+            x, z = y, z
+        w = T[x + parent]
+        w_child = root if w == root else w + left if x == T[w + left] else w + right
+        y = z if x == T[z + parent] else T[z + parent]
+        y_child = root if y == root else y + left if z == T[z + parent + left] else y + right
+        print(y_child, w_child)
+
     def _rotate(T, x):
+        assert _iskey(x)
         y = T[x + parent]
         assert y != root  # Do not rotate root
         if x is T[y + right]:
@@ -248,6 +260,22 @@ class TestArrayTree(unittest.TestCase):
         self.assertEqual(T.preorder(), R.preorder())
         self.assertEqual(T.postorder(), R.postorder())
         self.assertNotEqual(T._arr, R._arr)
+        K = ArrayTree([4, 2, 3, 6, 1, 7, 5])
+        L = ArrayTree([4, 3, 2, 1, 6, 5, 7])
+        L._rotate(L._find(2))
+        M = ArrayTree("dbacfeg")
+        self.assertEqual(tuple(range(1, 8)), K.inorder())
+        self.assertEqual(K.inorder(), L.inorder())
+        self.assertEqual((4, 2, 1, 3, 6, 5, 7), K.preorder())
+        self.assertEqual(K.preorder(), L.preorder())
+        self.assertEqual(K.encoding(), M.encoding())
+
+    def test_swap(self):
+        """Test internal swapping of array elements."""
+        T = ArrayTree("dbacfeg")
+        K = ArrayTree([4, 2, 3, 6, 1, 7, 5])
+        print(T._arr)
+        T._swap(1, 5)
 
 
 if __name__ == '__main__':
