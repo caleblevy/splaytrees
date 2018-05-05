@@ -52,9 +52,7 @@ class ArrayTree(object):
 
     def _find(T, key):
         """Return index of key, if found."""
-        x = T[root]
-        if x == null:
-            return root
+        x = y = T[root]
         while x != null:
             y = x
             if key < T[x]:
