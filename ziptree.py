@@ -151,6 +151,44 @@ class ZipTree(object):
                 else:
                     break
 
+    def _insert_td(T, x, rank=None):
+        key = x.key
+        if rank is not None:
+            x.rank = rank
+        else:
+            rank = x.rank
+        prev = None
+        cur = T.root
+        while cur is not None and (
+                rank < cur.rank or (rank == cur.rank and key > cur.key)):
+            prev = cur
+            cur = cur.left if key < cur.key else cur.right
+        if prev is None:
+            T.root = x
+        elif key < prev.key:
+            prev.left = x
+        else:
+            prev.right = x
+        l = r = header = Node(None)
+        while cur is not None:
+            t = cur
+            if key < cur.key:
+                while cur is not None and key < cur.key:
+                    prev = cur
+                    cur = cur.left
+                r.left = t
+                r = prev
+            else:
+                while cur is not None and key > cur.key:
+                    prev = cur
+                    cur = cur.right
+                l.right = t
+                l = prev
+        l.right = x.left
+        r.left = x.right
+        x.left = header.right
+        x.right = header.left
+
 
 class TestZipTree(unittest.TestCase):
 
@@ -166,7 +204,7 @@ class TestZipTree(unittest.TestCase):
         T.insert_zip("ab")
         self.assertFalse(T.search("abb"))
 
-    def test_insert_rank(self):
+    def test_insert_zip_rank(self):
         """Test Zip Tree insert."""
         T = ZipTree()
         for i in range(1, 5):
@@ -199,12 +237,36 @@ class TestZipTree(unittest.TestCase):
             T1._insert_zip_with_rank(k, r)
         for k, _ in lst[70:]:
             T1.delete_zip(k)
-        print(T1._preorder())
         T2 = ZipTree()
         for k, r in lst[:70]:
             T2._insert_zip_with_rank(k, r)
         self.assertEqual(T1._preorder(), T2._preorder())
 
+    def test_insert_td_rank(self):
+        """Check insert rank against blah."""
+        lst = [(i, geometricvariate()) for i in range(100)]
+        shuffle(lst)
+        T1 = ZipTree()
+        for k, r in lst:
+            T1._insert_zip_with_rank(k, r)
+        T2 = ZipTree()
+        for k, r in lst:
+            x = Node(k)
+            T2._insert_td(x, r)
+        # print(T2._preorder())
+
+
+T = ZipTree()
+T._insert_zip_with_rank(1, 1)
+T._insert_zip_with_rank(2, 2)
+T._insert_zip_with_rank(3, 1)
+print(T._preorder())
+# print(T._preorder())
+T._insert_td(Node(1.5), 3)
+print(T._preorder())
+print(T.root.left.key)
+print(T.root.right.key)
+print(T.root.right.left)
 
 if __name__ == '__main__':
     unittest.main()
