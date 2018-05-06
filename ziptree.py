@@ -169,7 +169,7 @@ class ZipTree(object):
             prev.left = x
         else:
             prev.right = x
-        l = r = header = Node(None)
+        l = r = x
         while cur is not None:
             t = cur
             if key < cur.key:
@@ -184,10 +184,8 @@ class ZipTree(object):
                     cur = cur.right
                 l.right = t
                 l = prev
-        l.right = x.left
-        r.left = x.right
-        x.left = header.right
-        x.right = header.left
+        l.right = r.left = None
+        x.left, x.right = x.right, x.left
 
 
 class TestZipTree(unittest.TestCase):
@@ -267,6 +265,15 @@ print(T._preorder())
 print(T.root.left.key)
 print(T.root.right.key)
 print(T.root.right.left)
+T = ZipTree()
+T._insert_td(Node(1), 1)
+T._insert_td(Node(2), 2)
+T._insert_td(Node(3), 1)
+T._insert_td(Node(1.5), 3)
+print(T._preorder())
+T._insert_td(Node(1.6), 2)
+print(T._preorder())
+print(T.root.right.key)
 
 if __name__ == '__main__':
     unittest.main()
