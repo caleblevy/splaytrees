@@ -151,12 +151,26 @@ class ZipTree(object):
                 else:
                     break
 
-    def _insert_td(T, x, rank=None):
+    @_maker(tuple)
+    def inorder(T):
+        """Traverse subtree rooted at x inorder."""
+        x = T.root
+        stack = []
+        while True:
+            if x is not None:
+                stack.append(x)
+                x = x.left
+            else:
+                if stack:
+                    x = stack.pop()
+                    yield x.key
+                    x = x.right
+                else:
+                    break
+
+    def _insert_td(T, x):
         key = x.key
-        if rank is not None:
-            x.rank = rank
-        else:
-            rank = x.rank
+        rank = x.rank
         prev = None
         cur = T.root
         while cur is not None and (
@@ -186,6 +200,13 @@ class ZipTree(object):
                 l = prev
         l.right = r.left = None
         x.left, x.right = x.right, x.left
+
+    def _insert_td_with_rank(T, k, rank=None):
+        if not T.search(k):
+            x = Node(k)
+            if rank is not None:
+                x.rank = rank
+            T._insert_td(x)
 
 
 class TestZipTree(unittest.TestCase):
@@ -239,8 +260,10 @@ class TestZipTree(unittest.TestCase):
         for k, r in lst[:70]:
             T2._insert_zip_with_rank(k, r)
         self.assertEqual(T1._preorder(), T2._preorder())
+        self.assertEqual(tuple(range(70)), T1.inorder())
+        self.assertEqual(T1.inorder(), T2.inorder())
 
-    def test_insert_td_rank(self):
+    def test_insert_td_with_rank_rank(self):
         """Check insert rank against blah."""
         lst = [(i, geometricvariate()) for i in range(100)]
         shuffle(lst)
@@ -249,31 +272,18 @@ class TestZipTree(unittest.TestCase):
             T1._insert_zip_with_rank(k, r)
         T2 = ZipTree()
         for k, r in lst:
-            x = Node(k)
-            T2._insert_td(x, r)
-        # print(T2._preorder())
+            T2._insert_td_with_rank(k, r)
+        self.assertEqual(T1.inorder(), T2.inorder())
+        self.assertEqual(T2._preorder(), T1._preorder())
+        T = ZipTree()
+        T._insert_td_with_rank(1, 1)
+        T._insert_td_with_rank(2, 2)
+        T._insert_td_with_rank(3, 1)
+        T._insert_td_with_rank(1.5, 3)
+        T._insert_td_with_rank(1.6, 2)
+        self.assertEqual((1.5, 1, 1.6, 2, 3), T._preorder())
+        self.assertEqual((1, 1.5, 1.6, 2, 3), T.inorder())
 
-
-T = ZipTree()
-T._insert_zip_with_rank(1, 1)
-T._insert_zip_with_rank(2, 2)
-T._insert_zip_with_rank(3, 1)
-print(T._preorder())
-# print(T._preorder())
-T._insert_td(Node(1.5), 3)
-print(T._preorder())
-print(T.root.left.key)
-print(T.root.right.key)
-print(T.root.right.left)
-T = ZipTree()
-T._insert_td(Node(1), 1)
-T._insert_td(Node(2), 2)
-T._insert_td(Node(3), 1)
-T._insert_td(Node(1.5), 3)
-print(T._preorder())
-T._insert_td(Node(1.6), 2)
-print(T._preorder())
-print(T.root.right.key)
 
 if __name__ == '__main__':
     unittest.main()
