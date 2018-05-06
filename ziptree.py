@@ -36,6 +36,20 @@ def _maker(maptype):
     return outputter
 
 
+def _hash32int(x):
+    x = ((x >> 16) ^ x) * 0x45d9f3b % 2**32
+    x = ((x >> 16) ^ x) * 0x45d9f3b % 2**32
+    x = (x >> 16) ^ x % 2**32
+    return x % 2**32
+
+
+def _unhash32int(x):
+    x = ((x >> 16) ^ x) *0x119de1f3 % 2**32
+    x = ((x >> 16) ^ x) *0x119de1f3 % 2**32
+    x = (x >> 16) ^ x % 2**32
+    return x % 2**32
+
+
 class Node(object):
     __slots__ = ("key", "rank", "left", "right")
 
@@ -80,20 +94,20 @@ def _insert_zip(x, root):
     return root
 
 
-def _delete_zip(x, root):
+def _delete_zip(key, root):
     """Delete x from tree and return resulting root."""
-    if x.key == root.key:
+    if key == root.key:
         return _zip(root.left, root.right)
-    if x.key < root.key:
-        if x.key == root.left.key:
+    if key < root.key:
+        if key == root.left.key:
             root.left = _zip(root.left.left, root.left.right)
         else:
-            _delete_zip(x, root.left)
+            _delete_zip(key, root.left)
     else:
-        if x.key == root.right.key:
+        if key == root.right.key:
             root.right = _zip(root.right.left, root.right.right)
         else:
-            _delete_zip(x, root.right)
+            _delete_zip(key, root.right)
     return root
 
 
@@ -132,7 +146,7 @@ class ZipTree(object):
 
     def delete_zip(T, k):
         if T.search(k):
-            T.root = _delete_zip(Node(k), T.root)
+            T.root = _delete_zip(k, T.root)
 
     @_maker(tuple)
     def _preorder(T):
@@ -183,23 +197,23 @@ class ZipTree(object):
             prev.left = x
         else:
             prev.right = x
-        l = r = x
+        left = right = x
         while cur is not None:
-            t = cur
+            fix = cur
             if key < cur.key:
                 while cur is not None and key < cur.key:
                     prev = cur
                     cur = cur.left
-                r.left = t
-                r = prev
+                right.left = fix
+                right = prev
             else:
                 while cur is not None and key > cur.key:
                     prev = cur
                     cur = cur.right
-                l.right = t
-                l = prev
-        l.right = r.left = None
-        x.left, x.right = x.right, x.left
+                left.right = fix
+                left = prev
+        left.right = right.left = None
+        x.left, x.right = x.right, x.left  # Swap
 
     def _insert_td_with_rank(T, k, rank=None):
         if not T.search(k):
@@ -208,8 +222,7 @@ class ZipTree(object):
                 x.rank = rank
             T._insert_td(x)
 
-    def _delete_td(T, x):
-        key = x.key
+    def _delete_td(T, key):
         prev = None
         cur = T.root
         while key != cur.key:
@@ -218,15 +231,19 @@ class ZipTree(object):
         left = cur.left
         right = cur.right
         if left is None:
-            T.root = right
+            top = right
+        elif right is None:
+            top = left
         elif left.rank >= right.rank:
-            T.root = left
+            top = left
         else:
-            T.root = right
-        if key < prev.key:
-            prev.left = T.root
+            top = right
+        if prev is None:
+            T.root = top
+        elif key < prev.key:
+            prev.left = top
         else:
-            prev.right = T.root
+            prev.right = top
         while left is not None and right is not None:
             if left.rank >= right.rank:
                 nxt = left.right
@@ -245,7 +262,7 @@ class ZipTree(object):
 
     def delete_td(T, k):
         if T.search(k):
-            T._delete_td(Node(k))
+            T._delete_td(k)
 
 
 class TestZipTree(unittest.TestCase):
@@ -301,6 +318,9 @@ class TestZipTree(unittest.TestCase):
         self.assertEqual(T1._preorder(), T2._preorder())
         self.assertEqual(tuple(range(70)), T1.inorder())
         self.assertEqual(T1.inorder(), T2.inorder())
+        for j in range(101, 200):
+            T2.delete_zip(j)
+        self.assertEqual(T1._preorder(), T2._preorder())
 
     def test_insert_td_with_rank_rank(self):
         """Check insert rank against blah."""
@@ -323,7 +343,7 @@ class TestZipTree(unittest.TestCase):
         self.assertEqual((1.5, 1, 1.6, 2, 3), T._preorder())
         self.assertEqual((1, 1.5, 1.6, 2, 3), T.inorder())
 
-    def test_delete_td_with_rank(self):
+    def test_delete_td(self):
         """Test deletion top-down."""
         T = ZipTree()
         T._insert_td_with_rank(1, 1)
@@ -331,8 +351,29 @@ class TestZipTree(unittest.TestCase):
         T._insert_td_with_rank(3, 1)
         T._insert_td_with_rank(1.5, 3)
         T._insert_td_with_rank(1.6, 2)
-        T.delete_td(2)
-        print(T._preorder())
+        T._insert_td_with_rank(2.5, 0)
+        T.delete_td(2.5)
+        self.assertEqual((1, 1.5, 1.6, 2, 3), T.inorder())
+        self.assertEqual((1.5, 1, 1.6, 2, 3), T._preorder())
+        T._insert_td_with_rank(2.5, 0)
+        T.delete_td(3)
+        self.assertEqual((1, 1.5, 1.6, 2, 2.5), T.inorder())
+        self.assertEqual((1.5, 1, 1.6, 2, 2.5), T._preorder())
+        lst = [(i, geometricvariate()) for i in range(100)]
+        T1 = ZipTree()
+        for k, r in lst:
+            T1._insert_td_with_rank(k, r)
+        for k, _ in lst[70:]:
+            T1.delete_td(k)
+        T2 = ZipTree()
+        for k, r in lst[:70]:
+            T2._insert_zip_with_rank(k, r)
+        self.assertEqual(T1._preorder(), T2._preorder())
+        self.assertEqual(tuple(range(70)), T1.inorder())
+        self.assertEqual(T1.inorder(), T2.inorder())
+        for j in range(101, 200):
+            T2.delete_td(j)
+        self.assertEqual(T1._preorder(), T2._preorder())
 
 
 if __name__ == '__main__':
