@@ -208,6 +208,45 @@ class ZipTree(object):
                 x.rank = rank
             T._insert_td(x)
 
+    def _delete_td(T, x):
+        key = x.key
+        prev = None
+        cur = T.root
+        while key != cur.key:
+            prev = cur
+            cur = cur.left if key < cur.key else cur.right
+        left = cur.left
+        right = cur.right
+        if left is None:
+            T.root = right
+        elif left.rank >= right.rank:
+            T.root = left
+        else:
+            T.root = right
+        if key < prev.key:
+            prev.left = T.root
+        else:
+            prev.right = T.root
+        while left is not None and right is not None:
+            if left.rank >= right.rank:
+                nxt = left.right
+                while nxt is not None and nxt.rank >= right.rank:
+                    left = nxt
+                    nxt = left.right
+                left.right = right
+                left = nxt
+            else:
+                nxt = right.left
+                while nxt is not None and nxt.rank < left.rank:
+                    right = nxt
+                    nxt = right.left
+                right.left = left
+                right = nxt
+
+    def delete_td(T, k):
+        if T.search(k):
+            T._delete_td(Node(k))
+
 
 class TestZipTree(unittest.TestCase):
 
@@ -283,6 +322,17 @@ class TestZipTree(unittest.TestCase):
         T._insert_td_with_rank(1.6, 2)
         self.assertEqual((1.5, 1, 1.6, 2, 3), T._preorder())
         self.assertEqual((1, 1.5, 1.6, 2, 3), T.inorder())
+
+    def test_delete_td_with_rank(self):
+        """Test deletion top-down."""
+        T = ZipTree()
+        T._insert_td_with_rank(1, 1)
+        T._insert_td_with_rank(2, 2)
+        T._insert_td_with_rank(3, 1)
+        T._insert_td_with_rank(1.5, 3)
+        T._insert_td_with_rank(1.6, 2)
+        T.delete_td(2)
+        print(T._preorder())
 
 
 if __name__ == '__main__':
