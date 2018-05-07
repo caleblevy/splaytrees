@@ -1,6 +1,7 @@
 """Implementations for zip trees."""
 
 import functools
+import sys
 import unittest
 
 from random import choice, shuffle
@@ -36,18 +37,52 @@ def _maker(maptype):
     return outputter
 
 
-def _hash32int(x):
+def hash32int(x):
     x = ((x >> 16) ^ x) * 0x45d9f3b % 2**32
     x = ((x >> 16) ^ x) * 0x45d9f3b % 2**32
     x = (x >> 16) ^ x % 2**32
-    return x % 2**32
+    return x
 
 
-def _unhash32int(x):
-    x = ((x >> 16) ^ x) *0x119de1f3 % 2**32
-    x = ((x >> 16) ^ x) *0x119de1f3 % 2**32
+def unhash32int(x):
+    x = ((x >> 16) ^ x) * 0x119de1f3 % 2**32
+    x = ((x >> 16) ^ x) * 0x119de1f3 % 2**32
     x = (x >> 16) ^ x % 2**32
-    return x % 2**32
+    return x
+
+
+def hash64int(x):
+    x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9 % 2**64
+    x = (x ^ (x >> 27)) * 0x94d049bb133111eb % 2**64
+    x = x ^ (x >> 31) % 2**64
+    return x
+
+
+def unhash64int(x):
+    x = (x ^ (x >> 31) ^ (x >> 62)) * 0x319642b2d24d8ec3 % 2**64
+    x = (x ^ (x >> 27) ^ (x >> 54)) * 0x96de1b173f119089 % 2**64
+    x = x ^ (x >> 30) ^ (x >> 60) % 2**64
+    return x
+
+
+def lowbit(i):
+    low = (i & -i)
+    bit = -1
+    while low:
+        low >>= 1
+        bit += 1
+    return bit
+
+
+if sys.version_info > (3, 0):
+    _hashint = hash64int
+else:
+    _hashint = hash32int
+
+
+def _hashrank(x):
+    """Return quick heuristic hash rank of x."""
+    return lowbit(_hashint(hash(x)))
 
 
 class Node(object):
@@ -222,6 +257,9 @@ class ZipTree(object):
                 x.rank = rank
             T._insert_td(x)
 
+    def insert_td(T, k):
+        T._insert_td_with_rank(k)
+
     def _delete_td(T, key):
         prev = None
         cur = T.root
@@ -246,19 +284,19 @@ class ZipTree(object):
             prev.right = top
         while left is not None and right is not None:
             if left.rank >= right.rank:
-                nxt = left.right
-                while nxt is not None and nxt.rank >= right.rank:
-                    left = nxt
-                    nxt = left.right
+                next = left.right
+                while next is not None and next.rank >= right.rank:
+                    left = next
+                    next = left.right
                 left.right = right
-                left = nxt
+                left = next
             else:
-                nxt = right.left
-                while nxt is not None and nxt.rank < left.rank:
-                    right = nxt
-                    nxt = right.left
+                next = right.left
+                while next is not None and next.rank < left.rank:
+                    right = next
+                    next = right.left
                 right.left = left
-                right = nxt
+                right = next
 
     def delete_td(T, k):
         if T.search(k):
@@ -377,4 +415,11 @@ class TestZipTree(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    from collections import Counter
+    c = Counter()
+    c.update(range(32))
+    for i in range(2**20):
+        c[_hashrank(i)] += 1
+    for k in sorted(c.keys()):
+        print(k, c[k])
     unittest.main()
