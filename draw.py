@@ -46,6 +46,36 @@ def _plot_points(x):
     return keys, locations, edges
 
 
+def ham_cycle_plot():
+    """Plot the Hamiltonian cycle of splay's transition graph."""
+    T = Tree((1,2,3,4))
+    requests = [4,1,3,4,1,2,4,1,4,2,1,4,3,1]
+    m = len(requests)
+    keys = []
+    locs = edges = None
+    t = [-2*np.pi*i/m for i in range(m)]
+    x = np.cos(t)
+    y = np.sin(t)
+    circle_points = np.stack([x, y]).T
+    circle_points *= 6
+    for r, p in zip(requests, circle_points):
+        _, l, e = _plot_points(T.root)
+        k = [""]*4
+        k[r-1] = "*"
+        center = np.mean(l, axis=0)
+        l += p - center
+        e += p - center
+        if locs is None:
+            locs = l
+            edges = e
+        else:
+            locs = np.vstack([locs, l])
+            edges = np.vstack([edges, e])
+        keys += k
+        T.splay(r)
+    return keys, locs, edges
+
+
 def plot_subtree(x, fname="myplot.pdf", labels=True, show=False):
     keys, locs, edges = _plot_points(x)
     y_min = np.min(locs[:, 1])
