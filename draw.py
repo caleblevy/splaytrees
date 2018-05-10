@@ -1,6 +1,7 @@
 """Drawings of BSTs. This is 'mockup' for now."""
 
 import numpy as np
+import numpy.linalg as lin
 import matplotlib.pyplot as plt
 from matplotlib.collections import PatchCollection, LineCollection
 from matplotlib.backends.backend_pdf import PdfPages
@@ -46,38 +47,7 @@ def _plot_points(x):
     return keys, locations, edges
 
 
-def ham_cycle_plot():
-    """Plot the Hamiltonian cycle of splay's transition graph."""
-    T = Tree((1,2,3,4))
-    requests = [4,1,3,4,1,2,4,1,4,2,1,4,3,1]
-    m = len(requests)
-    keys = []
-    locs = edges = None
-    t = [-2*np.pi*i/m for i in range(m)]
-    x = np.cos(t)
-    y = np.sin(t)
-    circle_points = np.stack([x, y]).T
-    circle_points *= 6
-    for r, p in zip(requests, circle_points):
-        _, l, e = _plot_points(T.root)
-        k = [""]*4
-        k[r-1] = "*"
-        center = np.mean(l, axis=0)
-        l += p - center
-        e += p - center
-        if locs is None:
-            locs = l
-            edges = e
-        else:
-            locs = np.vstack([locs, l])
-            edges = np.vstack([edges, e])
-        keys += k
-        T.splay(r)
-    return keys, locs, edges
-
-
-def plot_subtree(x, fname="myplot.pdf", labels=True, show=False):
-    keys, locs, edges = _plot_points(x)
+def make_plot(keys, locs, edges, fname="myplot.pdf", labels=True, show=False, fontsize=12, verttextoffset=0, arrows=None):
     y_min = np.min(locs[:, 1])
     y_max = np.max(locs[:, 1])
     x_min = np.min(locs[:, 0])
@@ -104,10 +74,15 @@ def plot_subtree(x, fname="myplot.pdf", labels=True, show=False):
         for p, k in zip(locs, keys):
             x, y = p
             plt.text(
-                x, y,
+                x, y-verttextoffset,
                 str(k),
+                fontsize=fontsize,
                 horizontalalignment='center',
                 verticalalignment='center')
+    if arrows is not None:
+        for arrow in arrows:
+            x1, y1, x2, y2 = arrow
+            ax.arrow(x1, y1, x2, y2, head_width=0.15, head_length=0.1, fc='k', ec='k')
     # Setup
     plt.axis('off')
     ax.autoscale_view()
@@ -115,6 +90,51 @@ def plot_subtree(x, fname="myplot.pdf", labels=True, show=False):
     plt.savefig(fname, dpi=100, bbox_inches="tight")
     if show:
         plt.show()
+
+
+def ham_cycle_plot():
+    """Plot the Hamiltonian cycle of splay's transition graph."""
+    T = Tree((1,2,3,4))
+    requests = [4,1,3,4,1,2,4,1,4,2,1,4,3,1]
+    m = len(requests)
+    keys = []
+    locs = edges = None
+    t = [-2*np.pi*i/m for i in range(m)]
+    x = np.cos(t)
+    y = np.sin(t)
+    circle_points = np.stack([x, y]).T
+    circle_points *= 10
+    for r, p in zip(requests, circle_points):
+        _, l, e = _plot_points(T.root)
+        k = [""]*4
+        k[r-1] = "*"
+        center = np.mean(l, axis=0)
+        l += p - center
+        e += p - center
+        if locs is None:
+            locs = l
+            edges = e
+        else:
+            locs = np.vstack([locs, l])
+            edges = np.vstack([edges, e])
+        keys += k
+        T.splay(r)
+    source = circle_points
+    dest = np.roll(circle_points, -1, axis=0)
+    units = (dest - source)/lin.norm(dest- source, axis=1)[:, np.newaxis]
+    r = 2
+    source += r*units 
+    dest -= r* units
+    circle_points = np.concatenate([source, dest-source], axis=1)
+    make_plot(keys, locs, edges, fname="ham-cycle.pdf", show=False, fontsize=16, verttextoffset=.05, arrows=circle_points)
+
+
+ham_cycle_plot()
+
+
+def plot_subtree(x, fname="myplot.pdf", labels=True, show=False):
+    keys, locs, edges = _plot_points(x)
+    make_plot(keys, locs, edges, fname, labels, show)
 
 
 if __name__ == '__main__':
