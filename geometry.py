@@ -6,6 +6,10 @@ import unittest
 from bst import maker
 
 
+Left = object()
+Right = object()
+
+
 class Node(object):
 
     def __init__(x, key, priority):
@@ -91,27 +95,29 @@ class Node(object):
 
     # New to this module
 
-    def sorted_path(x):
-        return tuple(sorted(x.path()))
+    @maker(tuple)
+    def split_path_subtrees(x):
+        for y in sorted(x.path()):
+            if y.key <= x.key:
+                z = y.left
+                if z is not None:
+                    z.parent = None
+                y.left = None
+                yield z
+            if y.key >= x.key:
+                z = y.right
+                if z is not None:
+                    z.parent = None
+                y.right = None
+                yield z
 
     @maker(tuple)
-    def path_subtree_nodes(x):
-        for y in x.sorted_path():
-            if y.key < x.key:
-                yield y.left
-            elif y.key > x.key:
-                yield y.right
-            else:
-                yield y.left
-                yield y.right
-
-    @maker(tuple)
-    def path_subtree_keys(x):
-        for y in x.path_subtree_nodes():
-            if y is None:
-                yield None
-            else:
-                yield y.key
+    def attachment_slots(x):
+        for x in x.inorder_nodes():
+            if x.left is None:
+                yield (x, Left)
+            if x.right is None:
+                yield (y, None)
 
 
 def is_node(x):
@@ -252,12 +258,41 @@ class TestUtilities(unittest.TestCase):
             (4, 2, 1, 3, 6, 5, 7)
         )
 
-    def test_path_subtrees(self):
-        """Test subtrees split."""
+    def test_path_split(self):
+        """Test path subtree splitting."""
         t = complete_bst(4)
-        y = t.left.right.left  # y = 5
-        self.assertEqual(y.path_subtree_keys(), (2, None, None, 7, 12))
-        self.assertEqual(y.parent.path_subtree_keys(), (2, 5, 7, 12))
+        u = t.left.right.left  # v = 5
+        v, w, x, y, z = u.split_path_subtrees()
+        self.assertEqual(v.key, 2)
+        self.assertEqual(v.parent, None)
+        self.assertEqual(v.preorder_keys(), (2, 1, 3))
+        self.assertEqual(w, None)
+        self.assertEqual(x, None)
+        self.assertEqual(y.key, 7)
+        self.assertEqual(y.preorder_keys(), (7, ))
+        self.assertEqual(y.parent, None)
+        self.assertEqual(z.key, 12)
+        self.assertEqual(z.preorder_keys(), (12, 10, 9, 11, 14, 13, 15))
+        self.assertEqual(z.parent, None)
+        self.assertEqual(t.preorder_keys(), (8, 4, 6, 5))
+        self.assertEqual(t.inorder_keys(), (4, 5, 6, 8))
+        a = complete_bst(4)
+        b = a.left.right
+        c, d, e, f = b.split_path_subtrees()
+        self.assertEqual(c.key, 2)
+        self.assertEqual(c.preorder_keys(), (2, 1, 3))
+        self.assertEqual(c.parent, None)
+        self.assertEqual(d.key, 5)
+        self.assertEqual(d.preorder_keys(), (5, ))
+        self.assertEqual(d.parent, None)
+        self.assertEqual(e.key, 7)
+        self.assertEqual(e.preorder_keys(), (7, ))
+        self.assertEqual(e.parent, None)
+        self.assertEqual(f.key, 12)
+        self.assertEqual(f.preorder_keys(), (12, 10, 9, 11, 14, 13, 15))
+        self.assertEqual(f.parent, None)
+        self.assertEqual(a.preorder_keys(), (8, 4, 6))
+        self.assertEqual(a.inorder_keys(), (4, 6, 8))
 
 
 if __name__ == '__main__':
