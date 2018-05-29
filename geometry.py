@@ -3,6 +3,8 @@ Optimality."""
 
 import unittest
 
+from bst import maker
+
 
 class Node(object):
 
@@ -81,6 +83,28 @@ class Node(object):
     def postorder_keys(x):
         return tuple(n.key for n in x._walk(1))
 
+    @maker(tuple)
+    def path(x):
+        while x is not None:
+            yield x
+            x = x.parent
+
+    # New to this module
+
+    def sorted_path(x):
+        return tuple(sorted(x.path()))
+
+    @maker(tuple)
+    def path_subtrees(x):
+        for y in x.sorted_path():
+            if y.key < x:
+                yield y.left
+            elif y.key > x:
+                yield y.right
+            else:
+                yield y.left
+                yield y.right
+
 
 def is_node(x):
     return isinstance(x, Node)
@@ -107,7 +131,7 @@ class Inf(object):
 Inf = Inf()
 
 
-def _treap(tau, pi):
+def treap(tau, pi):
     tau = list(tau)
     pi = list(pi)
     assert len(tau) == len(pi)
@@ -133,6 +157,22 @@ def _treap(tau, pi):
     while x.parent is not None:
         x = x.parent
     return x
+
+
+def complete_bst(k):
+    """Complete BST on 2**(k-1) nodes."""
+    n = 2**k-1
+    keys = range(1, n+1)
+    priorities = [0]*n
+    p = n
+    for i in range(1, k+1):
+        current = 2**(i-1)
+        increment = 2**i
+        while current <= n:
+            priorities[current-1] = p
+            p -= 1
+            current += increment
+    return treap(keys, priorities)
 
 
 class TestUtilities(unittest.TestCase):
@@ -167,15 +207,15 @@ class TestUtilities(unittest.TestCase):
         self.assertTrue(Inf >= Inf)
         self.assertFalse(Inf > Inf)
 
-    def test_treap(self):
+    def testtreap(self):
         """Test Internal Treap."""
-        x = _treap(range(1, 11), [7, 10, 9, 8, 3, 2, 6, 4, 5, 1])
+        x = treap(range(1, 11), [7, 10, 9, 8, 3, 2, 6, 4, 5, 1])
         self.assertEqual(x.inorder_keys(), tuple(range(1, 11)))
         self.assertEqual(
             x.preorder_keys(),
             (10, 6, 5, 1, 4, 3, 2, 8, 7, 9)
         )
-        y = _treap(range(1, 11), [Inf, 1, 2, 3, Inf, 9, 5, 7, 6, 10])
+        y = treap(range(1, 11), [Inf, 1, 2, 3, Inf, 9, 5, 7, 6, 10])
         self.assertEqual(y.inorder_keys(), tuple(range(1, 11)))
         self.assertEqual(y.preorder_keys(), (2, 1, 3, 4, 7, 6, 5, 9, 8, 10))
         for node in y.preorder_nodes()[1:]:
@@ -187,11 +227,21 @@ class TestUtilities(unittest.TestCase):
         infp[2] = Inf
         infp[5:7] = [Inf]*2
         infp[12:14] = [Inf]*2
-        z = _treap(range(15), infp)
+        z = treap(range(15), infp)
         self.assertEqual(z.inorder_keys(), tuple(range(15)))
         self.assertEqual(
             z.preorder_keys(),
             (0, 1, 3, 2, 4, 7, 6, 5, 8, 9, 10, 11, 14, 13, 12)
+        )
+        self.assertTrue(treap([], []) is None)
+
+    def test_complete_bst(self):
+        """Test complete binary search tree utility."""
+        self.assertEqual(complete_bst(1).preorder_keys(), (1, ))
+        self.assertEqual(complete_bst(2).preorder_keys(), (2, 1, 3))
+        self.assertEqual(
+            complete_bst(3).preorder_keys(),
+            (4, 2, 1, 3, 6, 5, 7)
         )
 
 
