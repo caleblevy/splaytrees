@@ -95,15 +95,23 @@ class Node(object):
         return tuple(sorted(x.path()))
 
     @maker(tuple)
-    def path_subtrees(x):
+    def path_subtree_nodes(x):
         for y in x.sorted_path():
-            if y.key < x:
+            if y.key < x.key:
                 yield y.left
-            elif y.key > x:
+            elif y.key > x.key:
                 yield y.right
             else:
                 yield y.left
                 yield y.right
+
+    @maker(tuple)
+    def path_subtree_keys(x):
+        for y in x.path_subtree_nodes():
+            if y is None:
+                yield None
+            else:
+                yield y.key
 
 
 def is_node(x):
@@ -243,6 +251,13 @@ class TestUtilities(unittest.TestCase):
             complete_bst(3).preorder_keys(),
             (4, 2, 1, 3, 6, 5, 7)
         )
+
+    def test_path_subtrees(self):
+        """Test subtrees split."""
+        t = complete_bst(4)
+        y = t.left.right.left  # y = 5
+        self.assertEqual(y.path_subtree_keys(), (2, None, None, 7, 12))
+        self.assertEqual(y.parent.path_subtree_keys(), (2, 5, 7, 12))
 
 
 if __name__ == '__main__':
