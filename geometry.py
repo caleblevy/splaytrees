@@ -2,6 +2,7 @@
 Optimality."""
 
 import unittest
+from operator import attrgetter
 
 from bst import maker
 
@@ -93,11 +94,9 @@ class Node(object):
             yield x
             x = x.parent
 
-    # New to this module
-
     @maker(tuple)
     def split_path_subtrees(x):
-        for y in sorted(x.path()):
+        for y in sorted(x.path(), key=attrgetter("key")):
             if y.key <= x.key:
                 z = y.left
                 if z is not None:
@@ -349,7 +348,7 @@ class TestUtilities(unittest.TestCase):
         for node in y.inorder_nodes():
             if node.priority == Inf:
                 self.assertTrue(node.left is node.right is None)
-        infp = range(1, 16)
+        infp = list(range(1, 16))
         infp[2] = Inf
         infp[5:7] = [Inf]*2
         infp[12:14] = [Inf]*2
