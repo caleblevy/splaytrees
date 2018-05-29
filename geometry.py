@@ -119,6 +119,16 @@ class Node(object):
             if x.right is None:
                 yield (x, Right)
 
+    def search(x, k):
+        while x is not None:
+            if k < x.key:
+                x = x.left
+            elif k > x.key:
+                x = x.right
+            else:
+                return x
+        return None
+
 
 def is_node(x):
     return isinstance(x, Node)
@@ -141,8 +151,33 @@ class Inf(object):
     def __le__(inf, x):
         return x is Inf
 
+    def __neg__(inf):
+        return NegInf
+
+
+class NegInf(object):
+
+    def __repr__(neginf):
+        return "-Inf"
+
+    def __gt__(neginf, x):
+        return False
+
+    def __ge__(neginf, x):
+        return x is NegInf
+
+    def __lt__(neginf, x):
+        return x is not NegInf
+
+    def __le__(neginf, x):
+        return True
+
+    def __neg__(neginf):
+        return Inf
+
 
 Inf = Inf()
+NegInf = NegInf()
 
 
 def treap(tau, pi):
@@ -203,6 +238,24 @@ def attach(t, subtrees):
             s.parent = x
 
 
+def initial_treap(X):
+    d = {}
+    for i, k in enumerate(X, start=1):
+        if k not in d:
+            d[k] = i
+    keys = sorted(d.keys())
+    priorities = list(map(d.__getitem__, keys))
+    return treap(keys, priorities)
+
+
+def min_priority(X, i, j, k):
+    """Return first index l greater than i such that j< X[l] < k."""
+    for l in range(i, len(X)+1):
+        if j < X[l] < k:
+            return l
+    return Inf
+
+
 class TestUtilities(unittest.TestCase):
 
     def test_infinity(self):
@@ -234,6 +287,51 @@ class TestUtilities(unittest.TestCase):
         self.assertFalse(Inf < Inf)
         self.assertTrue(Inf >= Inf)
         self.assertFalse(Inf > Inf)
+        # Neg Inf
+        self.assertFalse(NegInf > 1)
+        self.assertFalse(NegInf > "a")
+        self.assertFalse(1 < NegInf)
+        self.assertFalse("a" < NegInf)
+        self.assertTrue(NegInf < 1)
+        self.assertTrue(NegInf < "a")
+        self.assertTrue(1 > NegInf)
+        self.assertTrue("a" > NegInf)
+        self.assertFalse(NegInf >= 1)
+        self.assertFalse(NegInf >= "a")
+        self.assertFalse(1 <= NegInf)
+        self.assertFalse("a" <= NegInf)
+        self.assertTrue(NegInf <= 1)
+        self.assertTrue(NegInf <= "a")
+        self.assertTrue(1 >= NegInf)
+        self.assertTrue("a" >= NegInf)
+        arr = list(range(10))
+        arr[3], arr[7] = arr[7], arr[3]
+        arr.insert(5, NegInf)
+        arr.insert(0, NegInf)
+        self.assertEqual(sorted(arr), [NegInf, NegInf] + list(range(10)))
+        self.assertTrue(NegInf == NegInf)
+        self.assertFalse(NegInf != NegInf)
+        self.assertTrue(NegInf <= NegInf)
+        self.assertFalse(NegInf < NegInf)
+        self.assertTrue(NegInf >= NegInf)
+        self.assertFalse(NegInf > NegInf)
+        # Interaction
+        self.assertFalse(Inf == NegInf)
+        self.assertFalse(NegInf == Inf)
+        self.assertTrue(NegInf != Inf)
+        self.assertTrue(Inf != NegInf)
+        self.assertTrue(NegInf < Inf)
+        self.assertTrue(NegInf <= Inf)
+        self.assertTrue(Inf > NegInf)
+        self.assertTrue(Inf >= NegInf)
+        self.assertFalse(NegInf > Inf)
+        self.assertFalse(NegInf >= Inf)
+        self.assertFalse(Inf < NegInf)
+        self.assertFalse(Inf <= NegInf)
+        # Negation
+        self.assertTrue(NegInf is -Inf)
+        self.assertTrue(Inf is -NegInf)
+        self.assertTrue(-Inf < "a" <= Inf)
 
     def testtreap(self):
         """Test Internal Treap."""
@@ -341,6 +439,27 @@ class TestUtilities(unittest.TestCase):
         attach(t, b)
         self.assertEqual(t.preorder_keys(), complete_bst(4).preorder_keys())
         self.assertEqual(t.inorder_keys(), complete_bst(4).inorder_keys())
+
+
+class TreapExecutionTests(unittest.TestCase):
+
+    def test_initial_treap(self):
+        """Test Initial Treap."""
+        t = initial_treap([4, 10, 6, 8, 9, 4, 6, 10, 11, 2, 6])
+        self.assertEqual(t.preorder_keys(), (4, 2, 10, 6, 8, 9, 11))
+
+    def test_min_priority(self):
+        """Test minimum priorities"""
+        X = (8, 9, 4, 6, 10, 11, 2, 6)
+        self.assertEqual(min_priority(X, 1, 6, 10), 1)
+        self.assertEqual(min_priority(X, 1, 8, Inf), 1)
+        self.assertEqual(min_priority(X, 1, -Inf, 6), 2)
+        self.assertEqual(min_priority(X, 1, 4, 8), 3)
+
+    def test_binary_search(self):
+        """Test binary search on a node."""
+        x = treap(range(1, 11), [7, 10, 9, 8, 3, 2, 6, 4, 5, 1])
+        self.assertEqual(x.search(2).key, 2)
 
 if __name__ == '__main__':
     unittest.main()
