@@ -117,7 +117,7 @@ class Node(object):
             if x.left is None:
                 yield (x, Left)
             if x.right is None:
-                yield (y, None)
+                yield (x, Right)
 
 
 def is_node(x):
@@ -293,6 +293,24 @@ class TestUtilities(unittest.TestCase):
         self.assertEqual(f.parent, None)
         self.assertEqual(a.preorder_keys(), (8, 4, 6))
         self.assertEqual(a.inorder_keys(), (4, 6, 8))
+
+    def test_attachment_slots(self):
+        """Test points of attachment."""
+        t = complete_bst(4)
+        a = []
+        for i in range(1, 16, 2):
+            a.append((i, Left))
+            a.append((i, Right))
+        b = [(x.key, direction) for x, direction in t.attachment_slots()]
+        self.assertEqual(b, a)
+        r = treap(range(1, 11), range(1, 11))
+        ar = [(i, Left) for i in range(1, 11)] + [(10, Right)]
+        br = [(x.key, direction) for x, direction in r.attachment_slots()]
+        self.assertEqual(br, ar)
+        l = treap(range(1, 11), range(11, 1, -1))
+        al = [(1, Left)] + [(i, Right) for i in range(1, 11)]
+        bl = [(x.key, direction) for x, direction in l.attachment_slots()]
+        self.assertEqual(al, bl)
 
 
 if __name__ == '__main__':
