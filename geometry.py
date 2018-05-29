@@ -92,7 +92,7 @@ class Inf(object):
         return "Inf"
 
     def __gt__(inf, x):
-        return True
+        return x is not Inf
 
     def __ge__(inf, x):
         return True
@@ -101,7 +101,7 @@ class Inf(object):
         return False
 
     def __le__(inf, x):
-        return False
+        return x is Inf
 
 
 Inf = Inf()
@@ -116,12 +116,12 @@ def _treap(tau, pi):
     x = Node(tau[0], pi[0])
     for key, priority in zip(tau[1:], pi[1:]):
         y = Node(key, priority)
-        if y.priority < x.priority:
+        if y.priority > x.priority:
             x.right = y
             y.parent = x
         else:
             z = x.parent
-            while z is not None and z.priority < y.priority:
+            while z is not None and z.priority > y.priority:
                 x = z
                 z = z.parent
             y.left = x
@@ -133,13 +133,6 @@ def _treap(tau, pi):
     while x.parent is not None:
         x = x.parent
     return x
-
-
-x = _treap(range(1,11),[4,1,2,3,8,9,5,7,6,10])
-print(x.inorder_keys())
-print(x.preorder_keys())
-for y in x.preorder_nodes()[1:]:
-    print(y.priority < y.parent.priority)
 
 
 class TestUtilities(unittest.TestCase):
@@ -167,20 +160,39 @@ class TestUtilities(unittest.TestCase):
         arr.insert(5, Inf)
         arr.insert(0, Inf)
         self.assertEqual(sorted(arr), list(range(10))+[Inf, Inf])
-
+        self.assertTrue(Inf == Inf)
+        self.assertFalse(Inf != Inf)
+        self.assertTrue(Inf <= Inf)
+        self.assertFalse(Inf < Inf)
+        self.assertTrue(Inf >= Inf)
+        self.assertFalse(Inf > Inf)
 
     def test_treap(self):
         """Test Internal Treap."""
-        x = _treap(range(1,11),[4, 1, 2, 3, 8, 9, 5, 7, 6, 10])
+        x = _treap(range(1, 11), [7, 10, 9, 8, 3, 2, 6, 4, 5, 1])
         self.assertEqual(x.inorder_keys(), tuple(range(1, 11)))
         self.assertEqual(
             x.preorder_keys(),
             (10, 6, 5, 1, 4, 3, 2, 8, 7, 9)
         )
-        # y = _treap(range(1,11),[Inf, 1, 2, 3, Inf, 9, 5, 7, 6, 10])
-
-
-
+        y = _treap(range(1, 11), [Inf, 1, 2, 3, Inf, 9, 5, 7, 6, 10])
+        self.assertEqual(y.inorder_keys(), tuple(range(1, 11)))
+        self.assertEqual(y.preorder_keys(), (2, 1, 3, 4, 7, 6, 5, 9, 8, 10))
+        for node in y.preorder_nodes()[1:]:
+            self.assertTrue(node.parent.priority < node.priority)
+        for node in y.inorder_nodes():
+            if node.priority == Inf:
+                self.assertTrue(node.left is node.right is None)
+        infp = range(1, 16)
+        infp[2] = Inf
+        infp[5:7] = [Inf]*2
+        infp[12:14] = [Inf]*2
+        z = _treap(range(15), infp)
+        self.assertEqual(z.inorder_keys(), tuple(range(15)))
+        self.assertEqual(
+            z.preorder_keys(),
+            (0, 1, 3, 2, 4, 7, 6, 5, 8, 9, 10, 11, 14, 13, 12)
+        )
 
 
 if __name__ == '__main__':
