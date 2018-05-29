@@ -96,11 +96,15 @@ class Node(object):
             yield x
             x = x.parent
 
+    @maker(tuple)
+    def sorted_path(x):
+        return sorted(x.path(), key=attrgetter("key"))
+
     # New to This Module
 
     @maker(tuple)
     def split_path_subtrees(x):
-        for y in sorted(x.path(), key=attrgetter("key")):
+        for y in x.sorted_path():
             if y.key <= x.key:
                 z = y.left
                 if z is not None:
@@ -336,7 +340,7 @@ class TestUtilities(unittest.TestCase):
         self.assertTrue(Inf is -NegInf)
         self.assertTrue(-Inf < "a" <= Inf)
 
-    def testtreap(self):
+    def test_treap(self):
         """Test Internal Treap."""
         x = treap(range(1, 11), [7, 10, 9, 8, 3, 2, 6, 4, 5, 1])
         self.assertEqual(x.inorder_keys(), tuple(range(1, 11)))
@@ -371,6 +375,16 @@ class TestUtilities(unittest.TestCase):
         self.assertEqual(
             complete_bst(3).preorder_keys(),
             (4, 2, 1, 3, 6, 5, 7)
+        )
+
+    def test_sorted_path(self):
+        """Test path is indeed sorted."""
+        t = complete_bst(4)
+        u = t.left.right.left
+        self.assertEqual(tuple(x.key for x in u.sorted_path()), (4, 5, 6, 8))
+        self.assertEqual(
+            tuple(x.key for x in u.parent.sorted_path()),
+            (4, 6, 8)
         )
 
     def test_path_split(self):
