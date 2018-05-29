@@ -20,6 +20,8 @@ class Node(object):
         x.right = None
         x.parent = None
 
+    __lt__ = __le__ = __gt__ = __ge__ = None
+
     def _walk(x, order=None):
         """Do all three edge traversals at once."""
         z = x.parent
@@ -93,6 +95,8 @@ class Node(object):
         while x is not None:
             yield x
             x = x.parent
+
+    # New to This Module
 
     @maker(tuple)
     def split_path_subtrees(x):
@@ -439,6 +443,14 @@ class TestUtilities(unittest.TestCase):
         self.assertEqual(t.preorder_keys(), complete_bst(4).preorder_keys())
         self.assertEqual(t.inorder_keys(), complete_bst(4).inorder_keys())
 
+    def test_node_comparisons_are_forbidden(self):
+        """Test bug just described."""
+        t = complete_bst(4)
+        with self.assertRaises(TypeError):
+            sorted(t.inorder_nodes())
+        with self.assertRaises(TypeError):
+            t <= t
+
 
 class TreapExecutionTests(unittest.TestCase):
 
@@ -459,6 +471,9 @@ class TreapExecutionTests(unittest.TestCase):
         """Test binary search on a node."""
         x = treap(range(1, 11), [7, 10, 9, 8, 3, 2, 6, 4, 5, 1])
         self.assertEqual(x.search(2).key, 2)
+        self.assertEqual(x.search(2.5), None)
+        self.assertEqual(x.left.right.search(2), None)
+        self.assertEqual(x.left.right.search(9).key, 9)
 
 if __name__ == '__main__':
     unittest.main()
