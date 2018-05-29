@@ -189,6 +189,20 @@ def complete_bst(k):
     return treap(keys, priorities)
 
 
+def attach(t, subtrees):
+    """Attach subtrees to t."""
+    slots = t.attachment_slots()
+    subtrees = list(subtrees)
+    assert len(slots) == len(subtrees)
+    for (x, direction), s in zip(slots, subtrees):
+        if direction is Left:
+            x.left = s
+        elif direction is Right:
+            x.right = s
+        if s is not None:
+            s.parent = x
+
+
 class TestUtilities(unittest.TestCase):
 
     def test_infinity(self):
@@ -312,6 +326,21 @@ class TestUtilities(unittest.TestCase):
         bl = [(x.key, direction) for x, direction in l.attachment_slots()]
         self.assertEqual(al, bl)
 
+    def test_attach(self):
+        """Test (re)-attachment to the tree."""
+        t = complete_bst(4)
+        u = t.left.right.left  # v = 5
+        s = u.split_path_subtrees()
+        self.assertEqual(len(t.preorder_keys()), 4)
+        attach(t, s)
+        self.assertEqual(t.preorder_keys(), complete_bst(4).preorder_keys())
+        self.assertEqual(t.inorder_keys(), complete_bst(4).inorder_keys())
+        a = u.parent
+        b = a.split_path_subtrees()
+        self.assertEqual(len(t.preorder_keys()), 3)
+        attach(t, b)
+        self.assertEqual(t.preorder_keys(), complete_bst(4).preorder_keys())
+        self.assertEqual(t.inorder_keys(), complete_bst(4).inorder_keys())
 
 if __name__ == '__main__':
     unittest.main()
