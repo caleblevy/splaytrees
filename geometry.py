@@ -147,7 +147,9 @@ class Node(object):
             if y.key <= x.key:
                 subtree_labels.append(Inf if y.left is None else y.left.label)
             if y.key >= x.key:
-                subtree_labels.append(Inf if y.right is None else y.right.label)
+                subtree_labels.append(
+                    Inf if y.right is None else y.right.label
+                )
         for i, y in enumerate(path):
             l_label = subtree_labels[i]
             r_label = subtree_labels[i+1]
@@ -333,13 +335,28 @@ def initial_tree(X, T=None):
 #             return l
 #     return Inf
 
-# def 
+# def
 
 
 def GreedyExecution(X, T=None):
     """Execute greedy algorithm from Lucas 89."""
-    if T is not None:
-        assert tuple(sorted(X)) == T.inorder_keys()
+    T = initial_tree(X, T)
+    A = access_times(X)
+    for k in X:
+        x = T.search(k)
+        yield (T, x)
+        A[k].pop()
+        x.priority = A[k][-1]
+        labels = x.path_comparison_labels()
+        keys = tuple(y.key for y in x.sorted_path())
+        Q = treap(keys, labels, heap_winner=label_compare)
+        Q_post = Q.postorder_nodes()
+        for y in Q.inorder_nodes():
+            y.priority = y.priority[0]
+        subtrees = x.split_path_subtrees()
+        attach(Q, subtrees)
+        _update_labels(Q_post)
+        T = Q
 
 
 class TestUtilities(unittest.TestCase):
@@ -668,6 +685,28 @@ class TreapExecutionTests(unittest.TestCase):
         self.assertTrue(d[2] == (2, Inf, 2))
         self.assertTrue(d[3] == (2, 2, 6))
 
+    def test_greedy_execution(self):
+        """At long last, test the greedy execution."""
+        X = (8, 9, 4, 6, 10, 11, 2, 6)
+        T = canonical_tree((4, 2, 1, 3, 10, 6, 5, 8, 7, 9, 11))
+        E = GreedyExecution(X, T)
+        t1, x = next(E)
+        self.assertEqual(x.key, 8)
+        self.assertEqual(t1.preorder_keys(), T.preorder_keys())
+        t2, y = next(E)
+        self.assertEqual(y.key, 9)
+        self.assertEqual(
+            t2.preorder_keys(),
+            (10, 8, 4, 2, 1, 3, 6, 5, 7, 9, 11)
+        )
+        t3, z = next(E)
+        self.assertEqual(z.key, 4)
+        self.assertEqual(
+            t3.preorder_keys(),
+            (8, 4, 2, 1, 3, 6, 5, 7, 10, 9, 11)
+        )
+
 
 if __name__ == '__main__':
+
     unittest.main()
