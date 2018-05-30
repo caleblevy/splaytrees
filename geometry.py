@@ -217,24 +217,6 @@ def treap(tau, pi):
     return x
 
 
-def is_smaller(x, y):
-    assert x.key < y.key
-    if x.label < y.label:
-        return True
-    elif x.label > y.label:
-        return False
-    else:
-        l = Inf if x.left is None else x.left.label
-        r = Inf if y.right is None else y.right.label
-        if l < r:
-            return True
-        elif l > r:
-            return False
-        else:
-            assert l is r is Inf
-            return False
-
-
 def complete_bst(k):
     """Complete BST on 2**(k-1) nodes."""
     n = 2**k-1
@@ -314,6 +296,25 @@ def initial_tree(X, T=None):
             x.priority = d.get(x.key, Inf)
     _update_labels(T.postorder_nodes())
     return T
+
+
+def is_winner(x, y):
+    """Is x on top of y?"""
+    assert x.key < y.key
+    if x.label < y.label:
+        return True
+    elif x.label > y.label:
+        return False
+    else:
+        l = Inf if x.left is None else x.left.label
+        r = Inf if y.right is None else y.right.label
+        if l < r:
+            return True
+        elif l > r:
+            return False
+        else:
+            assert l is r is Inf
+            return False
 
 
 # def min_priority(X, i, j, k):
@@ -641,8 +642,30 @@ class TreapExecutionTests(unittest.TestCase):
 
 
 
-    def test_is_smaller(self):
+    def test_is_winner(self):
         """Ensure labels are compared correctly."""
+        # Setup
+        kozma_preorder = (4, 2, 1, 3, 10, 6, 5, 8, 7, 9, 11)
+        t = initial_tree(kozma_preorder)
+        X_Kozma = (8, 9, 4, 6, 10, 11, 2, 6)
+        T_Kozma = initial_tree(X_Kozma, t)
+        accessed_node = T_Kozma.search(8)
+        accessed_node.priority = Inf
+        _update_labels(accessed_node.path())
+        path = x, y, z, w = accessed_node.sorted_path()
+        for i in range(4):
+            for j in range(i):
+                with self.assertRaises(AssertionError):
+                    is_winner(path[i], path[j])
+        # (Node, label, left.label, right.label)
+        # ('x', 4, 3, 2, 7, 2)
+        # ('y', 6, 4, 2, Inf, 2)
+        # ('z', 8, Inf, 2, Inf, 2)
+        # ('w', 10, 5, 2, 2, 6)
+        # self.assertFalse(is_winner(z, w))
+        # self.assertFalse(is_winner(y, z))
+        # self.assertFalse(is_winner(x, z))
+        # self.assertTrue(is_winner(x, y))
 
 
 if __name__ == '__main__':
