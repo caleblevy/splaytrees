@@ -298,6 +298,24 @@ def initial_tree(X, T=None):
     return T
 
 
+def _path_comparison_labels(x):
+    """Return dictionary mapping keys to weights."""
+    d = {}
+    path = x.sorted_path()
+    subtree_labels = []
+    for y in path:
+        if y.key <= x.key:
+            subtree_labels.append(Inf if y.left is None else y.left.label)
+        if y.key >= x.key:
+            subtree_labels.append(Inf if y.right is None else y.right.label)
+    for i, y in enumerate(path):
+        l_label = subtree_labels[i]
+        r_label = subtree_labels[i+1]
+        c_label = min(y.priority, l_label, r_label)
+        d[y.key] = (c_label, l_label, r_label)
+    return d
+
+
 def is_winner(x, y):
     """Is x on top of y?"""
     assert x.key < y.key
@@ -640,7 +658,22 @@ class TreapExecutionTests(unittest.TestCase):
     #     self.assertEqual(min_priority(X, 1, -Inf, 6), 2)
     #     self.assertEqual(min_priority(X, 1, 4, 8), 3)
 
-
+    def test_path_comparison_labels(self):
+        """Ensure we can test these labels."""
+        # Setup for Fig 2.4 of Lazlo Kozma Thesis
+        kozma_preorder = (4, 2, 1, 3, 10, 6, 5, 8, 7, 9, 11)
+        t = initial_tree(kozma_preorder)
+        X_Kozma = (8, 9, 4, 6, 10, 11, 2, 6)
+        T_Kozma = initial_tree(X_Kozma, t)
+        accessed_node = T_Kozma.search(8)
+        accessed_node.priority = Inf
+        _update_labels(accessed_node.path())
+        # Actual tests
+        d = _path_comparison_labels(accessed_node)
+        self.assertTrue(d[4] == (3, 7, Inf))
+        self.assertTrue(d[6] == (4, Inf, Inf))
+        self.assertTrue(d[8] == (2, Inf, 2))
+        self.assertTrue(d[10] == (2, 2, 6))
 
     def test_is_winner(self):
         """Ensure labels are compared correctly."""
@@ -652,20 +685,7 @@ class TreapExecutionTests(unittest.TestCase):
         accessed_node = T_Kozma.search(8)
         accessed_node.priority = Inf
         _update_labels(accessed_node.path())
-        path = x, y, z, w = accessed_node.sorted_path()
-        for i in range(4):
-            for j in range(i):
-                with self.assertRaises(AssertionError):
-                    is_winner(path[i], path[j])
-        # (Node, label, left.label, right.label)
-        # ('x', 4, 3, 2, 7, 2)
-        # ('y', 6, 4, 2, Inf, 2)
-        # ('z', 8, Inf, 2, Inf, 2)
-        # ('w', 10, 5, 2, 2, 6)
-        # self.assertFalse(is_winner(z, w))
-        # self.assertFalse(is_winner(y, z))
-        # self.assertFalse(is_winner(x, z))
-        # self.assertTrue(is_winner(x, y))
+        d = _path_comparison_labels(accessed_node)
 
 
 if __name__ == '__main__':
