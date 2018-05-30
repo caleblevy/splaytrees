@@ -189,6 +189,7 @@ NegInf = NegInf()
 
 
 def treap(tau, pi):
+    """Binary search tree with nodes tau ordered by MIN-heap pi."""
     tau = list(tau)
     pi = list(pi)
     assert len(tau) == len(pi)
@@ -197,12 +198,12 @@ def treap(tau, pi):
     x = Node(tau[0], pi[0])
     for key, priority in zip(tau[1:], pi[1:]):
         y = Node(key, priority)
-        if y.priority > x.priority:
+        if x.priority < y.priority:
             x.right = y
             y.parent = x
         else:
             z = x.parent
-            while z is not None and z.priority > y.priority:
+            while z is not None and not(z.priority < y.priority):
                 x = z
                 z = z.parent
             y.left = x
@@ -214,6 +215,24 @@ def treap(tau, pi):
     while x.parent is not None:
         x = x.parent
     return x
+
+
+def is_smaller(x, y):
+    assert x.key < y.key
+    if x.label < y.label:
+        return True
+    elif x.label > y.label:
+        return False
+    else:
+        l = Inf if x.left is None else x.left.label
+        r = Inf if y.right is None else y.right.label
+        if l < r:
+            return True
+        elif l > r:
+            return False
+        else:
+            assert l is r is Inf
+            return False
 
 
 def complete_bst(k):
@@ -264,19 +283,44 @@ def first_access_times(X):
     return {k: s[-1] for k, s in t.items()}
 
 
-def initial_treap(X):
+def canonical_treap(X):
     d = first_access_times(X)
     keys = sorted(d.keys())
     priorities = list(map(d.__getitem__, keys))
     return treap(keys, priorities)
 
 
-def min_priority(X, i, j, k):
-    """Return first index l greater than i such that j< X[l] < k."""
-    for l in range(i, len(X)+1):
-        if j < X[l] < k:
-            return l
-    return Inf
+def _update_labels(nodes):
+    # You are assumed to input the postorder yourself
+    for x in nodes:
+        candidates = [x.priority]
+        if x.left is not None:
+            candidates.append(x.left.label)
+        if x.right is not None:
+            candidates.append(x.right.label)
+        x.label = min(candidates)
+
+
+def setup_initial_tree(X, T=None):
+    # Use canonical initial tree if T is None
+    if T is None:
+        T = canonical_treap(X)
+    else:
+        d = first_access_times(X)
+        nodes = T.inorder_nodes()
+        assert set(X).issubset(nodes)
+        for x in nodes:
+            x.priority = d.get(x.key, Inf)
+    _update_labels(T.postorder_nodes())
+    return T
+
+
+# def min_priority(X, i, j, k):
+#     """Return first index l greater than i such that j< X[l] < k."""
+#     for l in range(i, len(X)+1):
+#         if j < X[l] < k:
+#             return l
+#     return Inf
 
 
 def GreedyExecution(X, T=None):
@@ -518,20 +562,20 @@ class TreapExecutionTests(unittest.TestCase):
             {4: 1, 6: 2, 5: 3, 2: 5, 7: 6, 3: 8, 1: 9}
         )
 
-    def test_initial_treap(self):
+    def test_canonical_treap(self):
         """Test Initial Treap."""
-        t = initial_treap([4, 10, 6, 8, 9, 4, 6, 10, 11, 2, 6])
+        t = canonical_treap([4, 10, 6, 8, 9, 4, 6, 10, 11, 2, 6])
         self.assertEqual(t.preorder_keys(), (4, 2, 10, 6, 8, 9, 11))
-        u = initial_treap([4, 6, 5, 4, 2, 7, 7, 3, 1])
+        u = canonical_treap([4, 6, 5, 4, 2, 7, 7, 3, 1])
         self.assertEqual(u.preorder_keys(), complete_bst(3).preorder_keys())
 
-    def test_min_priority(self):
-        """Test minimum priorities"""
-        X = (8, 9, 4, 6, 10, 11, 2, 6)
-        self.assertEqual(min_priority(X, 1, 6, 10), 1)
-        self.assertEqual(min_priority(X, 1, 8, Inf), 1)
-        self.assertEqual(min_priority(X, 1, -Inf, 6), 2)
-        self.assertEqual(min_priority(X, 1, 4, 8), 3)
+    # def test_min_priority(self):
+    #     """Test minimum priorities"""
+    #     X = (8, 9, 4, 6, 10, 11, 2, 6)
+    #     self.assertEqual(min_priority(X, 1, 6, 10), 1)
+    #     self.assertEqual(min_priority(X, 1, 8, Inf), 1)
+    #     self.assertEqual(min_priority(X, 1, -Inf, 6), 2)
+    #     self.assertEqual(min_priority(X, 1, 4, 8), 3)
 
     def test_binary_search(self):
         """Test binary search on a node."""
@@ -540,6 +584,9 @@ class TreapExecutionTests(unittest.TestCase):
         self.assertEqual(x.search(2.5), None)
         self.assertEqual(x.left.right.search(2), None)
         self.assertEqual(x.left.right.search(9).key, 9)
+
+    def test_is_smaller(self):
+        """Ensure labels are compared correctly."""
 
 
 if __name__ == '__main__':
