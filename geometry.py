@@ -137,6 +137,23 @@ class Node(object):
                 return x
         return None
 
+    @maker(tuple)
+    def path_comparison_labels(x):
+        """Return dictionary mapping keys to weights."""
+        d = {}
+        path = x.sorted_path()
+        subtree_labels = []
+        for y in path:
+            if y.key <= x.key:
+                subtree_labels.append(Inf if y.left is None else y.left.label)
+            if y.key >= x.key:
+                subtree_labels.append(Inf if y.right is None else y.right.label)
+        for i, y in enumerate(path):
+            l_label = subtree_labels[i]
+            r_label = subtree_labels[i+1]
+            c_label = min(y.priority, l_label, r_label)
+            yield (c_label, l_label, r_label)
+
 
 def is_node(x):
     return isinstance(x, Node)
@@ -188,7 +205,18 @@ Inf = Inf()
 NegInf = NegInf()
 
 
-def treap(tau, pi):
+def priority_compare(x, y):
+    assert x.key < y.key
+    return x.priority < y.priority
+
+
+def label_compare(x, y):
+    """Is x on top of y?"""
+    assert x.key < y.key
+    return (x.priority[0], x.priority[1]) < (y.priority[0], y.priority[2])
+
+
+def treap(tau, pi, heap_winner=priority_compare):
     """Binary search tree with nodes tau ordered by MIN-heap pi."""
     tau = list(tau)
     pi = list(pi)
@@ -198,12 +226,12 @@ def treap(tau, pi):
     x = Node(tau[0], pi[0])
     for key, priority in zip(tau[1:], pi[1:]):
         y = Node(key, priority)
-        if x.priority < y.priority:
+        if heap_winner(x, y):
             x.right = y
             y.parent = x
         else:
             z = x.parent
-            while z is not None and not(z.priority < y.priority):
+            while z is not None and not heap_winner(z, y):
                 x = z
                 z = z.parent
             y.left = x
@@ -298,49 +326,14 @@ def initial_tree(X, T=None):
     return T
 
 
-def _path_comparison_labels(x):
-    """Return dictionary mapping keys to weights."""
-    d = {}
-    path = x.sorted_path()
-    subtree_labels = []
-    for y in path:
-        if y.key <= x.key:
-            subtree_labels.append(Inf if y.left is None else y.left.label)
-        if y.key >= x.key:
-            subtree_labels.append(Inf if y.right is None else y.right.label)
-    for i, y in enumerate(path):
-        l_label = subtree_labels[i]
-        r_label = subtree_labels[i+1]
-        c_label = min(y.priority, l_label, r_label)
-        d[y.key] = (c_label, l_label, r_label)
-    return d
-
-
-def is_winner(x, y):
-    """Is x on top of y?"""
-    assert x.key < y.key
-    if x.label < y.label:
-        return True
-    elif x.label > y.label:
-        return False
-    else:
-        l = Inf if x.left is None else x.left.label
-        r = Inf if y.right is None else y.right.label
-        if l < r:
-            return True
-        elif l > r:
-            return False
-        else:
-            assert l is r is Inf
-            return False
-
-
 # def min_priority(X, i, j, k):
 #     """Return first index l greater than i such that j< X[l] < k."""
 #     for l in range(i, len(X)+1):
 #         if j < X[l] < k:
 #             return l
 #     return Inf
+
+# def 
 
 
 def GreedyExecution(X, T=None):
@@ -669,23 +662,11 @@ class TreapExecutionTests(unittest.TestCase):
         accessed_node.priority = Inf
         _update_labels(accessed_node.path())
         # Actual tests
-        d = _path_comparison_labels(accessed_node)
-        self.assertTrue(d[4] == (3, 7, Inf))
-        self.assertTrue(d[6] == (4, Inf, Inf))
-        self.assertTrue(d[8] == (2, Inf, 2))
-        self.assertTrue(d[10] == (2, 2, 6))
-
-    def test_is_winner(self):
-        """Ensure labels are compared correctly."""
-        # Setup
-        kozma_preorder = (4, 2, 1, 3, 10, 6, 5, 8, 7, 9, 11)
-        t = initial_tree(kozma_preorder)
-        X_Kozma = (8, 9, 4, 6, 10, 11, 2, 6)
-        T_Kozma = initial_tree(X_Kozma, t)
-        accessed_node = T_Kozma.search(8)
-        accessed_node.priority = Inf
-        _update_labels(accessed_node.path())
-        d = _path_comparison_labels(accessed_node)
+        d = accessed_node.path_comparison_labels()
+        self.assertTrue(d[0] == (3, 7, Inf))
+        self.assertTrue(d[1] == (4, Inf, Inf))
+        self.assertTrue(d[2] == (2, Inf, 2))
+        self.assertTrue(d[3] == (2, 2, 6))
 
 
 if __name__ == '__main__':
