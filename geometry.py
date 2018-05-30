@@ -16,6 +16,7 @@ class Node(object):
     def __init__(x, key, priority):
         x.key = key
         x.priority = priority
+        x.label = None
         x.left = None
         x.right = None
         x.parent = None
@@ -245,11 +246,26 @@ def attach(t, subtrees):
             s.parent = x
 
 
-def initial_treap(X):
+def access_times(X):
+    """For x in X, d[x] is stack of access times for x. First time at top."""
     d = {}
-    for i, k in enumerate(X, start=1):
+    X = list(X)
+    m = len(X)
+    for i, k in enumerate(reversed(X)):
         if k not in d:
-            d[k] = i
+            d[k] = [Inf]
+        d[k].append(m-i)
+    return d
+
+
+def first_access_times(X):
+    """Return mapping of keys in X to their first access times"""
+    t = access_times(X)
+    return {k: s[-1] for k, s in t.items()}
+
+
+def initial_treap(X):
+    d = first_access_times(X)
     keys = sorted(d.keys())
     priorities = list(map(d.__getitem__, keys))
     return treap(keys, priorities)
@@ -261,6 +277,12 @@ def min_priority(X, i, j, k):
         if j < X[l] < k:
             return l
     return Inf
+
+
+def GreedyExecution(X, T=None):
+    """Execute greedy algorithm from Lucas 89."""
+    if T is not None:
+        assert tuple(sorted(X)) == T.inorder_keys()
 
 
 class TestUtilities(unittest.TestCase):
@@ -468,10 +490,40 @@ class TestUtilities(unittest.TestCase):
 
 class TreapExecutionTests(unittest.TestCase):
 
+    def test_access_times(self):
+        X = [4, 10, 6, 8, 9, 4, 6, 10, 11, 2, 6]
+        self.assertEqual(
+            access_times(X),
+            {
+                2: [Inf, 10],
+                4: [Inf, 6, 1],
+                6: [Inf, 11, 7, 3],
+                8: [Inf, 4],
+                9: [Inf, 5],
+                10: [Inf, 8, 2],
+                11: [Inf, 9]
+            }
+        )
+
+    def test_first_access_times(self):
+        """Test first access time."""
+        X = [4, 10, 6, 8, 9, 4, 6, 10, 11, 2, 6]
+        self.assertEqual(
+            first_access_times(X),
+            {4: 1, 10: 2, 6: 3, 8: 4, 9: 5, 11: 9, 2: 10}
+        )
+        Y = [4, 6, 5, 4, 2, 7, 7, 3, 1]
+        self.assertEqual(
+            first_access_times(Y),
+            {4: 1, 6: 2, 5: 3, 2: 5, 7: 6, 3: 8, 1: 9}
+        )
+
     def test_initial_treap(self):
         """Test Initial Treap."""
         t = initial_treap([4, 10, 6, 8, 9, 4, 6, 10, 11, 2, 6])
         self.assertEqual(t.preorder_keys(), (4, 2, 10, 6, 8, 9, 11))
+        u = initial_treap([4, 6, 5, 4, 2, 7, 7, 3, 1])
+        self.assertEqual(u.preorder_keys(), complete_bst(3).preorder_keys())
 
     def test_min_priority(self):
         """Test minimum priorities"""
@@ -488,6 +540,7 @@ class TreapExecutionTests(unittest.TestCase):
         self.assertEqual(x.search(2.5), None)
         self.assertEqual(x.left.right.search(2), None)
         self.assertEqual(x.left.right.search(9).key, 9)
+
 
 if __name__ == '__main__':
     unittest.main()
