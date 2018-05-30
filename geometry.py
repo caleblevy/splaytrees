@@ -283,7 +283,7 @@ def first_access_times(X):
     return {k: s[-1] for k, s in t.items()}
 
 
-def canonical_treap(X):
+def canonical_tree(X):
     d = first_access_times(X)
     keys = sorted(d.keys())
     priorities = list(map(d.__getitem__, keys))
@@ -301,14 +301,15 @@ def _update_labels(nodes):
         x.label = min(candidates)
 
 
-def setup_initial_tree(X, T=None):
+def initial_tree(X, T=None):
     # Use canonical initial tree if T is None
     if T is None:
-        T = canonical_treap(X)
+        T = canonical_tree(X)
     else:
         d = first_access_times(X)
+        assert set(X).issubset(T.inorder_keys())
+        T = canonical_tree(T.preorder_keys())  # Copy to prevent overwrite
         nodes = T.inorder_nodes()
-        assert set(X).issubset(nodes)
         for x in nodes:
             x.priority = d.get(x.key, Inf)
     _update_labels(T.postorder_nodes())
@@ -531,6 +532,14 @@ class TestUtilities(unittest.TestCase):
         with self.assertRaises(TypeError):
             t <= t
 
+    def test_binary_search(self):
+        """Test binary search on a node."""
+        x = treap(range(1, 11), [7, 10, 9, 8, 3, 2, 6, 4, 5, 1])
+        self.assertEqual(x.search(2).key, 2)
+        self.assertEqual(x.search(2.5), None)
+        self.assertEqual(x.left.right.search(2), None)
+        self.assertEqual(x.left.right.search(9).key, 9)
+
 
 class TreapExecutionTests(unittest.TestCase):
 
@@ -562,12 +571,65 @@ class TreapExecutionTests(unittest.TestCase):
             {4: 1, 6: 2, 5: 3, 2: 5, 7: 6, 3: 8, 1: 9}
         )
 
-    def test_canonical_treap(self):
+    def test_canonical_tree(self):
         """Test Initial Treap."""
-        t = canonical_treap([4, 10, 6, 8, 9, 4, 6, 10, 11, 2, 6])
+        t = canonical_tree([4, 10, 6, 8, 9, 4, 6, 10, 11, 2, 6])
         self.assertEqual(t.preorder_keys(), (4, 2, 10, 6, 8, 9, 11))
-        u = canonical_treap([4, 6, 5, 4, 2, 7, 7, 3, 1])
+        u = canonical_tree([4, 6, 5, 4, 2, 7, 7, 3, 1])
         self.assertEqual(u.preorder_keys(), complete_bst(3).preorder_keys())
+
+    def test_update_labels(self):
+        """Test label updating, Inf handling, etc."""
+        x = treap(range(1, 11), [7, 10, 9, 8, 3, 2, 6, 4, 5, 1])
+        # Labels in canonical treap work
+        x_copy = treap(range(1, 11), [7, 10, 9, 8, 3, 2, 6, 4, 5, 1])
+        _update_labels(x.postorder_nodes())
+        for y, z in zip(x.inorder_nodes(), x_copy.inorder_nodes()):
+            self.assertTrue(y.priority == y.label == z.priority)
+        # Change a priority
+        w = x.left.left.left.right
+        w.priority = 2
+        _update_labels(x.postorder_nodes())
+        new_labels = [y.label for y in x.postorder_nodes()]
+        self.assertEqual(new_labels, [10, 9, 2, 2, 2, 6, 5, 4, 2, 1])
+        # Set it back
+        w.priority = 8
+        _update_labels(x.postorder_nodes())
+        for y, z in zip(x.inorder_nodes(), x_copy.inorder_nodes()):
+            self.assertTrue(y.priority == y.label == z.priority)
+        k = x.left.right
+        k.priority = Inf
+        k.left.priority = Inf
+        _update_labels(x.postorder_nodes())
+        inf_labels = [y.label for y in x.postorder_nodes()]
+        self.assertEqual(inf_labels, [10, 9, 8, 7, 3, Inf, 5, 5, 2, 1])
+
+    def test_initial_tree(self):
+        """Test Kozma's tree with priorities."""
+        kozma_preorder = (4, 2, 1, 3, 10, 6, 5, 8, 7, 9, 11)
+        # Simple Initial Tree
+        t = initial_tree(kozma_preorder)
+        self.assertEqual(t.preorder_keys(), kozma_preorder)
+        t_priorities = [x.priority for x in t.preorder_nodes()]
+        t_labels = [x.label for x in t.preorder_nodes()]
+        self.assertTrue(list(range(1, 12)) == t_labels == t_priorities)
+        # Main Point: Non-Canonical Initial Tree
+        X_Kozma = (8, 9, 4, 6, 10, 11, 2, 6)
+        T_Kozma = initial_tree(X_Kozma, t)
+        self.assertEqual(T_Kozma.preorder_keys(), kozma_preorder)
+        reference_priorities = [Inf, Inf, 7, Inf, Inf, 2, 1, 4, 6, 5, 3]
+        test_priorities = [x.priority for x in T_Kozma.postorder_nodes()]
+        self.assertEqual(test_priorities, reference_priorities)
+        reference_labels = [Inf, Inf, 7, Inf, Inf, 2, 1, 1, 6, 1, 1]
+        test_labels = [x.label for x in T_Kozma.postorder_nodes()]
+        self.assertEqual(reference_labels, test_labels)
+        # Test Update Nodes on Subtree
+        accessed_node = T_Kozma.search(8)
+        accessed_node.priority = Inf
+        _update_labels(accessed_node.path())
+        starting_labels = [Inf, Inf, 7, Inf, Inf, 2, 2, 2, 6, 2, 2]
+        test_start = [x.label for x in T_Kozma.postorder_nodes()]
+        self.assertEqual(test_start, starting_labels)
 
     # def test_min_priority(self):
     #     """Test minimum priorities"""
@@ -577,13 +639,7 @@ class TreapExecutionTests(unittest.TestCase):
     #     self.assertEqual(min_priority(X, 1, -Inf, 6), 2)
     #     self.assertEqual(min_priority(X, 1, 4, 8), 3)
 
-    def test_binary_search(self):
-        """Test binary search on a node."""
-        x = treap(range(1, 11), [7, 10, 9, 8, 3, 2, 6, 4, 5, 1])
-        self.assertEqual(x.search(2).key, 2)
-        self.assertEqual(x.search(2.5), None)
-        self.assertEqual(x.left.right.search(2), None)
-        self.assertEqual(x.left.right.search(9).key, 9)
+
 
     def test_is_smaller(self):
         """Ensure labels are compared correctly."""
