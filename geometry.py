@@ -4,7 +4,7 @@ Optimality."""
 import unittest
 from operator import attrgetter
 
-from bst import maker
+from bst import maker, splay_cost, mr_crossing_cost, Tree
 
 
 Left = object()
@@ -98,10 +98,25 @@ class Node(object):
             x = x.parent
 
     @maker(tuple)
-    def sorted_path(x):
-        return sorted(x.path(), key=attrgetter("key"))
+    def crossing_nodes(x):
+        yield x
+        y = x.parent
+        while y is not None:
+            z = y.parent
+            if z is None:
+                yield y
+            else:
+                if ((y is z.left and x is y.right) or
+                        (y is z.right and x is y.left)):
+                    yield y
+            x = y
+            y = z
 
     # New to This Module
+
+    @maker(tuple)
+    def sorted_path(x):
+        return sorted(x.path(), key=attrgetter("key"))
 
     @maker(tuple)
     def split_path_subtrees(x):
@@ -328,16 +343,6 @@ def initial_tree(X, T=None):
     return T
 
 
-# def min_priority(X, i, j, k):
-#     """Return first index l greater than i such that j< X[l] < k."""
-#     for l in range(i, len(X)+1):
-#         if j < X[l] < k:
-#             return l
-#     return Inf
-
-# def
-
-
 def GreedyExecution(X, T=None):
     """Execute greedy algorithm from Lucas 89."""
     T = initial_tree(X, T)
@@ -357,6 +362,20 @@ def GreedyExecution(X, T=None):
         attach(Q, subtrees)
         _update_labels(Q_post)
         T = Q
+
+
+def greedy_cost(X, T=None):
+    cost = 0
+    for _, x in GreedyExecution(X, T):
+        cost += len(x.path())
+    return cost
+
+
+def greedy_crossing_cost(X, T=None):
+    cost = 0
+    for _, x in GreedyExecution(X, T):
+        cost += len(x.crossing_nodes())
+    return cost
 
 
 class TestUtilities(unittest.TestCase):
@@ -660,14 +679,6 @@ class TreapExecutionTests(unittest.TestCase):
         test_start = [x.label for x in T_Kozma.postorder_nodes()]
         self.assertEqual(test_start, starting_labels)
 
-    # def test_min_priority(self):
-    #     """Test minimum priorities"""
-    #     X = (8, 9, 4, 6, 10, 11, 2, 6)
-    #     self.assertEqual(min_priority(X, 1, 6, 10), 1)
-    #     self.assertEqual(min_priority(X, 1, 8, Inf), 1)
-    #     self.assertEqual(min_priority(X, 1, -Inf, 6), 2)
-    #     self.assertEqual(min_priority(X, 1, 4, 8), 3)
-
     def test_path_comparison_labels(self):
         """Ensure we can test these labels."""
         # Setup for Fig 2.4 of Lazlo Kozma Thesis
@@ -708,5 +719,26 @@ class TreapExecutionTests(unittest.TestCase):
 
 
 if __name__ == '__main__':
-
+    from random import shuffle, randrange
+    X = list(range(1, 1000))
+    shuffle(X)
+    t = canonical_tree(X)
+    print(t)
+    c = greedy_crossing_cost(X, t)
+    print(t)
+    print(c)
+    print("-")
+    for _ in range(100):
+        i = randrange(1, 1000)
+        j = randrange(1, 999)
+        y = X[:]
+        y.pop(_)
+        y.pop(_+1)
+        y.pop(_+2)
+        print(
+            c,
+            c-greedy_crossing_cost(y, t),
+            len(t.search(_+1).path()),
+            len(t.search(_+2).path())
+        )
     unittest.main()
