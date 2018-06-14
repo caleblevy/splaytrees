@@ -19,14 +19,6 @@ def geometricvariate():
     return c
 
 
-def _ranksizevariate(n):
-    """Sample size of largest rank among n nodes."""
-    s = 0
-    for _ in range(n):
-        s = max(s, len(bin(geometricvariate()))-2)
-    return s
-
-
 def _maker(maptype):
     """Turn a generator into a specified type of sequence."""
     def outputter(generator):
@@ -35,54 +27,6 @@ def _maker(maptype):
             return maptype(generator(*args, **kwargs))
         return mapper
     return outputter
-
-
-def hash32int(x):
-    x = ((x >> 16) ^ x) * 0x45d9f3b % 2**32
-    x = ((x >> 16) ^ x) * 0x45d9f3b % 2**32
-    x = (x >> 16) ^ x % 2**32
-    return x
-
-
-def unhash32int(x):
-    x = ((x >> 16) ^ x) * 0x119de1f3 % 2**32
-    x = ((x >> 16) ^ x) * 0x119de1f3 % 2**32
-    x = (x >> 16) ^ x % 2**32
-    return x
-
-
-def hash64int(x):
-    x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9 % 2**64
-    x = (x ^ (x >> 27)) * 0x94d049bb133111eb % 2**64
-    x = x ^ (x >> 31) % 2**64
-    return x
-
-
-def unhash64int(x):
-    x = (x ^ (x >> 31) ^ (x >> 62)) * 0x319642b2d24d8ec3 % 2**64
-    x = (x ^ (x >> 27) ^ (x >> 54)) * 0x96de1b173f119089 % 2**64
-    x = x ^ (x >> 30) ^ (x >> 60) % 2**64
-    return x
-
-
-def lowbit(i):
-    low = (i & -i)
-    bit = -1
-    while low:
-        low >>= 1
-        bit += 1
-    return bit
-
-
-if sys.version_info > (3, 0):
-    _hashint = hash64int
-else:
-    _hashint = hash32int
-
-
-def _hashrank(x):
-    """Return quick heuristic hash rank of x."""
-    return lowbit(_hashint(hash(x)))
 
 
 class Node(object):
@@ -360,8 +304,8 @@ class TestZipTree(unittest.TestCase):
             T2.delete_zip(j)
         self.assertEqual(T1._preorder(), T2._preorder())
 
-    def test_insert_td_with_rank_rank(self):
-        """Check insert rank against blah."""
+    def test_insert_td_with_rank(self):
+        """Check iterative insert against zip/unzip."""
         lst = [(i, geometricvariate()) for i in range(100)]
         shuffle(lst)
         T1 = ZipTree()
@@ -415,11 +359,4 @@ class TestZipTree(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    from collections import Counter
-    c = Counter()
-    c.update(range(32))
-    for i in range(2**20):
-        c[_hashrank(i)] += 1
-    for k in sorted(c.keys()):
-        print(k, c[k])
     unittest.main()
