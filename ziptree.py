@@ -163,39 +163,6 @@ class ZipTree(object):
                     break
 
     def _insert_td(T, x):
-        key = x.key
-        rank = x.rank
-        prev = None
-        cur = T.root
-        while cur is not None and (
-                rank < cur.rank or (rank == cur.rank and key > cur.key)):
-            prev = cur
-            cur = cur.left if key < cur.key else cur.right
-        if prev is None:
-            T.root = x
-        elif key < prev.key:
-            prev.left = x
-        else:
-            prev.right = x
-        left = right = x
-        while cur is not None:
-            fix = cur
-            if key < cur.key:
-                while cur is not None and key < cur.key:
-                    prev = cur
-                    cur = cur.left
-                right.left = fix
-                right = prev
-            else:
-                while cur is not None and key > cur.key:
-                    prev = cur
-                    cur = cur.right
-                left.right = fix
-                left = prev
-        left.right = right.left = None
-        x.left, x.right = x.right, x.left  # Swap
-
-    def _insert_td(T, x):
         rank = x.rank
         key = x.key
         cur = T.root
@@ -245,44 +212,6 @@ class ZipTree(object):
 
     def insert_td(T, k):
         T._insert_td_with_rank(k)
-
-    def _delete_td(T, key):
-        prev = None
-        cur = T.root
-        while key != cur.key:
-            prev = cur
-            cur = cur.left if key < cur.key else cur.right
-        left = cur.left
-        right = cur.right
-        if left is None:
-            top = right
-        elif right is None:
-            top = left
-        elif left.rank >= right.rank:
-            top = left
-        else:
-            top = right
-        if prev is None:
-            T.root = top
-        elif key < prev.key:
-            prev.left = top
-        else:
-            prev.right = top
-        while left is not None and right is not None:
-            if left.rank >= right.rank:
-                next = left.right
-                while next is not None and next.rank >= right.rank:
-                    left = next
-                    next = left.right
-                left.right = right
-                left = next
-            else:
-                next = right.left
-                while next is not None and next.rank < left.rank:
-                    right = next
-                    next = right.left
-                right.left = left
-                right = next
 
     def _delete_td(T, key):
         cur = T.root
