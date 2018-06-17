@@ -231,10 +231,10 @@ class ZipTree(object):
                     cur = cur.left
                     if cur is None or cur.key < key:
                         break
-            if fix.key < key or (fix is x and prev.key < key):
-                fix.right = cur
-            else:
+            if fix.key > key or (fix is x and prev.key > key):
                 fix.left = cur
+            else:
+                fix.right = cur
 
     def _insert_td_with_rank(T, k, rank=None):
         if not T.search(k):
@@ -283,6 +283,43 @@ class ZipTree(object):
                     next = right.left
                 right.left = left
                 right = next
+
+    def _delete_td(T, key):
+        cur = T.root
+        while cur.key != key:
+            prev = cur
+            cur = cur.left if key < cur.key else cur.right
+        left = cur.left
+        right = cur.right
+        if left is None:
+            cur = right
+        elif right is None:
+            cur = left
+        elif left.rank >= right.rank:
+            cur = left
+        else:
+            cur = right
+        if T.root.key == key:
+            T.root = cur
+        elif key < prev.key:
+            prev.left = cur
+        else:
+            prev.right = cur
+        while left is not None and right is not None:
+            if left.rank >= right.rank:
+                while True:
+                    prev = left
+                    left = left.right
+                    if left is None or left.rank < right.rank:
+                        break
+                prev.right = right
+            else:
+                while True:
+                    prev = right
+                    right = right.left
+                    if right is None or left.rank >= right.rank:
+                        break
+                prev.left = left
 
     def delete_td(T, k):
         if T.search(k):
