@@ -382,6 +382,14 @@ class TestZipTree(unittest.TestCase):
         for j in range(101, 200):
             T2.delete_zip(j)
         self.assertEqual(T1._preorder(), T2._preorder())
+        # Check < and <='s
+        items = [(5, 5), (3, 3), (4, 3), (10, 4), (9, 3)]
+        T3 = ZipTree()
+        for k, r in items:
+            T3._insert_zip_with_rank(k, r)
+        self.assertEqual((5, 3, 4, 10, 9), T3._preorder())
+        T3.delete_zip(5)
+        self.assertEqual((10, 3, 4, 9), T3._preorder())
 
     def test_insert_td_with_rank(self):
         """Check iterative insert against zip/unzip."""
@@ -435,6 +443,14 @@ class TestZipTree(unittest.TestCase):
         for j in range(101, 200):
             T2.delete_td(j)
         self.assertEqual(T1._preorder(), T2._preorder())
+        # Check < and <='s
+        items = [(5, 5), (3, 3), (4, 3), (10, 4), (9, 3)]
+        T3 = ZipTree()
+        for k, r in items:
+            T3._insert_zip_with_rank(k, r)
+        self.assertEqual((5, 3, 4, 10, 9), T3._preorder())
+        T3.delete_td(5)
+        self.assertEqual((10, 3, 4, 9), T3._preorder())
 
 
 if __name__ == '__main__':
