@@ -53,6 +53,7 @@ def _zip(x, y):
 def _insert_zip(x, root):
     """Insert x into tree with given root, and return root of new tree."""
     if root is None:
+        x.left = x.right = None
         return x
     if x.key < root.key:
         if x is _insert_zip(x, root.left):
@@ -193,6 +194,47 @@ class ZipTree(object):
                 left = prev
         left.right = right.left = None
         x.left, x.right = x.right, x.left  # Swap
+
+    def _insert_td(T, x):
+        rank = x.rank
+        key = x.key
+        cur = T.root
+        while cur is not None and (
+                rank < cur.rank or (rank == cur.rank and key > cur.key)):
+            prev = cur
+            cur = cur.left if key < cur.key else cur.right
+        if cur is T.root:
+            T.root = x
+        elif key < prev.key:
+            prev.left = x
+        else:
+            prev.right = x
+        if cur is None:
+            x.left = x.right = None
+            return
+        if key < cur.key:
+            x.right = cur
+        else:
+            x.left = cur
+        prev = x
+        while cur is not None:
+            fix = prev
+            if cur.key < key:
+                while True:
+                    prev = cur
+                    cur = cur.right
+                    if cur is None or cur.key > key:
+                        break
+            else:
+                while True:
+                    prev = cur
+                    cur = cur.left
+                    if cur is None or cur.key < key:
+                        break
+            if fix.key < key or (fix is x and prev.key < key):
+                fix.right = cur
+            else:
+                fix.left = cur
 
     def _insert_td_with_rank(T, k, rank=None):
         if not T.search(k):
