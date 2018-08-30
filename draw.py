@@ -2,6 +2,7 @@
 
 import numpy as np
 import numpy.linalg as lin
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.collections import PatchCollection, LineCollection
 from matplotlib.backends.backend_pdf import PdfPages
@@ -47,7 +48,7 @@ def _plot_points(x):
     return keys, locations, edges
 
 
-def make_plot(keys, locs, edges, fname="myplot.pdf", labels=True, show=False, fontsize=12, verttextoffset=0, arrows=None):
+def make_plot(keys, locs, edges, fname="myplot.pdf", labels=True, show=False, fontsize=22, verttextoffset=0, arrows=None):
     y_min = np.min(locs[:, 1])
     y_max = np.max(locs[:, 1])
     x_min = np.min(locs[:, 0])
@@ -58,15 +59,15 @@ def make_plot(keys, locs, edges, fname="myplot.pdf", labels=True, show=False, fo
     edgeCol = LineCollection(
         edges,
         color=(0,0,0),
-        linewidth=.5,
+        linewidth=2,
         zorder=1)
     ax.add_collection(edgeCol)
     # Add Points
     vertsCol = PatchCollection(
-        [plt.Circle(p, 0.25) for p in locs],
+        [plt.Circle(p, .3) for p in locs],
         facecolors="white",
         edgecolors="black",
-        linewidths=0.5,
+        linewidths=3,
         zorder=2)
     ax.add_collection(vertsCol)
     # Add text
@@ -77,12 +78,14 @@ def make_plot(keys, locs, edges, fname="myplot.pdf", labels=True, show=False, fo
                 x, y-verttextoffset,
                 str(k),
                 fontsize=fontsize,
+                weight='bold',
+                style='italic',
                 horizontalalignment='center',
                 verticalalignment='center')
     if arrows is not None:
         for arrow in arrows:
             x1, y1, x2, y2 = arrow
-            ax.arrow(x1, y1, x2, y2, head_width=0.15, head_length=0.1, fc='k', ec='k')
+            ax.arrow(x1, y1, x2, y2, width=.15, head_width=.4, head_length=0.3, ec='k')
     # Setup
     plt.axis('off')
     ax.autoscale_view()
@@ -107,7 +110,7 @@ def ham_cycle_plot():
     for r, p in zip(requests, circle_points):
         _, l, e = _plot_points(T.root)
         k = [""]*4
-        k[r-1] = "*"
+        k[r-1] = "x"
         center = np.mean(l, axis=0)
         l += p - center
         e += p - center
@@ -126,7 +129,7 @@ def ham_cycle_plot():
     source += r*units 
     dest -= r* units
     circle_points = np.concatenate([source, dest-source], axis=1)
-    make_plot(keys, locs, edges, fname="ham-cycle.pdf", show=False, fontsize=16, verttextoffset=.05, arrows=circle_points)
+    make_plot(keys, locs, edges, fname="ham-cycle.pdf", show=False, fontsize=20, verttextoffset=0, arrows=circle_points)
 
 
 ham_cycle_plot()
