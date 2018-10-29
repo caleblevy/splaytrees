@@ -64,7 +64,7 @@ def make_plot(keys, locs, edges, fname="myplot.pdf", labels=True, show=False, fo
     ax.add_collection(edgeCol)
     # Add Points
     vertsCol = PatchCollection(
-        [plt.Circle(p, .35) for p in locs],
+        [plt.Circle(p, .4) for p in locs],
         facecolors="white",
         edgecolors="black",
         linewidths=3,
@@ -88,7 +88,7 @@ def make_plot(keys, locs, edges, fname="myplot.pdf", labels=True, show=False, fo
         offsets = [ri, le, ri, ri, le, le, ri, le, ri, le, le, ri, ri, ri]
         for (x, y), t in zip(stars, offsets):
             plt.text(
-                x, y-.05,
+                x, y-2*verttextoffset,
                 t,
                 fontsize=fontsize+10,
                 weight='bold',
@@ -104,7 +104,7 @@ def make_plot(keys, locs, edges, fname="myplot.pdf", labels=True, show=False, fo
                 x, y,
                 t,
                 fontsize=fontsize+10,
-                # weight='bold',
+                weight='bold',
                 # color='blue',
                 # style='italic',
                 horizontalalignment='center',
@@ -113,7 +113,7 @@ def make_plot(keys, locs, edges, fname="myplot.pdf", labels=True, show=False, fo
     if arrows is not None:
         for arrow in arrows:
             x1, y1, x2, y2 = arrow
-            ax.arrow(x1, y1, x2, y2, width=.15, head_width=.4, head_length=0.3, ec='k')
+            ax.arrow(x1, y1, x2, y2, width=.15, head_width=.4, head_length=0.3, ec='k', color='black')
     # Setup
     plt.axis('off')
     ax.autoscale_view()
@@ -159,7 +159,7 @@ def ham_cycle_plot():
     source += r*units 
     dest -= r* units
     circle_points = np.concatenate([source, dest-source], axis=1)
-    make_plot(keys, locs, edges, fname="ham-cycle.pdf", show=False, fontsize=20, verttextoffset=0, arrows=circle_points, stars=stars, numeral_points=numeral_points)
+    make_plot(keys, locs, edges, fname="ham-cycle.pdf", show=False, fontsize=24, verttextoffset=.05, arrows=circle_points, stars=stars, numeral_points=numeral_points)
 
 
 ham_cycle_plot()
