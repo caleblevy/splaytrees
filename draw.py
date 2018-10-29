@@ -48,7 +48,7 @@ def _plot_points(x):
     return keys, locations, edges
 
 
-def make_plot(keys, locs, edges, fname="myplot.pdf", labels=True, show=False, fontsize=22, verttextoffset=0, arrows=None):
+def make_plot(keys, locs, edges, fname="myplot.pdf", labels=True, show=False, fontsize=22, verttextoffset=0, arrows=None, stars=None, numerals=None):
     y_min = np.min(locs[:, 1])
     y_max = np.max(locs[:, 1])
     x_min = np.min(locs[:, 0])
@@ -64,7 +64,7 @@ def make_plot(keys, locs, edges, fname="myplot.pdf", labels=True, show=False, fo
     ax.add_collection(edgeCol)
     # Add Points
     vertsCol = PatchCollection(
-        [plt.Circle(p, .3) for p in locs],
+        [plt.Circle(p, .35) for p in locs],
         facecolors="white",
         edgecolors="black",
         linewidths=3,
@@ -79,7 +79,20 @@ def make_plot(keys, locs, edges, fname="myplot.pdf", labels=True, show=False, fo
                 str(k),
                 fontsize=fontsize,
                 weight='bold',
-                style='italic',
+                # style='italic',
+                horizontalalignment='center',
+                verticalalignment='center')
+    if stars:
+        ri = u"       \u2217"
+        le = u"\u2217       "
+        offsets = [ri, le, ri, ri, le, le, ri, le, ri, le, le, ri, ri, le]
+        for (x, y), t in zip(stars, offsets):
+            plt.text(
+                x, y,
+                t,
+                fontsize=fontsize+6,
+                weight='bold',
+                color='red',
                 horizontalalignment='center',
                 verticalalignment='center')
     if arrows is not None:
@@ -107,10 +120,10 @@ def ham_cycle_plot():
     y = np.sin(t)
     circle_points = np.stack([x, y]).T
     circle_points *= 10
+    stars = []
     for r, p in zip(requests, circle_points):
         _, l, e = _plot_points(T.root)
-        k = [""]*4
-        k[r-1] = "x"
+        stars.append(l[r-1])
         center = np.mean(l, axis=0)
         l += p - center
         e += p - center
@@ -120,8 +133,8 @@ def ham_cycle_plot():
         else:
             locs = np.vstack([locs, l])
             edges = np.vstack([edges, e])
-        keys += k
         T.splay(r)
+    keys = ["1", "2", "3", "4"]*14
     source = circle_points
     dest = np.roll(circle_points, -1, axis=0)
     units = (dest - source)/lin.norm(dest- source, axis=1)[:, np.newaxis]
@@ -129,7 +142,7 @@ def ham_cycle_plot():
     source += r*units 
     dest -= r* units
     circle_points = np.concatenate([source, dest-source], axis=1)
-    make_plot(keys, locs, edges, fname="ham-cycle.pdf", show=False, fontsize=20, verttextoffset=0, arrows=circle_points)
+    make_plot(keys, locs, edges, fname="ham-cycle.pdf", show=False, fontsize=20, verttextoffset=0, arrows=circle_points, stars=stars)
 
 
 ham_cycle_plot()
@@ -141,22 +154,24 @@ def plot_subtree(x, fname="myplot.pdf", labels=True, show=False):
 
 
 if __name__ == '__main__':
-    t = Tree.from_encoding("lllprrlpppprpprlrpprlppp")
-    assert t.preorder() == (8, 6, 2, 1, 3, 5, 4, 7, 11, 9, 10, 13, 12)
-    k, d, p = _plot_info(t.root)
-    assert k == tuple(range(1, 14)), k
-    assert d == (4, 3, 4, 6, 5, 2, 3, 1, 3, 4, 2, 4, 3), d
-    assert p == (1, 5, 1, 4, 2, 7, 5, 7, 10, 8, 7, 12, 10), p
-
-    keys, locs, edges = _plot_points(t.root)
-    plot_subtree(t.root, "tree_sample.pdf")
-
-    t2 = cbst(7)
-    plot_subtree(t2.root, "complete_7.pdf")
-    plot_subtree(cbst(5).root, "complete_5.pdf")
-    t_samp = Tree()
-    for i in "aihjgfclkendbpmo":
-        t_samp.move_to_root(i)
-    plot_subtree(t_samp.root, "wilber_sample.pdf")
-    t_post = Tree(t_samp.postorder())
-    plot_subtree(t_post.root, "postorder.pdf")
+    pass
+    # t = Tree.from_encoding("lllprrlpppprpprlrpprlppp")
+    # assert t.preorder() == (8, 6, 2, 1, 3, 5, 4, 7, 11, 9, 10, 13, 12)
+    # k, d, p = _plot_info(t.root)
+    # assert k == tuple(range(1, 14)), k
+    # assert d == (4, 3, 4, 6, 5, 2, 3, 1, 3, 4, 2, 4, 3), d
+    # assert p == (1, 5, 1, 4, 2, 7, 5, 7, 10, 8, 7, 12, 10), p
+    #
+    # keys, locs, edges = _plot_points(t.root)
+    # plot_subtree(t.root, "tree_sample.pdf")
+    #
+    # t2 = cbst(7)
+    # plot_subtree(t2.root, "complete_7.pdf")
+    # plot_subtree(cbst(5).root, "complete_5.pdf")
+    # t_samp = Tree("aihjgfclkendbpmo")
+    # for i, k in enumerate("aihjgfclkendbpmoi"):
+    #     plot_subtree(t_samp.root, "wilber/wilber_sample_" + str(i) + ".pdf")
+    #     t_samp.move_to_root(k)
+    # plot_subtree(t_samp.root, "wilber/wilber_sample_" + str(i+1) + ".pdf")
+    # t_post = Tree(t_samp.postorder())
+    # plot_subtree(t_post.root, "postorder.pdf")
