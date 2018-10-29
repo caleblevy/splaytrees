@@ -48,7 +48,7 @@ def _plot_points(x):
     return keys, locations, edges
 
 
-def make_plot(keys, locs, edges, fname="myplot.pdf", labels=True, show=False, fontsize=22, verttextoffset=0, arrows=None, stars=None, numerals=None):
+def make_plot(keys, locs, edges, fname="myplot.pdf", labels=True, show=False, fontsize=22, verttextoffset=0, arrows=None, stars=None, numeral_points=None):
     y_min = np.min(locs[:, 1])
     y_max = np.max(locs[:, 1])
     x_min = np.min(locs[:, 0])
@@ -78,23 +78,38 @@ def make_plot(keys, locs, edges, fname="myplot.pdf", labels=True, show=False, fo
                 x, y-verttextoffset,
                 str(k),
                 fontsize=fontsize,
-                weight='bold',
+                # weight='bold',
                 # style='italic',
                 horizontalalignment='center',
                 verticalalignment='center')
     if stars:
         ri = u"       \u2217"
         le = u"\u2217       "
-        offsets = [ri, le, ri, ri, le, le, ri, le, ri, le, le, ri, ri, le]
+        offsets = [ri, le, ri, ri, le, le, ri, le, ri, le, le, ri, ri, ri]
         for (x, y), t in zip(stars, offsets):
+            plt.text(
+                x, y-.05,
+                t,
+                fontsize=fontsize+10,
+                weight='bold',
+                color='blue',
+                horizontalalignment='center',
+                verticalalignment='center')
+    if numeral_points is not None:
+        numerals = ["IV", "V", "VI", "VII", "VIII", "IX",
+                    "X", "XI", "XII", "XIII", "XIV", "I", "II", "III", ]
+        print(numeral_points)
+        for (x, y), t in zip(numeral_points, numerals):
             plt.text(
                 x, y,
                 t,
-                fontsize=fontsize+6,
-                weight='bold',
-                color='red',
+                fontsize=fontsize+10,
+                # weight='bold',
+                # color='blue',
+                # style='italic',
                 horizontalalignment='center',
                 verticalalignment='center')
+
     if arrows is not None:
         for arrow in arrows:
             x1, y1, x2, y2 = arrow
@@ -120,6 +135,7 @@ def ham_cycle_plot():
     y = np.sin(t)
     circle_points = np.stack([x, y]).T
     circle_points *= 10
+    numeral_points = []
     stars = []
     for r, p in zip(requests, circle_points):
         _, l, e = _plot_points(T.root)
@@ -127,6 +143,7 @@ def ham_cycle_plot():
         center = np.mean(l, axis=0)
         l += p - center
         e += p - center
+        numeral_points.append((1/1.3)*np.mean(l,axis=0))
         if locs is None:
             locs = l
             edges = e
@@ -142,7 +159,7 @@ def ham_cycle_plot():
     source += r*units 
     dest -= r* units
     circle_points = np.concatenate([source, dest-source], axis=1)
-    make_plot(keys, locs, edges, fname="ham-cycle.pdf", show=False, fontsize=20, verttextoffset=0, arrows=circle_points, stars=stars)
+    make_plot(keys, locs, edges, fname="ham-cycle.pdf", show=False, fontsize=20, verttextoffset=0, arrows=circle_points, stars=stars, numeral_points=numeral_points)
 
 
 ham_cycle_plot()
