@@ -143,6 +143,11 @@ class TestTDSplay(unittest.TestCase):
         splay(td, 9.5)
         self.assertEqual(td_found.preorder(), td.preorder())
 
+    def test_example(self):
+        t = tdfrompre((1, 2, 8, 7, 6, 3, 4, 5))
+        splay(t, 5)
+        self.assertEqual(t.preorder(), (5, 2, 1, 3, 4, 7, 6, 8))
+
 
 if __name__ == '__main__':
     unittest.main()
