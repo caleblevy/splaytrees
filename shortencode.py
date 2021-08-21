@@ -45,6 +45,7 @@ def encode(node):
 class Tree:
 
     def __init__(self, iterable=None):
+        self.size = 0
         self.root = None
         if iterable is not None:
             for element in iterable:
@@ -67,19 +68,25 @@ class Tree:
             if value < current.value:
                 if current.left is None:
                     current.left = Node(value)
+                    self.size += 1
                     return
                 current = current.left
             elif value > current.value:
                 if current.right is None:
                     current.right = Node(value)
+                    self.size += 1
                     return
                 current = current.right
             else:
                 return
         self.root = Node(value)
+        self.size += 1
 
     def __iter__(self):
         return inorder(self.root)
+
+    def __len__(self):
+        return self.size
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.preorder()})"
@@ -101,4 +108,5 @@ if __name__ == '__main__':
     tree = Tree([6, 4, 2, 10, 6, 12, 7, 7, 8, 4])
     print(tree)
     print(tree.encode())
+    print(len(tree), len(tree.encode()))
     
