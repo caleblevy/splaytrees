@@ -21,12 +21,25 @@ def preorder(node):
     yield from preorder(node.left)
     yield from preorder(node.right)
 
+
 def postorder(node):
     if node is None:
         return
     yield from postorder(node.left)
     yield from postorder(node.right)
     yield node.value
+
+
+def encode(node):
+    if node is None:
+        return
+    if node.left is not None:
+        yield "l"
+        yield from encode(node.left)
+    if node.right is not None:
+        yield "r"
+        yield from encode(node.right)
+    yield "p"
 
 
 class Tree:
@@ -80,8 +93,12 @@ class Tree:
     def postorder(self):
         return list(postorder(self.root))
 
+    def encode(self):
+        return "".join(encode(self.root))
+
 
 if __name__ == '__main__':
     tree = Tree([6, 4, 2, 10, 6, 12, 7, 7, 8, 4])
     print(tree)
+    print(tree.encode())
     
