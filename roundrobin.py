@@ -27,7 +27,7 @@ def roundrobin(n, k):
 
 def _gentuples(tup):
     for i in range(len(tup)):
-        yield tup[:i] + tup[i+1:]
+        yield tup[i], tup[:i] + tup[i+1:]
 
 
 def _roundrobin(C):
@@ -36,16 +36,20 @@ def _roundrobin(C):
         yield ()
     else:
         s = min(len(B) for B in C if len(B) > 0)
-        if t == s:
+        if s == t:
             if (t % 2 == 0):
-                b_star = C[0]
+                b_star = 0
             else:
-                b_star = C[-1]
+                b_star = -1
         else:
-            
             if len(C[0]) < t:
-                b_star = C.
+                b_star = min(i for i, B in enumerate(C) if len(B) == t)
+            else:
+                b_star = max(i for i, B in enumerate(C) if len(B) == t)
+        for (x, B) in _gentuples(C[b_star]):
+            yield from _roundrobin(C[:b_star] + (B, ) + C[b_star+1:])
 
 
 if __name__ == '__main__':
-    print(roundrobin(100, 3))
+    for i in roundrobin(6, 2):
+        print(i)
