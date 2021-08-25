@@ -14,36 +14,38 @@ def floorpow(k):
     return b_prev
 
 
-def roundrobin(n, k):
-    assert 2 <= k <= floorlog(n)
+def generate_bins(n, k):
+    assert 1 <= k <= floorlog(n)
     b = floorpow(k)
-    l = n // b
-    sets = [set(range(i*b+1, (i+1)*b+1)) for i in range(l)]
-    remainder = list(range(l*b+1, n+1))
-    print(sets)
-    print(remainder)
+    l = -(-n//b)
+    return tuple(tuple(range((i-1)*b+1, min(i*b, n)+1)) for i in range(1, l+1))
 
 
-def _generate(sets, num_cycles_remaining, current_bin_number):
-    print(sets)
-    if current_bin_number == 2*len(sets):
-        if num_cycles_remaining == -1:
-            yield ()
-        else:
-            yield from _generate(sets, num_cycles_remaining-1, 0)
+def roundrobin(n, k):
+    return list(_roundrobin(generate_bins(n, k)))
+
+
+def _gentuples(tup):
+    for i in range(len(tup)):
+        yield tup[:i] + tup[i+1:]
+
+
+def _roundrobin(C):
+    t = max(len(B) for B in C)
+    if t == 0:
+        yield ()
     else:
-        if current_bin_number < len(sets):
-            bin_index = current_bin_number
+        s = min(len(B) for B in C if len(B) > 0)
+        if t == s:
+            if (t % 2 == 0):
+                b_star = C[0]
+            else:
+                b_star = C[-1]
         else:
-            bin_index = 2*len(sets) - current_bin_number - 1
-        for item_index in range(len(sets[bin_index])):
-            value = sets[bin_index].pop(item_index)
-            for permutation in _generate(sets, num_cycles_remaining, current_bin_number+1):
-                yield (value, ) + permutation
-            sets[bin_index].insert(item_index, value)
+            
+            if len(C[0]) < t:
+                b_star = C.
 
 
 if __name__ == '__main__':
-    roundrobin(100, 3)
-    print(floorpow(3.1))
-    print(list(_generate([[1,2,3,4],[5,6,7,8],[9,10,11,12]], 2, 0)))
+    print(roundrobin(100, 3))
