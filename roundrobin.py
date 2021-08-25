@@ -15,10 +15,8 @@ def floorpow(k):
 
 
 def generate_bins(n, k):
-    assert 1 <= k <= floorlog(n)
-    b = floorpow(k)
-    l = -(-n//b)
-    return tuple(tuple(range((i-1)*b+1, min(i*b, n)+1)) for i in range(1, l+1))
+    assert 1 <= k <= n
+    return tuple(tuple(range((i-1)*k+1, min(i*k, n)+1)) for i in range(1, (n//k)+1))
 
 
 def roundrobin(n, k):
@@ -26,11 +24,12 @@ def roundrobin(n, k):
 
 
 def _gentuples(tup):
-    for i in range(len(tup)):
+    for i in reversed(range(len(tup))):
         yield tup[i], tup[:i] + tup[i+1:]
 
 
 def _roundrobin(C):
+    print(C)
     t = max(len(B) for B in C)
     if t == 0:
         yield ()
@@ -48,8 +47,8 @@ def _roundrobin(C):
                 b_star = max(i for i, B in enumerate(C) if len(B) == t)
         for (x, B) in _gentuples(C[b_star]):
             for p in _roundrobin(C[:b_star] + (B, ) + C[b_star+1:]):
-                yield (x, ) + p
+                yield p + (x, )
 
 
 if __name__ == '__main__':
-    roundrobin(6, 2)
+    print(roundrobin(12, 3))
