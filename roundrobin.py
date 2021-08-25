@@ -40,16 +40,16 @@ def _roundrobin(C):
             if (t % 2 == 0):
                 b_star = 0
             else:
-                b_star = -1
+                b_star = max(i for i, B in enumerate(C) if len(B) > 0)
         else:
             if len(C[0]) < t:
                 b_star = min(i for i, B in enumerate(C) if len(B) == t)
             else:
                 b_star = max(i for i, B in enumerate(C) if len(B) == t)
         for (x, B) in _gentuples(C[b_star]):
-            yield from _roundrobin(C[:b_star] + (B, ) + C[b_star+1:])
+            for p in _roundrobin(C[:b_star] + (B, ) + C[b_star+1:]):
+                yield (x, ) + p
 
 
 if __name__ == '__main__':
-    for i in roundrobin(6, 2):
-        print(i)
+    roundrobin(6, 2)
