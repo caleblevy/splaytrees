@@ -29,7 +29,6 @@ def _gentuples(tup):
 
 
 def _roundrobin(C):
-    print(C)
     t = max(len(B) for B in C)
     if t == 0:
         yield ()
@@ -37,7 +36,7 @@ def _roundrobin(C):
         s = min(len(B) for B in C if len(B) > 0)
         if s == t:
             if (t % 2 == 0):
-                b_star = 0
+                b_star = min(i for i, B in enumerate(C) if len(B) > 0)
             else:
                 b_star = max(i for i, B in enumerate(C) if len(B) > 0)
         else:
@@ -51,4 +50,4 @@ def _roundrobin(C):
 
 
 if __name__ == '__main__':
-    print(roundrobin(12, 3))
+    print(roundrobin(13, 3))
