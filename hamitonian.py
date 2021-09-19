@@ -6,21 +6,24 @@ class Node:
         self.left = None
         self.right = None
 
-    def find(self, value):
-        current = self
-        while current is not None:
-            if current.value < value:
-                current = current.right
-            elif current.value > value:
-                current = current.left
-            else:
-                return current
-        return None
+
+def hamiltonian_path(n):
+    if n == 0:
+        return
+    t = {}
+    t[n] = root = Node(n)
+    for i in range(n-1, 0, -1):
+        t[i] = Node(i)
+        t[i+1].left = t[i]
+        t[i].parent = t[i+1]
+
 
     def rotate(x):
         """Rotate the edge between x and its parent."""
         # Normalize to kozma's definition, page 8 of thesis
         y = x.parent
+        if y is root:
+            root = x
         # Ensures x < y
         if x is y.right:
             x, y = y, x
@@ -65,27 +68,5 @@ def preorder(node):
     yield from preorder(node.left)
     yield from preorder(node.right)
 
-
-def hamiltonian_path(n):
-    if n == 0:
-        return
-    root = previous = Node(1)
-    for i in range(2, n+1):
-        current = Node(i)
-        previous.right = current
-        current.parent = previous
-        previous = current
-    for _ in _hamiltonian_path(t, n):
-        yield root
-
-
-def _hamiltonian_path(t, n):
-    if t is None:
-        yield
-    yield from _hamiltonian_path(t.find(t.value + 1))
-    if t.left is not None:
-        if while t.value != n:
-            
-
-
-print(list(preorder(hamiltonian_path(5))))
+if __name__ == '__main__':
+    hamiltonian_path(5)
