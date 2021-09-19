@@ -7,14 +7,6 @@ class Node:
         self.right = None
 
 
-def f(x):
-    i = 1
-    def g(n):
-        i = n
-        print(n)
-    print(i)
-
-
 def hamiltonian_path(n):
     if n == 0:
         return
