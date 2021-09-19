@@ -1,31 +1,29 @@
 import random
 
-def generate_balanced_string(n):
-    nonlocal k
-    nonlocal r
+
+def _generate_balanced_string(n):
     k = 2*n
     r = 0
-    def open_string():
-        nonlocal k, r
-        r += 1
-        k -= 1
-        return "("
-    def close_string():
-        r -= 1
-        k += 1
-        return ")"
-    def prob_close():
-        return ((r*(r+k+2))/(2*k*(r+1)))
     while r != k:
-        if r == 0:
-            yield open_string()
-        elif random.random() < prob_close():
-            yield close_string()
+        if r == 0 or random.uniform(0, 1) >= r*(r+k+2)/(2*k*(r+1)):  # open
+            yield "("
+            r += 1
         else:
-            yield open_string()
-    while k != 0:
-        yield close_string()
+            yield ")"
+            r -= 1
+        k -= 1
+    while k > 0:
+        k -= 1
+        yield ")"
 
 
-for _ in range(100):
-    generate_balanced_string(3)
+def generate_balanced_string(n):
+    return "".join(_generate_balanced_string(n))
+
+
+if __name__ == '__main__':
+    from collections import Counter
+    c = Counter()
+    for _ in range(4):
+        c[generate_balanced_string(3)] += 1
+    print(c)
