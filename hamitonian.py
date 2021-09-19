@@ -66,13 +66,13 @@ def hamiltonian_path(n):
             yield t["root"]
         else:
             yield from generate(k+1)
-            if t[k].left is not None:
-                while t[k].left is not None:
-                    rotate(t[k].left)
+            if t[k].left is None:
+                while t[k].parent is not None and t[k].parent.value <= k:
+                    rotate(t[k])
                     yield from generate(k+1)
             else:
-                while t[k] is not t["root"]:
-                    rotate(t[k])
+                while t[k].left is not None:
+                    rotate(t[k].left)
                     yield from generate(k+1)
 
     yield from generate(2)
@@ -87,6 +87,8 @@ def preorder(node):
 
 
 if __name__ == '__main__':
-    for n in range(1, 5):
-        for t in hamiltonian_path(n):
-            print(list(preorder(t)))
+    for n in range(1, 6):
+        s = list(tuple(preorder(t)) for t in hamiltonian_path(n))
+        print(f"{n} nodes, {len(set(s))} trees:\n----------------")
+        for t in s:
+            print(t)
