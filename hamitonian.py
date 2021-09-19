@@ -87,11 +87,6 @@ def preorder(node):
 
 
 if __name__ == '__main__':
-    for t in hamiltonian_path(1):
-        print(list(preorder(t)))
-    for t in hamiltonian_path(2):
-        print(list(preorder(t)))
-    for t in hamiltonian_path(3):
-        print(list(preorder(t)))
-    for t in hamiltonian_path(4):
-        print(list(preorder(t)))
+    for n in range(1, 5):
+        for t in hamiltonian_path(n):
+            print(list(preorder(t)))
