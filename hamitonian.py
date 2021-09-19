@@ -7,23 +7,50 @@ class Node:
         self.right = None
 
 
-def hamiltonian_path(n):
-    if n == 0:
-        return
-    t = {}
-    t[n] = t["root"] = Node(n)
-    for i in range(n-1, 0, -1):
-        t[i] = Node(i)
-        t[i+1].left = t[i]
-        t[i].parent = t[i+1]
-    t[n+1] = None
+class BST:
 
-    def rotate(x):
+    def __init__(self):
+        self.root = None
+        self._node = {}
+
+    def __getitem__(self, value):
+        return self._node[value]
+
+    def __contains__(self, value):
+        return value in self._node
+
+    def insert(self, value):
+        current = self.root
+        while current is not None:
+            if value < current.value:
+                if current.left is None:
+                    current.left = self._new_node(value, current)
+                    return
+                else:
+                    current = current.left
+            elif value > current.value:
+                if current.right is None:
+                    current.right = self._new_node(value, current)
+                    return
+                else:
+                    current = current.right
+            else:
+                return
+        self.root = self._new_node(value, current)
+
+    def _new_node(self, value, parent):
+        node = Node(value)
+        node.parent = parent
+        self._node[value] = node
+        return node
+
+    def rotate(self, value):
         """Rotate the edge between x and its parent."""
         # Normalize to kozma's definition, page 8 of thesis
+        x = self._node[value]
         y = x.parent
-        if y is t["root"]:
-            t["root"] = x
+        if y is self.root:
+            self.root = x
         # Ensures x < y
         if x is y.right:
             x, y = y, x
@@ -60,19 +87,32 @@ def hamiltonian_path(n):
             y.left = x
             x.parent = y
 
+    def preorder(self):
+        return tuple(preorder(self.root))
+
+
+def hamiltonian_path(n):
+    if n == 0:
+        return
+    t = BST()
+    t.insert(1)
+    for i in range(2, n+1):
+        t.insert(i)
+        t.rotate(i)
+
     def generate(k):
         """Generate binary trees with induced subtree T[range(1, k)]"""
-        if t[k] is None:
-            yield t["root"]
+        if k not in t:
+            yield t
         else:
             yield from generate(k+1)
             if t[k].left is None:
                 while t[k].parent is not None and t[k].parent.value <= k:
-                    rotate(t[k])
+                    t.rotate(k)
                     yield from generate(k+1)
             else:
                 while t[k].left is not None:
-                    rotate(t[k].left)
+                    t.rotate(t[k].left.value)
                     yield from generate(k+1)
 
     yield from generate(2)
@@ -88,7 +128,7 @@ def preorder(node):
 
 if __name__ == '__main__':
     for n in range(1, 6):
-        s = list(tuple(preorder(t)) for t in hamiltonian_path(n))
-        print(f"{n} nodes, {len(set(s))} trees:\n----------------")
+        s = list(t.preorder() for t in hamiltonian_path(n))
         for t in s:
             print(t)
+        print(f"--------------\n{n} nodes, {len(set(s))} trees")
