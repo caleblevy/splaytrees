@@ -81,19 +81,18 @@ def random_bst(n):
 def good_bst(s):
     sentinal = object()
     current = None
+    v = 0
     for c in s:
         if c:
+            v += 1
             node = Node()
-            if current is None:
-                current = node
-            elif current.left is None:
-                current.left = node
-                current.left.parent = current
-                current = current.left
-            else:
-                current.right = node
-                current.right.parent = current
-                current = current.right
+            node.parent = current
+            if current is not None:
+                if current.left is None:
+                    current.left = node
+                else:
+                    current.right = node
+            current = node
         else:
             if current.left is None:
                 current.left = sentinal
