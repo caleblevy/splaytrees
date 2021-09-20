@@ -49,11 +49,12 @@ def _generate_balanced_string(n):
 def random_balanced_string(n):
     return "".join("(" if c else ")" for c in _generate_balanced_string(n))
 
+t1 = [True, True, True, True, True, True, False, True, False, True, True, True, False, False, True, False, False, True, True, False, True, False, False, True, True, False, False, False, False, False, True, True, False, True, False, True, False, True, True, False, True, False, True, True, True, True, False, True, True, True, False, False, False, True, False, False, False, True, True, False, False, False, False, False, False, True, False, True, True, True, False, True, True, True, True, True, False, False, True, True, False, False, True, False, False, False, False, True, True, False, True, False, False, False, True, False, False, True, False, False]
+t2 = [True, False, True, True, False, True, False, True, True, True, True, False, True, True, False, True, False, True, True, True, True, True, True, False, False, False, True, True, False, True, True, True, False, False, False, False, True, False, True, False, False, True, False, False, False, True, False, True, False, True, False, False, True, False, True, True, True, False, False, True, True, False, True, False, True, False, False, False, False, False, False, True, True, False, True, False, False, True, False, True, False, True, True, False, False, False, True, True, True, True, False, False, False, False, True, True, False, False, True, False]
 
-def random_bst(n):
+
+def random_bst(s):
     i = 0
-    s = list(_generate_balanced_string(n))
-
     def recurse():
         nonlocal i
         if i >= len(s) or not s[i]:
@@ -67,18 +68,18 @@ def random_bst(n):
             return node
         node.right = recurse()
         return node
-
     root = recurse()
     relabel(root)
     return root
 
 
 if __name__ == '__main__':
-    print(list(random_bst(5).preorder()))
-    from collections import Counter
-    c = Counter()
-    for _ in range(10000):
-        c[tuple(random_bst(5).preorder())] += 1
-    print(c)
-    print(len(c))
-    t = Node()
+    print(list(random_bst(t1).preorder()))
+    print(list(random_bst(t2).preorder()))
+    # from collections import Counter
+    # c = Counter()
+    # for _ in range(10000):
+    #     c[tuple(random_bst(5).preorder())] += 1
+    # print(c)
+    # print(len(c))
+    # t = Node()
