@@ -85,23 +85,23 @@ def good_bst(s):
     for c in s:
         if c:
             node = Node()
-            print("hi")
             if current is None:
                 current = node
+                continue
             elif current.left is None:
                 current.left = node
                 current.left.parent = current
                 current = current.left
             else:
-                assert current.right is None
                 current.right = node
                 current.right.parent = current
                 current = current.right
         else:
             if current.left is None:
                 current.left = sentinal
-            elif current.right is None:
+            else:
                 current.right = sentinal
+            while current.left is not None and current.right is not None:
                 current = current.parent
     if current is not None:
         while current.parent is not None:
@@ -131,7 +131,8 @@ if __name__ == '__main__':
     print(list(bst(t1).preorder()))
     print(list(bst(t2).preorder()))
     s = [True, True, False, True, False, False, True, False]
+    s = list(random_balanced_bools(7))
     print(s)
     print(balanced_string(s))
     print(preorder(bst(s)))
-    print(preorder(good_bst(s)))
+    print(preorder(good_bst(t2)))
