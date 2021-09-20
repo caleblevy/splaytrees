@@ -84,7 +84,6 @@ def good_bst(s):
     v = 0
     for c in s:
         if c:
-            v += 1
             node = Node()
             node.parent = current
             if current is not None:
@@ -97,6 +96,8 @@ def good_bst(s):
             if current.left is None:
                 current.left = sentinal
             else:
+                v += 1
+                current.value = v
                 current.right = sentinal
                 while current.left is not None and current.right is not None:
                     current = current.parent
