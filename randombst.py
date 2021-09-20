@@ -1,4 +1,4 @@
-from collections import deque
+from collections import deque, Counter
 import random
 
 LEFT = 0
@@ -43,7 +43,7 @@ def random_balanced_bools(n):
     r = 0
     root = current = None
     while k > 0:
-        if k > r and (r == 0 or random.uniform(0, 1) >= r*(r+k+2)/(2*k*(r+1))):
+        if k > r and (r == 0 or random.randrange(2*k*(r+1)) >= r*(r+k+2)):
             yield True
             r += 1
         else:
@@ -130,6 +130,10 @@ t2 = [True, False, True, True, False, True, False, True, True, True, True, False
 if __name__ == '__main__':
     print(list(bst(t1).preorder()))
     print(list(bst(t2).preorder()))
+    c = Counter()
+    for _ in range(100000):
+        c[random_balanced_string(3)] += 1
+    print(c)
     s = [True, True, False, True, False, False, True, False]
     s = list(random_balanced_bools(7))
     print(s)
