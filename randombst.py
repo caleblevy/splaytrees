@@ -1,7 +1,8 @@
 import random
 
-OPEN = False
-CLOSED = True
+LEFT = 0
+RIGHT = 1
+UP = 2
 
 
 class Node:
@@ -11,7 +12,7 @@ class Node:
         self.parent = None
         self.left = None
         self.right = None
-        self._filled = False
+        self._direction = LEFT
 
     def insert_left(self, value=None):
         assert self.left is None
@@ -65,8 +66,29 @@ def random_balanced_string(n):
     return "".join("(" if p else ")" for p in _generate_balanced_string(n))
 
 
+def random_bst(n):
+    current = None
+    for c in _generate_balanced_string(n):
+        print(c)
+        if current is not None:
+            print(current.parent)
+        if c:
+            if current is None:
+                root = current = Node()
+            elif not current._left_complete:
+                current = current.insert_left()
+            else:
+                current = current.insert_right()
+        else:
+            if current._left_complete:
+                current = current.parent
+            current._left_complete = True
+    relabel(root)
+    return root
+
+
 if __name__ == '__main__':
-    # print(list(preorder(random_bst(5))))
+    print(list(random_bst(5).inorder()))
     from collections import Counter
     c = Counter()
     for _ in range(10000):
