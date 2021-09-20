@@ -54,22 +54,17 @@ t2 = [True, False, True, True, False, True, False, True, True, True, True, False
 
 
 def random_bst(s):
-    i = 0
-    def recurse():
-        nonlocal i
-        if i >= len(s) or not s[i]:
-            i += 1
-            return None
+    def recurse(i):
         i += 1
-        node = Node()
-        node.left = recurse()
         if i >= len(s) or not s[i]:
-            i += 1
-            return node
-        node.right = recurse()
-        return node
-    root = recurse()
-    relabel(root)
+            return (None, i)
+        node = Node()
+        (node.left, i) = recurse(i)
+        (node.right, i) = recurse(i)
+        return (node, i)
+    root = recurse(-1)[0]
+    if root is not None:
+        relabel(root)
     return root
 
 
