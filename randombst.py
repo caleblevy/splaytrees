@@ -81,10 +81,8 @@ def random_bst(n):
 def good_bst(s):
     sentinal = object()
     current = None
-    v = 0
     for c in s:
         if c:
-            v += 1
             node = Node()
             if current is None:
                 current = node
@@ -101,19 +99,26 @@ def good_bst(s):
                 current.left = sentinal
             else:
                 current.right = sentinal
-        if v == len(s)//2:
-            current.right = sentinal
-        while None not in {current, current.parent, current.left, current.right}:
+            while current.left is not None and current.right is not None:
+                current = current.parent
+    if current is not None:
+        while current.parent is not None:
+            current = current.parent
+        root = current
+        q = deque([current])
+        while q:
+            current = q.popleft()
             if current.left is sentinal:
                 current.left = None
+            elif current.left is not None:
+                q.append(current.left)
             if current.right is sentinal:
                 current.right = None
-            current = current.parent
-    if current.left is sentinal:
-        current.left = None
-    if current.right is sentinal:
-        current.right = None
-    return current
+            elif current.right is not None:
+                q.append(current.right)
+        current = root
+    relabel(current)
+    return root
 
 
 t1 = [True, True, True, True, True, True, False, True, False, True, True, True, False, False, True, False, False, True, True, False, True, False, False, True, True, False, False, False, False, False, True, True, False, True, False, True, False, True, True, False, True, False, True, True, True, True, False, True, True, True, False, False, False, True, False, False, False, True, True, False, False, False, False, False, False, True, False, True, True, True, False, True, True, True, True, True, False, False, True, True, False, False, True, False, False, False, False, True, True, False, True, False, False, False, True, False, False, True, False, False]
