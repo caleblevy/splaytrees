@@ -98,8 +98,8 @@ def good_bst(s):
                 current.left = sentinal
             else:
                 current.right = sentinal
-            while current.left is not None and current.right is not None:
-                current = current.parent
+                while current.left is not None and current.right is not None:
+                    current = current.parent
     if current is not None:
         while current.parent is not None:
             current = current.parent
