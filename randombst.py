@@ -1,3 +1,4 @@
+from collections import deque
 import random
 
 LEFT = 0
@@ -18,7 +19,7 @@ class Node:
 
 
 def relabel(node, start=0):
-    if node is not None:
+    if type(node) is Node:
         start = relabel(node.left, start) + 1
         node.value = start
         start = relabel(node.right, start)
@@ -84,6 +85,7 @@ def good_bst(s):
     for c in s:
         if c:
             node = Node()
+            print("hi")
             if current is None:
                 current = node
             elif current.left is None:
@@ -91,24 +93,34 @@ def good_bst(s):
                 current.left.parent = current
                 current = current.left
             else:
+                assert current.right is None
                 current.right = node
                 current.right.parent = current
                 current = current.right
         else:
             if current.left is None:
                 current.left = sentinal
-            else:
-                if current.left is sentinal:
-                    current.left = None
+            elif current.right is None:
+                current.right = sentinal
                 current = current.parent
-    parent = current
-    while parent is not None:
-        if current.left is sentinal:
-            current.left = None
-        current = parent
-        parent = current.parent
+    if current is not None:
+        while current.parent is not None:
+            current = current.parent
+        root = current
+        q = deque([current])
+        while q:
+            current = q.popleft()
+            if current.left is sentinal:
+                current.left = None
+            elif current.left is not None:
+                q.append(current.left)
+            if current.right is sentinal:
+                current.right = None
+            elif current.right is not None:
+                q.append(current.right)
+        current = root
     relabel(current)
-    return current
+    return root
 
 
 t1 = [True, True, True, True, True, True, False, True, False, True, True, True, False, False, True, False, False, True, True, False, True, False, False, True, True, False, False, False, False, False, True, True, False, True, False, True, False, True, True, False, True, False, True, True, True, True, False, True, True, True, False, False, False, True, False, False, False, True, True, False, False, False, False, False, False, True, False, True, True, True, False, True, True, True, True, True, False, False, True, True, False, False, True, False, False, False, False, True, True, False, True, False, False, False, True, False, False, True, False, False]
@@ -118,7 +130,7 @@ t2 = [True, False, True, True, False, True, False, True, True, True, True, False
 if __name__ == '__main__':
     print(list(bst(t1).preorder()))
     print(list(bst(t2).preorder()))
-    s = list(random_balanced_bools(7))
+    s = [True, True, False, True, False, False, True, False]
     print(s)
     print(balanced_string(s))
     print(preorder(bst(s)))
