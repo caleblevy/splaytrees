@@ -50,7 +50,6 @@ def inorder(node):
 def _generate_balanced_string(n):
     k = 2*n
     r = 0
-    v = 1
     root = current = None
     while k > 0:
         if k > r and (r == 0 or random.uniform(0, 1) >= r*(r+k+2)/(2*k*(r+1))):
