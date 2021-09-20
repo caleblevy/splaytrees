@@ -17,13 +17,23 @@ def _generate_balanced_string(n):
         yield ")"
 
 
-def generate_balanced_string(n):
+def random_balanced_string(n):
     return "".join(_generate_balanced_string(n))
+
+
+def random_bst(n):
+    """Uniform random binary search tree of size n."""
+    s = generate_balanced_string(n)
+    def recur(i):
+        if i >= len(s) or s[i] == ")":
+            i += 1
+            return None
+            
 
 
 if __name__ == '__main__':
     from collections import Counter
     c = Counter()
     for _ in range(4):
-        c[generate_balanced_string(3)] += 1
+        c[random_balanced_string(3)] += 1
     print(c)
