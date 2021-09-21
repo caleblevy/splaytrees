@@ -96,28 +96,28 @@ def good_bst(s):
             if current.left is None:
                 current.left = sentinal
             else:
-                v += 1
-                current.value = v
                 current.right = sentinal
                 while current.left is not None and current.right is not None:
                     current = current.parent
+            v += 1
+            current.value = v
     if current is not None:
         while current.parent is not None:
             current = current.parent
         root = current
-        q = deque([current])
-        while q:
-            current = q.popleft()
-            if current.left is sentinal:
-                current.left = None
-            elif current.left is not None:
-                q.append(current.left)
-            if current.right is sentinal:
-                current.right = None
-            elif current.right is not None:
-                q.append(current.right)
-        current = root
-    relabel(current)
+    #     q = deque([current])
+    #     while q:
+    #         current = q.popleft()
+    #         if current.left is sentinal:
+    #             current.left = None
+    #         elif current.left is not None:
+    #             q.append(current.left)
+    #         if current.right is sentinal:
+    #             current.right = None
+    #         elif current.right is not None:
+    #             q.append(current.right)
+    #     current = root
+    # relabel(current)
     return root
 
 
