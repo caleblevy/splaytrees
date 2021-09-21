@@ -75,11 +75,11 @@ def bst(s):
 
 
 def random_bst(n):
-    return bst(random_balanced_bools(n))
+    return bst(list(random_balanced_bools(n)))
 
 
 def good_bst(s):
-    sentinal = object()
+    sentinal = Node()
     current = None
     v = 0
     for c in s:
@@ -114,20 +114,15 @@ def good_bst(s):
     return current
 
 
-t1 = [True, True, True, True, True, True, False, True, False, True, True, True, False, False, True, False, False, True, True, False, True, False, False, True, True, False, False, False, False, False, True, True, False, True, False, True, False, True, True, False, True, False, True, True, True, True, False, True, True, True, False, False, False, True, False, False, False, True, True, False, False, False, False, False, False, True, False, True, True, True, False, True, True, True, True, True, False, False, True, True, False, False, True, False, False, False, False, True, True, False, True, False, False, False, True, False, False, True, False, False]
-t2 = [True, False, True, True, False, True, False, True, True, True, True, False, True, True, False, True, False, True, True, True, True, True, True, False, False, False, True, True, False, True, True, True, False, False, False, False, True, False, True, False, False, True, False, False, False, True, False, True, False, True, False, False, True, False, True, True, True, False, False, True, True, False, True, False, True, False, False, False, False, False, False, True, True, False, True, False, False, True, False, True, False, True, True, False, False, False, True, True, True, True, False, False, False, False, True, True, False, False, True, False]
+def good_random_bst(n):
+    return good_bst(random_balanced_bools(n))
 
 
 if __name__ == '__main__':
-    print(list(bst(t1).preorder()))
-    print(list(bst(t2).preorder()))
     c = Counter()
-    for _ in range(100000):
-        c[random_balanced_string(3)] += 1
+    for _ in range(10000):
+        c[preorder(good_random_bst(3))] += 1
     print(c)
-    s = [True, True, False, True, False, False, True, False]
-    s = list(random_balanced_bools(7))
-    print(s)
-    print(balanced_string(s))
-    print(preorder(bst(s)))
+    print(len(c))
     print(preorder(good_bst(random_balanced_bools(50))))
+    a = good_random_bst(1_000_00)
