@@ -28,7 +28,7 @@ def relabel(node, start=0):
 
 
 def _preorder(node):
-    if node is not None:
+    if type(node) is Node:
         yield node.value
         yield from _preorder(node.left)
         yield from _preorder(node.right)
