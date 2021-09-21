@@ -28,7 +28,7 @@ def relabel(node, start=0):
 
 
 def _preorder(node):
-    if type(node) is Node:
+    if node is not None:
         yield node.value
         yield from _preorder(node.left)
         yield from _preorder(node.right)
@@ -96,29 +96,22 @@ def good_bst(s):
             if current.left is None:
                 current.left = sentinal
             else:
-                current.right = sentinal
-                while current.left is not None and current.right is not None:
+                while True:
+                    if current.left is sentinal:
+                        current.left = None
                     current = current.parent
+                    if current.right is None:
+                        break
             v += 1
             current.value = v
-    if current is not None:
-        while current.parent is not None:
-            current = current.parent
-        root = current
-    #     q = deque([current])
-    #     while q:
-    #         current = q.popleft()
-    #         if current.left is sentinal:
-    #             current.left = None
-    #         elif current.left is not None:
-    #             q.append(current.left)
-    #         if current.right is sentinal:
-    #             current.right = None
-    #         elif current.right is not None:
-    #             q.append(current.right)
-    #     current = root
-    # relabel(current)
-    return root
+    while current is not None:
+        if current.left is sentinal:
+            current.left = None
+        parent = current.parent
+        if parent is None:
+            break
+        current = parent
+    return current
 
 
 t1 = [True, True, True, True, True, True, False, True, False, True, True, True, False, False, True, False, False, True, True, False, True, False, False, True, True, False, False, False, False, False, True, True, False, True, False, True, False, True, True, False, True, False, True, True, True, True, False, True, True, True, False, False, False, True, False, False, False, True, True, False, False, False, False, False, False, True, False, True, True, True, False, True, True, True, True, True, False, False, True, True, False, False, True, False, False, False, False, True, True, False, True, False, False, False, True, False, False, True, False, False]
@@ -137,4 +130,4 @@ if __name__ == '__main__':
     print(s)
     print(balanced_string(s))
     print(preorder(bst(s)))
-    print(preorder(good_bst(t2)))
+    print(preorder(good_bst(random_balanced_bools(50))))
